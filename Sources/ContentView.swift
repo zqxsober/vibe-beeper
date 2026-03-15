@@ -123,10 +123,10 @@ struct ContentView: View {
 
                 Spacer().frame(height: 6)
 
-                // Buttons
-                HStack(alignment: .center, spacing: 10) {
+                // Buttons — V-shaped layout (middle slightly lower)
+                HStack(alignment: .top, spacing: 5) {
                     if monitor.autoAccept {
-                        // YOLO mode: bolt (disable) + go-to-convo
+                        // YOLO mode: bolt (disable) + go-to-convo — centered, no V
                         ActionButton(
                             symbol: "bolt.slash.fill", size: 12,
                             iconColor: .white,
@@ -145,6 +145,7 @@ struct ContentView: View {
                         .accessibilityLabel("Deny permission")
 
                         centerButton
+                            .offset(y: 5)
 
                         ActionButton(
                             symbol: "checkmark", size: 12,
@@ -157,7 +158,8 @@ struct ContentView: View {
                 }
                 .animation(.easeInOut(duration: 0.3), value: monitor.state)
                 .animation(.easeInOut(duration: 0.3), value: monitor.autoAccept)
-                .frame(height: 34)
+                .frame(height: 40)
+                .offset(y: -8)
             }
         }
         .frame(width: 250, height: 300)
@@ -228,9 +230,13 @@ struct ActionButton: View {
     var iconColor: Color = .white
     let active: Bool
     var pulse: Bool = false
+    var buttonSize: CGFloat = 28
     let action: () -> Void
 
     @State private var animating = false
+
+    private var wellSize: CGFloat { buttonSize + 3 }
+    private var frameSize: CGFloat { buttonSize + 4 }
 
     var body: some View {
         Button(action: action) {
@@ -238,7 +244,7 @@ struct ActionButton: View {
                 // Recessed well the button sits in
                 Circle()
                     .fill(Color.black.opacity(0.25))
-                    .frame(width: 31, height: 31)
+                    .frame(width: wellSize, height: wellSize)
                     .blur(radius: 1)
 
                 // Button face — themed accent color
@@ -251,10 +257,10 @@ struct ActionButton: View {
                             ],
                             center: UnitPoint(x: 0.4, y: 0.35),
                             startRadius: 0,
-                            endRadius: 16
+                            endRadius: buttonSize * 0.57
                         )
                     )
-                    .frame(width: 28, height: 28)
+                    .frame(width: buttonSize, height: buttonSize)
 
                 // Top specular highlight
                 Circle()
@@ -268,7 +274,7 @@ struct ActionButton: View {
                             startPoint: .top, endPoint: .center
                         )
                     )
-                    .frame(width: 28, height: 28)
+                    .frame(width: buttonSize, height: buttonSize)
 
                 // Bottom catch light
                 Circle()
@@ -281,7 +287,7 @@ struct ActionButton: View {
                             startPoint: .center, endPoint: .bottom
                         )
                     )
-                    .frame(width: 28, height: 28)
+                    .frame(width: buttonSize, height: buttonSize)
 
                 // Rim
                 Circle()
@@ -297,14 +303,14 @@ struct ActionButton: View {
                         ),
                         lineWidth: 0.8
                     )
-                    .frame(width: 28, height: 28)
+                    .frame(width: buttonSize, height: buttonSize)
 
                 Image(systemName: symbol)
                     .font(.system(size: size, weight: .black))
                     .foregroundColor(active ? iconColor : Color(hex: "A8A4A0"))
                     .shadow(color: .black.opacity(active ? 0.3 : 0), radius: 0.5, y: 0.5)
             }
-            .frame(width: 32, height: 32)
+            .frame(width: frameSize, height: frameSize)
             .scaleEffect(pulse && animating ? 1.08 : 1.0)
         }
         .buttonStyle(.plain)

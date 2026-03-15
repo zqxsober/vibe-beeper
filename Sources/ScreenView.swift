@@ -22,19 +22,13 @@ struct ScreenView: View {
                             active: monitor.state == .needsYou,
                             color: themeManager.lcdOn)
                     Spacer()
-                    LCDIcon(symbol: "bolt.fill",
-                            active: isYoloActive ? false : monitor.state == .thinking,
+                    LCDIcon(symbol: isYoloActive ? "flame.fill" : "bolt.fill",
+                            active: isYoloActive ? true : monitor.state == .thinking,
                             color: themeManager.lcdOn)
                     Spacer()
                     LCDIcon(symbol: "checkmark.circle.fill",
                             active: monitor.state == .finished,
                             color: themeManager.lcdOn)
-                    if monitor.autoAccept {
-                        Spacer()
-                        LCDIcon(symbol: "flame.fill",
-                                active: true,
-                                color: themeManager.lcdOn)
-                    }
                 }
                 .padding(.horizontal, 8)
                 .padding(.top, 4)
@@ -52,14 +46,15 @@ struct ScreenView: View {
                     .foregroundColor(themeManager.lcdOn)
                     .opacity(monitor.state.needsAttention
                              ? (animFrame % 2 == 0 ? 1 : 0.15) : 1)
+                    .frame(height: 11)
 
                 // Detail line
                 Text(displayDetail)
                     .font(.system(size: 6.5, weight: .medium, design: .monospaced))
-                    .foregroundColor(themeManager.lcdOn.opacity(0.55))
+                    .foregroundColor(themeManager.lcdOn.opacity(displayDetail.isEmpty ? 0 : 0.55))
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity, minHeight: 10, alignment: .top)
+                    .frame(maxWidth: .infinity, minHeight: 14, maxHeight: 14, alignment: .top)
                     .padding(.bottom, 3)
             }
             .padding(.horizontal, 4)
