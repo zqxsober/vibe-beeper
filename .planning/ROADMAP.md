@@ -31,7 +31,10 @@ v1.1 hardens the existing foundation before adding new visible capabilities. Pha
   3. A malformed, empty, or missing-key response.json results in a deny decision — Claude Code never auto-allows due to bad data
   4. Events with unexpected schema are rejected before processing, not silently passed through
   5. A response.json written before the permission request was issued is ignored (stale timestamp check)
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 01-01-PLAN.md — Swift-side fixes: YOLO icon, window identifier lookup, event schema validation
+- [ ] 01-02-PLAN.md — Python-side fixes: default-deny with whitelist, response freshness check
 
 ### Phase 2: Reliability + Performance
 **Goal**: The app runs stably for hours without degrading — watcher survives file rotation, timers pause when hidden, rendering is efficient
@@ -72,7 +75,7 @@ v1.1 hardens the existing foundation before adding new visible capabilities. Pha
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Hardening | 0/TBD | Not started | - |
+| 1. Hardening | 0/2 | Planning complete | - |
 | 2. Reliability + Performance | 0/TBD | Not started | - |
 | 3. UX Enhancements | 0/TBD | Not started | - |
 | 4. Notifications | 0/TBD | Not started | - |
