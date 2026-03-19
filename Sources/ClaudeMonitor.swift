@@ -176,7 +176,9 @@ final class ClaudeMonitor: ObservableObject {
     private func processEvent(_ json: String) {
         guard let data = json.data(using: .utf8),
               let event = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let type = event["event"] as? String else { return }
+              let type = event["event"] as? String,
+              event["sid"] is String,
+              event["ts"] is Int else { return }
 
         let sid = event["sid"] as? String ?? ""
 
