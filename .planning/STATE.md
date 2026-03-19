@@ -4,7 +4,7 @@ milestone: v1.1
 milestone_name: Polish + Hardening
 status: unknown
 stopped_at: Completed 01-hardening-01-PLAN.md
-last_updated: "2026-03-19T14:52:10.902Z"
+last_updated: "2026-03-19T15:01:10.929Z"
 progress:
   total_phases: 4
   completed_phases: 1
