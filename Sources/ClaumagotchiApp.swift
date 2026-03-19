@@ -65,7 +65,7 @@ struct ClaumagotchiApp: App {
     }
 
     static func toggleMainWindow() {
-        for window in NSApp.windows where window.title == "Claumagotchi" {
+        for window in NSApp.windows where window.identifier?.rawValue == "main" {
             window.isVisible ? window.orderOut(nil) : window.makeKeyAndOrderFront(nil)
             return
         }
@@ -73,7 +73,7 @@ struct ClaumagotchiApp: App {
 
     /// Show the main window without toggling (used by applicationShouldHandleReopen).
     static func showMainWindow() {
-        for window in NSApp.windows where window.title == "Claumagotchi" {
+        for window in NSApp.windows where window.identifier?.rawValue == "main" {
             if !window.isVisible {
                 window.makeKeyAndOrderFront(nil)
             }
