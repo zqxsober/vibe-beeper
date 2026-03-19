@@ -9,14 +9,14 @@ Requirements for the polish and hardening milestone. Each maps to roadmap phases
 
 ### Bug Fixes
 
-- [ ] **BUG-01**: YOLO mode shows a distinct visual indicator in the menu bar icon
-- [ ] **BUG-02**: Window lookup uses a stable identifier instead of matching by title string
+- [x] **BUG-01**: YOLO mode shows a distinct visual indicator in the menu bar icon
+- [x] **BUG-02**: Window lookup uses a stable identifier instead of matching by title string
 - [x] **BUG-03**: Malformed or empty permission response defaults to deny, not allow
 
 ### Security
 
 - [x] **SEC-01**: Permission response file defaults to deny when decision key is missing or malformed
-- [ ] **SEC-02**: Event JSON is validated against expected schema before processing
+- [x] **SEC-02**: Event JSON is validated against expected schema before processing
 - [x] **SEC-03**: Response file is checked for freshness (timestamp) to prevent stale/pre-written responses
 
 ### Reliability
@@ -73,11 +73,11 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | Phase 1 | Pending |
-| BUG-02 | Phase 1 | Pending |
+| BUG-01 | Phase 1 | Complete |
+| BUG-02 | Phase 1 | Complete |
 | BUG-03 | Phase 1 | Complete |
 | SEC-01 | Phase 1 | Complete |
-| SEC-02 | Phase 1 | Pending |
+| SEC-02 | Phase 1 | Complete |
 | SEC-03 | Phase 1 | Complete |
 | REL-01 | Phase 2 | Pending |
 | REL-02 | Phase 2 | Pending |

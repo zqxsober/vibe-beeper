@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Polish + Hardening
-status: in_progress
-stopped_at: "Completed 01-hardening-01-02-PLAN.md"
-last_updated: "2026-03-19T14:46:26Z"
+status: unknown
+stopped_at: Completed 01-hardening-01-PLAN.md
+last_updated: "2026-03-19T14:52:10.902Z"
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
   completed_plans: 2
 ---
@@ -41,6 +41,7 @@ Plan: 2 of 2 (all plans complete)
 | 01-hardening | 2 | ~4 min | ~2 min |
 
 *Updated after each plan completion*
+| Phase 01-hardening P01 | 6 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -53,6 +54,9 @@ Plan: 2 of 2 (all plans complete)
 - 01-02: Default decision changed from allow to deny — hook fails closed on any ambiguous data (BUG-03/SEC-01)
 - 01-02: 2-second mtime tolerance for freshness check to account for filesystem/clock drift (SEC-03)
 - 01-02: Whitelist guard normalizes non-string/unexpected decision values to deny rather than passing through
+- [Phase 01-hardening]: EggIcon.image() takes EggIconState not Bool — extensible for future states
+- [Phase 01-hardening]: Window lookup via identifier?.rawValue == 'main', not mutable title string
+- [Phase 01-hardening]: processEvent schema validation uses is String / is Int type checks inside existing guard
 
 ### Pending Todos
 
@@ -65,6 +69,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T14:46:26Z
-Stopped at: Completed 01-hardening-01-02-PLAN.md
-Resume file: .planning/phases/01-hardening/01-02-SUMMARY.md
+Last session: 2026-03-19T14:52:10.899Z
+Stopped at: Completed 01-hardening-01-PLAN.md
+Resume file: None
