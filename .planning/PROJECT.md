@@ -35,14 +35,14 @@ Users can see what Claude is doing and respond to permission requests without le
 - ✓ Noise texture cached as static NSImage (renders once) — Phase 2
 - ✓ Throttled sessions.json reads (every 30s, not per-event) — Phase 2
 - ✓ Unified hex color parsing (single implementation) — Phase 2
+- ✓ Session count badge on LCD screen — Phase 3
+- ✓ Idle/sleeping animation after 60s inactivity — Phase 3
+- ✓ Full file path in permission prompts (not just basename) — Phase 3
+- ✓ Global hotkeys Option+A/D with accessibility gate — Phase 3
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
-- [ ] Show active session count on screen
-- [ ] Idle/sleeping animation after inactivity
-- [ ] Richer permission info (full file path or command, not just tool name)
-- [ ] Global hotkeys (Option+A allow, Option+D deny) for permission response without mouse
 - [ ] macOS Notification Center integration (with enable/disable toggle)
 
 ### Out of Scope
@@ -75,9 +75,9 @@ Users can see what Claude is doing and respond to permission requests without le
 |----------|-----------|---------|
 | File-based IPC over XPC/sockets | Simpler, works cross-process, debuggable | ✓ Good |
 | No external dependencies | Minimal attack surface, easy distribution | ✓ Good |
-| Global hotkey Option+A/D for permissions | Fastest response path without mouse | — Pending |
+| Global hotkey Option+A/D for permissions | Fastest response path without mouse | ✓ Good |
 | Notifications for visibility, not actions | App is always floating — action buttons redundant | — Pending |
 | Default-deny on malformed response | Security: fail closed, not open | ✓ Good |
 
 ---
-*Last updated: 2026-03-20 after Phase 2 completion*
+*Last updated: 2026-03-20 after Phase 3 completion*
