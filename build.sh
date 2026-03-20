@@ -64,3 +64,6 @@ cat > Claumagotchi.app/Contents/Info.plist << 'PLIST'
 PLIST
 
 echo "Built Claumagotchi.app"
+
+codesign --force --deep --sign - Claumagotchi.app
+echo "Signed Claumagotchi.app (ad-hoc)"
