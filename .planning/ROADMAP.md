@@ -73,7 +73,7 @@ Plans:
 
 </details>
 
-### 🚧 v2.0 Voice & Intelligence (In Progress)
+### v2.0 Voice & Intelligence (In Progress)
 
 **Milestone Goal:** Transform Claumagotchi from a status monitor into an interactive companion — users can speak to Claude, see what it did, and manage everything from a proper settings experience.
 
@@ -103,8 +103,8 @@ Plans:
   3. Feed data is derived from existing hook events without any changes to the IPC protocol
 **Plans:** 2/2 plans complete
 Plans:
-- [ ] 06-01-PLAN.md — ActivityEntry data model, hook summary enrichment, real-time storage in ClaudeMonitor (FEED-01, FEED-02, FEED-03)
-- [ ] 06-02-PLAN.md — ActivityFeedView UI, expandable panel in ContentView, human verification (FEED-01, FEED-02)
+- [x] 06-01-PLAN.md — ActivityEntry data model, hook summary enrichment, real-time storage in ClaudeMonitor (FEED-01, FEED-02, FEED-03)
+- [x] 06-02-PLAN.md — ActivityFeedView UI, expandable panel in ContentView, human verification (FEED-01, FEED-02)
 
 ### Phase 7: AI Summary
 **Goal**: When a session ends and an API key is configured, Claude's activity is summarized into a readable recap — gracefully degrading to raw feed when no key is set
@@ -115,7 +115,10 @@ Plans:
   2. Without an API key, the raw activity feed is shown and no summary is attempted
   3. API calls go directly from the Mac to Anthropic or OpenAI — no intermediate servers involved
   4. User can configure which provider's API key to use (Anthropic or OpenAI)
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 07-01-PLAN.md — SummaryService with Anthropic/OpenAI API calls, ClaudeMonitor session_end trigger (SUM-01, SUM-02, SUM-04)
+- [ ] 07-02-PLAN.md — ActivityFeedView summary display with graceful degradation (SUM-02, SUM-03)
 
 ### Phase 8: Voice Input + Layout
 **Goal**: Users can speak to Claude by holding a hotkey or pressing the mic button — and the Tamagotchi UI shows recording state clearly
@@ -131,7 +134,7 @@ Plans:
 
 ## Progress
 
-**Execution Order:** 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+**Execution Order:** 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -140,6 +143,6 @@ Plans:
 | 3. UX Enhancements | v1.1 | 2/2 | Complete | 2026-03-20 |
 | 4. Notifications | v1.1 | 2/2 | Complete | 2026-03-20 |
 | 5. Settings Window | v2.0 | 2/2 | Complete | 2026-03-20 |
-| 6. Activity Feed | 2/2 | Complete   | 2026-03-20 | - |
-| 7. AI Summary | v2.0 | 0/? | Not started | - |
+| 6. Activity Feed | v2.0 | 2/2 | Complete | 2026-03-20 |
+| 7. AI Summary | v2.0 | 0/2 | Planning | - |
 | 8. Voice Input + Layout | v2.0 | 0/? | Not started | - |
