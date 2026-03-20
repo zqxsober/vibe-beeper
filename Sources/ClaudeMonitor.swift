@@ -158,12 +158,30 @@ final class ClaudeMonitor: ObservableObject {
         let fd = open(Self.eventsFile, O_EVTONLY)
         guard fd >= 0 else { return }
         let source = DispatchSource.makeFileSystemObjectSource(
-            fileDescriptor: fd, eventMask: [.write, .extend], queue: .main
+            fileDescriptor: fd, eventMask: [.write, .extend, .delete, .rename], queue: .main
         )
-        source.setEventHandler { [weak self] in self?.readNewEvents() }
+        source.setEventHandler { [weak self] in
+            guard let self else { return }
+            let flags = source.data
+            if flags.contains(.delete) || flags.contains(.rename) {
+                self.restartFileWatcher()
+                return
+            }
+            self.readNewEvents()
+        }
         source.setCancelHandler { close(fd) }
         source.resume()
         self.source = source
+    }
+
+    private func restartFileWatcher() {
+        source?.cancel()
+        source = nil
+        try? fileHandle?.close()
+        fileHandle = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.setupFileWatcher()
+        }
     }
 
     private func readNewEvents() {
