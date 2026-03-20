@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Polish + Hardening
 status: unknown
-stopped_at: Completed 04-notifications-01-PLAN.md
-last_updated: "2026-03-20T14:40:00.000Z"
+stopped_at: "Checkpoint reached: 04-02 Task 2 human-verify"
+last_updated: "2026-03-20T14:34:44.985Z"
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -77,6 +77,8 @@ Plan: 2 of 2
 - [Phase 04-notifications]: post_tool_error separated from pre_tool/post_tool case to allow targeted notification call
 - [Phase 04-notifications]: Nil-coalescing fallback for sendPermissionRequest (pendingPermission races with async loadPendingPermission retries)
 - [Phase 04-notifications]: Ad-hoc signing (codesign --force --deep --sign -) sufficient for local distribution — notification authorization requires code signing
+- [Phase 04-notifications]: Keyboard shortcut n for notifications toggle — no conflict with existing menu bar shortcuts
+- [Phase 04-notifications]: Notifications toggle positioned immediately after sound toggle for logical media/alert grouping
 
 ### Pending Todos
 
@@ -89,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-20T14:40:00Z
-Stopped at: Completed 04-notifications-01-PLAN.md
+Last session: 2026-03-20T14:34:40.684Z
+Stopped at: Checkpoint reached: 04-02 Task 2 human-verify
 Resume file: None
