@@ -68,7 +68,7 @@ Each task was committed atomically:
 1. **Task 1: Make file watcher resilient to events.jsonl deletion/rename** - `e59d34a` (feat)
 2. **Task 2: Cache active session IDs in memory and replace manual idle Timer** - `fccf232` (feat)
 
-**Plan metadata:** TBD (docs: complete plan)
+**Plan metadata:** `627c7ff` (docs: complete plan)
 
 ## Files Created/Modified
 
@@ -100,3 +100,4 @@ None - no external service configuration required.
 ---
 *Phase: 02-reliability-performance*
 *Completed: 2026-03-20*
+## Self-Check: PASSED
