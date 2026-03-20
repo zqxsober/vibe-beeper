@@ -29,13 +29,16 @@ Users can see what Claude is doing and respond to permission requests without le
 - ✓ Default-deny on malformed/missing permission response — Phase 1
 - ✓ Event JSON schema validation before processing — Phase 1
 - ✓ Response freshness check (rejects stale/pre-written responses) — Phase 1
+- ✓ File watcher auto-recovers from events.jsonl deletion/rename — Phase 2
+- ✓ Sprite animation pauses when window is hidden — Phase 2
+- ✓ DispatchWorkItem idle timer (no manual Timer objects) — Phase 2
+- ✓ Noise texture cached as static NSImage (renders once) — Phase 2
+- ✓ Throttled sessions.json reads (every 30s, not per-event) — Phase 2
+- ✓ Unified hex color parsing (single implementation) — Phase 2
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
-
-- [ ] Improve reliability (file watcher recovery, timer management)
-- [ ] Improve performance (cache noise texture, pause timers when hidden, reduce disk I/O, unify hex parsers)
 - [ ] Show active session count on screen
 - [ ] Idle/sleeping animation after inactivity
 - [ ] Richer permission info (full file path or command, not just tool name)
@@ -77,4 +80,4 @@ Users can see what Claude is doing and respond to permission requests without le
 | Default-deny on malformed response | Security: fail closed, not open | ✓ Good |
 
 ---
-*Last updated: 2026-03-19 after Phase 1 completion*
+*Last updated: 2026-03-20 after Phase 2 completion*
