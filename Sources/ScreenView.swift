@@ -34,7 +34,7 @@ struct ScreenView: View {
                             color: themeManager.lcdOn)
                     Spacer()
                     LCDIcon(symbol: "checkmark.circle.fill",
-                            active: monitor.state == .finished,
+                            active: monitor.state == .finished || monitor.state == .idle,
                             color: themeManager.lcdOn)
                 }
                 .padding(.horizontal, 8)
@@ -176,6 +176,7 @@ struct PixelCharacterView: View {
         case .thinking: [Sprites.thinking1, Sprites.thinking2, Sprites.working1, Sprites.working2]
         case .needsYou: [Sprites.alert1, Sprites.alert2]
         case .finished: [Sprites.happy1, Sprites.happy2]
+        case .idle: [Sprites.sleep1, Sprites.sleep2]
         }
     }
 }
@@ -289,6 +290,35 @@ enum Sprites {
         ".#..##..##..#.",
         ".#..........#.",
         ".#.########.#.",
+        ".#..........#.",
+        "..##########..",
+        "....######....",
+        "...#......#...",
+        "..##......##..",
+    ]
+    // Sleeping — eyes closed, neutral mouth, gentle breathing animation
+    static let sleep1: [String] = [
+        "......##......",
+        "....######....",
+        "..##########..",
+        ".#..........#.",
+        ".#..........#.",
+        ".#..........#.",
+        ".#....##....#.",
+        ".#..........#.",
+        "..##########..",
+        "....######....",
+        "..............",
+        "..##......##..",
+    ]
+    static let sleep2: [String] = [
+        "......##......",
+        "....######....",
+        "..##########..",
+        ".#..........#.",
+        ".#..........#.",
+        ".#..........#.",
+        ".#....##....#.",
         ".#..........#.",
         "..##########..",
         "....######....",

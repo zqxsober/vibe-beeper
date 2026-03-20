@@ -8,12 +8,14 @@ enum ClaudeState: Equatable {
     case thinking
     case finished
     case needsYou
+    case idle
 
     var label: String {
         switch self {
         case .thinking: "THINKING..."
         case .finished: "DONE!"
         case .needsYou: "NEEDS YOU!"
+        case .idle: "ZZZ..."
         }
     }
 
@@ -318,7 +320,7 @@ final class ClaudeMonitor: ObservableObject {
         idleWork?.cancel()
         let work = DispatchWorkItem { [weak self] in
             guard let self, self.pendingPermission == nil else { return }
-            DispatchQueue.main.async { self.state = .finished }
+            DispatchQueue.main.async { self.state = .idle }
         }
         idleWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + interval, execute: work)
