@@ -44,6 +44,10 @@ struct ClaumagotchiApp: App {
                 monitor.soundEnabled.toggle()
             }
             .keyboardShortcut("s")
+            Button(monitor.notificationsEnabled ? "Disable Notifications" : "Enable Notifications") {
+                monitor.notificationsEnabled.toggle()
+            }
+            .keyboardShortcut("n")
             Divider()
             Menu("Theme") {
                 Picker("Color", selection: $themeManager.currentThemeId) {
