@@ -26,7 +26,7 @@
 
 - [x] **SUM-01**: User can enter their Anthropic or OpenAI API key in settings, stored securely in macOS Keychain
 - [x] **SUM-02**: When an API key is configured, session activity is summarized into a readable recap on session end
-- [ ] **SUM-03**: Without an API key, user sees the raw activity feed only (graceful degradation)
+- [x] **SUM-03**: Without an API key, user sees the raw activity feed only (graceful degradation)
 - [x] **SUM-04**: API calls go directly from the user's Mac to the provider — no intermediate servers
 
 ### Settings Window
@@ -101,7 +101,7 @@
 | FEED-03 | Phase 6 | Complete |
 | SUM-01 | Phase 7 | Complete |
 | SUM-02 | Phase 7 | Complete |
-| SUM-03 | Phase 7 | Pending |
+| SUM-03 | Phase 7 | Complete |
 | SUM-04 | Phase 7 | Complete |
 | SET-01 | Phase 5 | Complete |
 | SET-02 | Phase 5 | Complete |

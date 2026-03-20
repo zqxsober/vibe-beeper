@@ -115,7 +115,7 @@ Plans:
   2. Without an API key, the raw activity feed is shown and no summary is attempted
   3. API calls go directly from the Mac to Anthropic or OpenAI — no intermediate servers involved
   4. User can configure which provider's API key to use (Anthropic or OpenAI)
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 07-01-PLAN.md — SummaryService with Anthropic/OpenAI API calls, ClaudeMonitor session_end trigger (SUM-01, SUM-02, SUM-04)
 - [ ] 07-02-PLAN.md — ActivityFeedView summary display with graceful degradation (SUM-02, SUM-03)
@@ -144,5 +144,5 @@ Plans:
 | 4. Notifications | v1.1 | 2/2 | Complete | 2026-03-20 |
 | 5. Settings Window | v2.0 | 2/2 | Complete | 2026-03-20 |
 | 6. Activity Feed | v2.0 | 2/2 | Complete | 2026-03-20 |
-| 7. AI Summary | v2.0 | 0/2 | Planning | - |
+| 7. AI Summary | 2/2 | Complete   | 2026-03-20 | - |
 | 8. Voice Input + Layout | v2.0 | 0/? | Not started | - |
