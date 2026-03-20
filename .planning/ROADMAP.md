@@ -88,7 +88,7 @@ Plans:
   2. User can enter and save an Anthropic or OpenAI API key, with visible confirmation it is stored in Keychain
   3. Settings window shows clear privacy messaging ("Stored in Keychain. All data stays on your Mac.")
   4. Sound toggle, notification toggle, theme picker, and hotkey config are all accessible from the Settings window
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 05-01-PLAN.md — KeychainHelper, APIKeyValidator, Window scene registration + openSettingsWindow helper (SET-01, SET-04)
 - [ ] 05-02-PLAN.md — SettingsView with 4 tabs (General/Appearance/AI/Privacy), menu bar cleanup (SET-01, SET-02, SET-03, SET-04)
@@ -136,7 +136,7 @@ Plans:
 | 2. Reliability + Performance | v1.1 | 2/2 | Complete | 2026-03-20 |
 | 3. UX Enhancements | v1.1 | 2/2 | Complete | 2026-03-20 |
 | 4. Notifications | v1.1 | 2/2 | Complete | 2026-03-20 |
-| 5. Settings Window | 1/2 | In Progress|  | - |
+| 5. Settings Window | 2/2 | Complete   | 2026-03-20 | - |
 | 6. Activity Feed | v2.0 | 0/? | Not started | - |
 | 7. AI Summary | v2.0 | 0/? | Not started | - |
 | 8. Voice Input + Layout | v2.0 | 0/? | Not started | - |

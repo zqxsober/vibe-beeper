@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Voice & Intelligence
 status: unknown
-stopped_at: Completed 05-settings-window plan 01
-last_updated: "2026-03-20T16:41:38.342Z"
+stopped_at: Completed 05-settings-window plan 02
+last_updated: "2026-03-20T17:00:12.330Z"
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -49,6 +49,7 @@ Plan: 2 of 2
 - Trend: Stable
 
 | Phase 05-settings-window P01 | 5 | 2 tasks | 3 files |
+| Phase 05-settings-window P02 | 25 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Recent decisions affecting v2.0:
 - [Phase 05-settings-window]: Used custom Window scene (id: settings) not SwiftUI Settings scene — openSettings broken on macOS 26 Tahoe
 - [Phase 05-settings-window]: Keychain upsert via SecItemDelete+SecItemAdd (not SecItemUpdate) — simpler, avoids query/attributes split
 - [Phase 05-settings-window]: Anthropic 529 mapped to networkError not invalid — temporary overload is not a key validity signal
+- [Phase 05-settings-window]: Tab API (not tabItem) for SettingsView TabView; no tabViewStyle modifier to avoid sidebarAdaptable pitfall on macOS 26
+- [Phase 05-settings-window]: Menu bar cleaned to status/permissions/YOLO/Settings/Show-Hide/Quit — all preference controls now exclusively in Settings window
 
 ### Pending Todos
 
@@ -77,6 +80,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-20T16:41:38.332Z
-Stopped at: Completed 05-settings-window plan 01
+Last session: 2026-03-20T17:00:12.326Z
+Stopped at: Completed 05-settings-window plan 02
 Resume file: None

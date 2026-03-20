@@ -32,8 +32,8 @@
 ### Settings Window
 
 - [x] **SET-01**: A proper native settings window replaces most menu bar toggles
-- [ ] **SET-02**: Settings include: API key entry, sound toggle, notification toggle, theme picker, hotkey config
-- [ ] **SET-03**: API key section shows clear privacy messaging ("Stored in Keychain. All data stays on your Mac.")
+- [x] **SET-02**: Settings include: API key entry, sound toggle, notification toggle, theme picker, hotkey config
+- [x] **SET-03**: API key section shows clear privacy messaging ("Stored in Keychain. All data stays on your Mac.")
 - [x] **SET-04**: Settings window accessible from menu bar ("Settings..." menu item)
 
 ### Layout Update
@@ -104,8 +104,8 @@
 | SUM-03 | Phase 7 | Pending |
 | SUM-04 | Phase 7 | Pending |
 | SET-01 | Phase 5 | Complete |
-| SET-02 | Phase 5 | Pending |
-| SET-03 | Phase 5 | Pending |
+| SET-02 | Phase 5 | Complete |
+| SET-03 | Phase 5 | Complete |
 | SET-04 | Phase 5 | Complete |
 | LAYOUT-01 | Phase 8 | Pending |
 | LAYOUT-02 | Phase 8 | Pending |
