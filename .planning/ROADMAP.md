@@ -15,7 +15,7 @@ v1.1 hardens the existing foundation before adding new visible capabilities. Pha
 **Milestone Goal:** Fix known issues, harden security, improve stability and performance, then ship three user-visible improvements and Notification Center integration.
 
 - [x] **Phase 1: Hardening** - Fix bugs and close security gaps in the IPC and event pipeline
-- [ ] **Phase 2: Reliability + Performance** - Stabilize the file watcher, timers, and rendering without changing behavior
+- [x] **Phase 2: Reliability + Performance** - Stabilize the file watcher, timers, and rendering without changing behavior (completed 2026-03-20)
 - [ ] **Phase 3: UX Enhancements** - Add session count, idle animation, richer permission context, and global hotkeys
 - [ ] **Phase 4: Notifications** - Integrate macOS Notification Center with permission, finish, and error alerts
 
@@ -45,7 +45,7 @@ Plans:
   2. The sprite animation does not consume CPU cycles when the companion window is hidden or minimized
   3. Switching themes or triggering state changes does not cause noticeable frame drops or redundant disk reads
   4. Hex color parsing behaves consistently across all themes (single implementation, no divergence)
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 02-01-PLAN.md — Monitor resilience: file watcher recovery, throttled session pruning, DispatchWorkItem idle timer
 - [ ] 02-02-PLAN.md — View layer performance: visibility-aware sprite timer, cached noise texture, unified hex parser
@@ -79,6 +79,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Hardening | 2/2 | Complete   | 2026-03-19 |
-| 2. Reliability + Performance | 0/2 | Not started | - |
+| 2. Reliability + Performance | 2/2 | Complete   | 2026-03-20 |
 | 3. UX Enhancements | 0/TBD | Not started | - |
 | 4. Notifications | 0/TBD | Not started | - |

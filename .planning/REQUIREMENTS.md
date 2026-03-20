@@ -21,14 +21,14 @@ Requirements for the polish and hardening milestone. Each maps to roadmap phases
 
 ### Reliability
 
-- [ ] **REL-01**: File watcher recovers automatically when events.jsonl is deleted and recreated
+- [x] **REL-01**: File watcher recovers automatically when events.jsonl is deleted and recreated
 - [x] **REL-02**: Sprite animation timer pauses when the app window is not visible
-- [ ] **REL-03**: Idle timer and state are managed without manual Timer objects where possible
+- [x] **REL-03**: Idle timer and state are managed without manual Timer objects where possible
 
 ### Performance
 
 - [x] **PERF-01**: Noise texture is rendered once and cached as an image, not re-rendered per frame
-- [ ] **PERF-02**: Aggregate state updates avoid reading sessions.json from disk on every event
+- [x] **PERF-02**: Aggregate state updates avoid reading sessions.json from disk on every event
 - [x] **PERF-03**: Duplicate hex color parsing logic is unified into a single implementation
 
 ### UX
@@ -79,11 +79,11 @@ Deferred to future release. Tracked but not in current roadmap.
 | SEC-01 | Phase 1 | Complete |
 | SEC-02 | Phase 1 | Complete |
 | SEC-03 | Phase 1 | Complete |
-| REL-01 | Phase 2 | Pending |
+| REL-01 | Phase 2 | Complete |
 | REL-02 | Phase 2 | Complete |
-| REL-03 | Phase 2 | Pending |
+| REL-03 | Phase 2 | Complete |
 | PERF-01 | Phase 2 | Complete |
-| PERF-02 | Phase 2 | Pending |
+| PERF-02 | Phase 2 | Complete |
 | PERF-03 | Phase 2 | Complete |
 | UX-01 | Phase 3 | Pending |
 | UX-02 | Phase 3 | Pending |

@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Polish + Hardening
 status: unknown
-stopped_at: Completed 02-reliability-performance-02-PLAN.md
-last_updated: "2026-03-20T11:06:31.191Z"
+stopped_at: Completed 02-reliability-performance-01-PLAN.md
+last_updated: "2026-03-20T11:06:39.573Z"
 progress:
   total_phases: 4
   completed_phases: 2
@@ -61,6 +61,9 @@ Plan: 1 of 2
 - [Phase 01-hardening]: processEvent schema validation uses is String / is Int type checks inside existing guard
 - [Phase 02-reliability-performance]: Gate animFrame increment not timer - Canvas re-render is expensive, timer tick is not
 - [Phase 02-reliability-performance]: Color.hexComponents() as shared helper for Color(hex:) and ThemeManager.darken() — single source of truth for hex parsing
+- [Phase 02-reliability-performance]: 0.5s restart delay gives hook time to recreate events.jsonl before re-opening fd
+- [Phase 02-reliability-performance]: 30-second prune throttle for sessions.json disk reads; session_end resets to distantPast for immediate accuracy
+- [Phase 02-reliability-performance]: DispatchWorkItem replaces Timer.scheduledTimer: no RunLoop dependency, clean cancellation
 
 ### Pending Todos
 
@@ -73,6 +76,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-20T11:06:18.924Z
-Stopped at: Completed 02-reliability-performance-02-PLAN.md
+Last session: 2026-03-20T11:06:39.570Z
+Stopped at: Completed 02-reliability-performance-01-PLAN.md
 Resume file: None
