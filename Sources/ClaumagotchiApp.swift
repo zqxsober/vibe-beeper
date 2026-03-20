@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import ApplicationServices
 
 @main
 struct ClaumagotchiApp: App {
@@ -54,6 +55,12 @@ struct ClaumagotchiApp: App {
                 Toggle("Dark Mode", isOn: $themeManager.darkMode)
             }
             Divider()
+            if !AXIsProcessTrusted() {
+                Button("Enable Global Hotkeys...") {
+                    let opts = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+                    _ = AXIsProcessTrustedWithOptions(opts)
+                }
+            }
             Button("Show / Hide") { Self.toggleMainWindow() }
                 .keyboardShortcut("h", modifiers: [.command, .shift])
             Button("Quit Claumagotchi") { NSApp.terminate(nil) }

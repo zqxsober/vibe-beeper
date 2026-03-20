@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import AppKit
+import ApplicationServices
 
 // MARK: - State
 
@@ -66,6 +67,8 @@ final class ClaudeMonitor: ObservableObject {
     private var source: DispatchSourceFileSystemObject?
     private var idleWork: DispatchWorkItem?
     private var lastPruneTime: Date = .distantPast
+    private var globalKeyMonitor: Any?
+    private var localKeyMonitor: Any?
 
     init() {
         soundEnabled = UserDefaults.standard.object(forKey: "soundEnabled") as? Bool ?? true
@@ -73,6 +76,7 @@ final class ClaudeMonitor: ObservableObject {
         ensureIPCDir()
         rehydrateSessions()
         setupFileWatcher()
+        setupGlobalHotkeys()
     }
 
     /// Pre-populate sessionStates from sessions.json so the app picks up
@@ -107,6 +111,8 @@ final class ClaudeMonitor: ObservableObject {
         source?.cancel()
         try? fileHandle?.close()
         idleWork?.cancel()
+        if let m = globalKeyMonitor { NSEvent.removeMonitor(m) }
+        if let m = localKeyMonitor { NSEvent.removeMonitor(m) }
     }
 
     // MARK: Actions
@@ -209,6 +215,7 @@ final class ClaudeMonitor: ObservableObject {
         if type == "permission" {
             idleWork?.cancel()
             loadPendingPermission()
+            setupGlobalHotkeys()
             if autoAccept {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                     self?.respondToPermission(allow: true)
@@ -225,6 +232,7 @@ final class ClaudeMonitor: ObservableObject {
         if type == "notification", event["type"] as? String == "permission_prompt" {
             idleWork?.cancel()
             loadPendingPermission()
+            setupGlobalHotkeys()
             if autoAccept {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                     self?.respondToPermission(allow: true)
@@ -324,6 +332,31 @@ final class ClaudeMonitor: ObservableObject {
         }
         idleWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + interval, execute: work)
+    }
+
+    private func setupGlobalHotkeys() {
+        guard globalKeyMonitor == nil, AXIsProcessTrusted() else { return }
+        globalKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            self?.handleHotKey(event)
+        }
+        localKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            self?.handleHotKey(event)
+            return event
+        }
+    }
+
+    private func handleHotKey(_ event: NSEvent) {
+        guard pendingPermission != nil else { return }
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        guard flags == .option else { return }
+        switch event.keyCode {
+        case 0:  // kVK_ANSI_A
+            DispatchQueue.main.async { self.respondToPermission(allow: true) }
+        case 2:  // kVK_ANSI_D
+            DispatchQueue.main.async { self.respondToPermission(allow: false) }
+        default:
+            break
+        }
     }
 
     private func playAlert() {
