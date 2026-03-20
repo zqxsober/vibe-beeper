@@ -64,6 +64,10 @@ final class ClaudeMonitor: ObservableObject {
     @Published var sessionCount: Int = 0
     /// Per-session activity log — key is session ID, value is list of activity entries.
     @Published var sessionActivities: [String: [ActivityEntry]] = [:]
+    /// AI-generated summary for the most recent completed session.
+    @Published var sessionSummary: String?
+    /// True while an AI summary is being generated asynchronously.
+    @Published var isSummarizing: Bool = false
 
     /// True when a permission has been requested and user hasn't acted yet.
     /// This is the source of truth — never cleared by timeouts or external events.
@@ -320,9 +324,21 @@ final class ClaudeMonitor: ObservableObject {
             }
         case "session_start":
             if !sid.isEmpty { sessionStates[sid] = .thinking }
+            sessionSummary = nil
+            isSummarizing = false
             updateAggregateState()
         case "session_end":
             if !sid.isEmpty { sessionStates.removeValue(forKey: sid) }
+            // Generate summary from session activities before cleanup
+            let activitiesToSummarize = sessionActivities[sid] ?? []
+            if !activitiesToSummarize.isEmpty {
+                isSummarizing = true
+                Task { @MainActor [weak self] in
+                    let summary = await SummaryService.summarizeIfConfigured(activities: activitiesToSummarize)
+                    self?.sessionSummary = summary
+                    self?.isSummarizing = false
+                }
+            }
             // Keep activities for 5 minutes after session ends, then clean up
             let endedSid = sid
             DispatchQueue.main.asyncAfter(deadline: .now() + 300) { [weak self] in
