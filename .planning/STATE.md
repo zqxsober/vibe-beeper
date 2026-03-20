@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Voice & Intelligence
 status: unknown
-stopped_at: Completed 05-settings-window plan 02
-last_updated: "2026-03-20T17:00:12.330Z"
+stopped_at: Completed 06-activity-feed plan 01
+last_updated: "2026-03-20T17:20:50.085Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 4
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-20)
 
 **Core value:** Users can see what Claude is doing and respond to permission requests without leaving their workflow
-**Current focus:** Phase 05 — settings-window
+**Current focus:** Phase 06 — activity-feed
 
 ## Current Position
 
-Phase: 05 (settings-window) — EXECUTING
-Plan: 2 of 2
+Phase: 06 (activity-feed) — EXECUTING
+Plan: 1 of 2
 
 ## Performance Metrics
 
@@ -50,6 +50,7 @@ Plan: 2 of 2
 
 | Phase 05-settings-window P01 | 5 | 2 tasks | 3 files |
 | Phase 05-settings-window P02 | 25 | 3 tasks | 2 files |
+| Phase 06-activity-feed P01 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Recent decisions affecting v2.0:
 - [Phase 05-settings-window]: Anthropic 529 mapped to networkError not invalid — temporary overload is not a key validity signal
 - [Phase 05-settings-window]: Tab API (not tabItem) for SettingsView TabView; no tabViewStyle modifier to avoid sidebarAdaptable pitfall on macOS 26
 - [Phase 05-settings-window]: Menu bar cleaned to status/permissions/YOLO/Settings/Show-Hide/Quit — all preference controls now exclusively in Settings window
+- [Phase 06-activity-feed]: Only pre_tool events create ActivityEntry records (not post_tool) to avoid duplicates; post_tool_error records with isError=true
+- [Phase 06-activity-feed]: 200-entry cap per session bounds memory; 5-minute delayed cleanup after session_end preserves feed for UI
 
 ### Pending Todos
 
@@ -80,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-20T17:00:12.326Z
-Stopped at: Completed 05-settings-window plan 02
+Last session: 2026-03-20T17:20:50.081Z
+Stopped at: Completed 06-activity-feed plan 01
 Resume file: None

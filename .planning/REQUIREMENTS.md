@@ -18,9 +18,9 @@
 
 ### Activity Feed
 
-- [ ] **FEED-01**: User can see a per-session activity log of what Claude did (files edited, commands run, tools used)
-- [ ] **FEED-02**: Activity feed updates in real-time as events arrive from the hook
-- [ ] **FEED-03**: Activity data is derived from existing hook events (no new IPC protocol changes needed)
+- [x] **FEED-01**: User can see a per-session activity log of what Claude did (files edited, commands run, tools used)
+- [x] **FEED-02**: Activity feed updates in real-time as events arrive from the hook
+- [x] **FEED-03**: Activity data is derived from existing hook events (no new IPC protocol changes needed)
 
 ### AI Summary (BYOK)
 
@@ -96,9 +96,9 @@
 | VOICE-02 | Phase 8 | Pending |
 | VOICE-03 | Phase 8 | Pending |
 | VOICE-04 | Phase 8 | Pending |
-| FEED-01 | Phase 6 | Pending |
-| FEED-02 | Phase 6 | Pending |
-| FEED-03 | Phase 6 | Pending |
+| FEED-01 | Phase 6 | Complete |
+| FEED-02 | Phase 6 | Complete |
+| FEED-03 | Phase 6 | Complete |
 | SUM-01 | Phase 7 | Pending |
 | SUM-02 | Phase 7 | Pending |
 | SUM-03 | Phase 7 | Pending |
