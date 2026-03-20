@@ -7,7 +7,56 @@ struct ContentView: View {
     private let shellW: CGFloat = 186
     private let shellH: CGFloat = 224
 
+    @State private var showFeed = false
+
     var body: some View {
+        VStack(spacing: 0) {
+            // Existing Tamagotchi shell
+            tamagotchiShell
+
+            // Feed toggle button — small tab at bottom of shell
+            Button(action: { withAnimation(.easeInOut(duration: 0.25)) { showFeed.toggle() } }) {
+                HStack(spacing: 3) {
+                    Image(systemName: showFeed ? "chevron.down" : "chevron.up")
+                        .font(.system(size: 6, weight: .bold))
+                    if !monitor.currentSessionActivities.isEmpty {
+                        Text("\(monitor.currentSessionActivities.count)")
+                            .font(.system(size: 6, weight: .bold, design: .monospaced))
+                    }
+                }
+                .foregroundStyle(themeManager.lcdOn.opacity(0.4))
+                .frame(width: 40, height: 12)
+                .background(
+                    Capsule()
+                        .fill(themeManager.lcdBg.opacity(0.6))
+                )
+            }
+            .buttonStyle(.plain)
+            .offset(y: -6)
+
+            // Activity feed panel
+            if showFeed {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(themeManager.lcdBg)
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(themeManager.lcdOn.opacity(0.1), lineWidth: 0.5)
+
+                    ActivityFeedView()
+                }
+                .frame(width: 200, height: 120)
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .frame(width: 250, height: showFeed ? 430 : 300)
+        .background(Color.clear)
+        .contextMenu {
+            Button("Quit Claumagotchi") { NSApplication.shared.terminate(nil) }
+        }
+    }
+
+    @ViewBuilder
+    private var tamagotchiShell: some View {
         ZStack {
             // Diffused drop shadow
             Ellipse()
@@ -163,10 +212,6 @@ struct ContentView: View {
             }
         }
         .frame(width: 250, height: 300)
-        .background(Color.clear)
-        .contextMenu {
-            Button("Quit Claumagotchi") { NSApplication.shared.terminate(nil) }
-        }
     }
 
     private var centerButton: some View {
