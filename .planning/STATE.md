@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Polish + Hardening
 status: unknown
-stopped_at: Completed 02-reliability-performance-01-PLAN.md
-last_updated: "2026-03-20T12:46:26.514Z"
+stopped_at: Completed 03-ux-enhancements-01-PLAN.md
+last_updated: "2026-03-20T13:51:09.937Z"
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Users can see what Claude is doing and respond to permission requests without leaving their workflow
-**Current focus:** Phase 02 — reliability-performance
+**Current focus:** Phase 03 — ux-enhancements
 
 ## Current Position
 
-Phase: 02 (reliability-performance) — EXECUTING
+Phase: 03 (ux-enhancements) — EXECUTING
 Plan: 1 of 2
 
 ## Performance Metrics
@@ -44,6 +44,7 @@ Plan: 1 of 2
 | Phase 01-hardening P01 | 6 | 3 tasks | 2 files |
 | Phase 02-reliability-performance P02 | 3min | 2 tasks | 4 files |
 | Phase 02-reliability-performance P01 | 4 | 2 tasks | 1 files |
+| Phase 03-ux-enhancements P01 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,9 @@ Plan: 1 of 2
 - [Phase 02-reliability-performance]: 0.5s restart delay gives hook time to recreate events.jsonl before re-opening fd
 - [Phase 02-reliability-performance]: 30-second prune throttle for sessions.json disk reads; session_end resets to distantPast for immediate accuracy
 - [Phase 02-reliability-performance]: DispatchWorkItem replaces Timer.scheduledTimer: no RunLoop dependency, clean cancellation
+- [Phase 03-ux-enhancements]: sessionCount updated at all 4 mutation sites for accuracy
+- [Phase 03-ux-enhancements]: Idle timer transitions to .idle not .finished — distinct sleeping state
+- [Phase 03-ux-enhancements]: Full path left-truncated at 40 chars preserving meaningful filename end
 
 ### Pending Todos
 
@@ -76,6 +80,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-20T11:06:39.570Z
-Stopped at: Completed 02-reliability-performance-01-PLAN.md
+Last session: 2026-03-20T13:51:09.935Z
+Stopped at: Completed 03-ux-enhancements-01-PLAN.md
 Resume file: None

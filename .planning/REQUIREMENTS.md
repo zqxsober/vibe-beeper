@@ -33,9 +33,9 @@ Requirements for the polish and hardening milestone. Each maps to roadmap phases
 
 ### UX
 
-- [ ] **UX-01**: Active session count is displayed on the LCD screen
-- [ ] **UX-02**: Character plays a sleeping/idle animation after a period of inactivity
-- [ ] **UX-03**: Permission prompt shows the full file path or command, not just the tool name
+- [x] **UX-01**: Active session count is displayed on the LCD screen
+- [x] **UX-02**: Character plays a sleeping/idle animation after a period of inactivity
+- [x] **UX-03**: Permission prompt shows the full file path or command, not just the tool name
 - [ ] **UX-04**: Global hotkeys (Option+A to allow, Option+D to deny) respond to permissions system-wide
 
 ### Notifications
@@ -85,9 +85,9 @@ Deferred to future release. Tracked but not in current roadmap.
 | PERF-01 | Phase 2 | Complete |
 | PERF-02 | Phase 2 | Complete |
 | PERF-03 | Phase 2 | Complete |
-| UX-01 | Phase 3 | Pending |
-| UX-02 | Phase 3 | Pending |
-| UX-03 | Phase 3 | Pending |
+| UX-01 | Phase 3 | Complete |
+| UX-02 | Phase 3 | Complete |
+| UX-03 | Phase 3 | Complete |
 | UX-04 | Phase 3 | Pending |
 | NOTIF-01 | Phase 4 | Pending |
 | NOTIF-02 | Phase 4 | Pending |

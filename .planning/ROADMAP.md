@@ -59,7 +59,7 @@ Plans:
   2. When no session has been active for a defined period, the character plays a sleeping or idle animation
   3. The permission prompt shows the actual file path or command being requested, not just a tool category label
   4. Pressing Option+A allows and Option+D denies a pending permission from any app, without clicking the companion window
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
 - [ ] 03-01-PLAN.md — Session count display, idle/sleeping animation, full-path permission info
 - [ ] 03-02-PLAN.md — Global hotkeys (Option+A allow, Option+D deny) with accessibility gate
@@ -83,5 +83,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Hardening | 2/2 | Complete   | 2026-03-19 |
 | 2. Reliability + Performance | 2/2 | Complete   | 2026-03-20 |
-| 3. UX Enhancements | 0/2 | Not started | - |
+| 3. UX Enhancements | 1/2 | In Progress|  |
 | 4. Notifications | 0/TBD | Not started | - |
