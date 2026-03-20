@@ -70,7 +70,9 @@ def summarize_input(tool, tool_input):
         return t + "..." if len(cmd) > 50 else t
     elif tool in ("Write", "Read", "Edit", "Glob"):
         path = tool_input.get("file_path", "") or tool_input.get("pattern", "")
-        return os.path.basename(path) if path else tool
+        if not path:
+            return tool.lower()
+        return path if len(path) <= 40 else "..." + path[-37:]
     elif tool == "Grep":
         return tool_input.get("pattern", "search")
     elif tool == "Agent":

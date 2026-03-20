@@ -45,6 +45,7 @@ final class ClaudeMonitor: ObservableObject {
     @Published var autoAccept: Bool {
         didSet { UserDefaults.standard.set(autoAccept, forKey: "autoAccept") }
     }
+    @Published var sessionCount: Int = 0
 
     /// True when a permission has been requested and user hasn't acted yet.
     /// This is the source of truth — never cleared by timeouts or external events.
@@ -86,6 +87,7 @@ final class ClaudeMonitor: ObservableObject {
         }
         if !sessionStates.isEmpty {
             state = .thinking
+            sessionCount = sessionStates.count
         }
     }
 
@@ -211,6 +213,7 @@ final class ClaudeMonitor: ObservableObject {
                 }
             } else {
                 if !sid.isEmpty { sessionStates[sid] = .needsYou }
+                sessionCount = sessionStates.count
                 awaitingUserAction = true
                 state = .needsYou
                 playAlert()
@@ -226,6 +229,7 @@ final class ClaudeMonitor: ObservableObject {
                 }
             } else {
                 if !sid.isEmpty { sessionStates[sid] = .needsYou }
+                sessionCount = sessionStates.count
                 awaitingUserAction = true
                 state = .needsYou
                 playAlert()
@@ -287,6 +291,7 @@ final class ClaudeMonitor: ObservableObject {
         } else {
             state = .finished
         }
+        sessionCount = sessionStates.count
     }
 
     // MARK: Pending Permission

@@ -23,6 +23,12 @@ struct ScreenView: View {
                             active: monitor.state == .needsYou,
                             color: themeManager.lcdOn)
                     Spacer()
+                    if monitor.sessionCount > 0 {
+                        Text("\(monitor.sessionCount)")
+                            .font(.system(size: 7, weight: .black, design: .monospaced))
+                            .foregroundColor(themeManager.lcdOn.opacity(0.85))
+                    }
+                    Spacer()
                     LCDIcon(symbol: isYoloActive ? "flame.fill" : "bolt.fill",
                             active: isYoloActive ? true : monitor.state == .thinking,
                             color: themeManager.lcdOn)
