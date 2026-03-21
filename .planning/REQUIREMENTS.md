@@ -13,8 +13,8 @@
 
 - [ ] **VOICE-01**: User can hold a hotkey to record voice, which is transcribed on-device and typed into the focused terminal as simulated keystrokes
 - [ ] **VOICE-02**: User can press a mic button on the Tamagotchi to start/stop voice recording (same behavior as hotkey)
-- [ ] **VOICE-03**: Voice transcription uses on-device SFSpeechRecognizer (no API cost, no data leaves the Mac)
-- [ ] **VOICE-04**: If no terminal is focused when voice input starts, the last-used terminal is activated first
+- [x] **VOICE-03**: Voice transcription uses on-device SFSpeechRecognizer (no API cost, no data leaves the Mac)
+- [x] **VOICE-04**: If no terminal is focused when voice input starts, the last-used terminal is activated first
 
 ### Activity Feed
 
@@ -94,8 +94,8 @@
 |-------------|-------|--------|
 | VOICE-01 | Phase 8 | Pending |
 | VOICE-02 | Phase 8 | Pending |
-| VOICE-03 | Phase 8 | Pending |
-| VOICE-04 | Phase 8 | Pending |
+| VOICE-03 | Phase 8 | Complete |
+| VOICE-04 | Phase 8 | Complete |
 | FEED-01 | Phase 6 | Complete |
 | FEED-02 | Phase 6 | Complete |
 | FEED-03 | Phase 6 | Complete |

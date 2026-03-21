@@ -33,9 +33,22 @@ final class VoiceService: ObservableObject {
     // MARK: Recording
 
     func startRecording() {
-        guard let recognizer, recognizer.isAvailable else { return }
-        guard SFSpeechRecognizer.authorizationStatus() == .authorized else {
+        print("[VoiceService] startRecording called")
+        guard let recognizer else {
+            print("[VoiceService] recognizer is nil — SFSpeechRecognizer not available for locale")
+            return
+        }
+        guard recognizer.isAvailable else {
+            print("[VoiceService] recognizer not available (offline or restricted)")
+            return
+        }
+
+        let authStatus = SFSpeechRecognizer.authorizationStatus()
+        print("[VoiceService] auth status: \(authStatus.rawValue)")
+        guard authStatus == .authorized else {
+            print("[VoiceService] requesting authorization...")
             Self.requestAuthorization { [weak self] granted in
+                print("[VoiceService] authorization result: \(granted)")
                 if granted { self?.startRecording() }
             }
             return
@@ -71,7 +84,13 @@ final class VoiceService: ObservableObject {
         }
 
         audioEngine.prepare()
-        try? audioEngine.start()
+        do {
+            try audioEngine.start()
+            print("[VoiceService] audio engine started, recording...")
+        } catch {
+            print("[VoiceService] audio engine failed to start: \(error)")
+            return
+        }
         DispatchQueue.main.async { self.isRecording = true }
     }
 

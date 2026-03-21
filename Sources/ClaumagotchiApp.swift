@@ -7,6 +7,7 @@ struct ClaumagotchiApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var monitor = ClaudeMonitor()
     @StateObject private var themeManager = ThemeManager()
+    @Environment(\.openWindow) private var openWindow
 
     var body: some Scene {
         Window("Claumagotchi", id: "main") {
@@ -68,7 +69,9 @@ struct ClaumagotchiApp: App {
             .keyboardShortcut("a", modifiers: [.command, .shift])
             Divider()
             Button("Settings...") {
-                ClaumagotchiApp.openSettingsWindow()
+                NSApp.setActivationPolicy(.regular)
+                openWindow(id: "settings")
+                NSApp.activate(ignoringOtherApps: true)
             }
             .keyboardShortcut(",", modifiers: .command)
             Divider()
