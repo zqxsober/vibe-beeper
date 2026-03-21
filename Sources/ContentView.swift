@@ -233,7 +233,7 @@ struct ContentView: View {
             symbol: monitor.voiceService.isRecording ? "mic.fill" : "mic",
             size: 12,
             iconColor: .white,
-            active: monitor.voiceService.isRecording,
+            active: true,
             pulse: monitor.voiceService.isRecording
         ) {
             if monitor.voiceService.isRecording {
