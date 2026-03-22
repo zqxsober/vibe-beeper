@@ -173,7 +173,7 @@ struct ContentView: View {
                         pulse: monitor.isRecording,
                         buttonSize: 28
                     ) {
-                        monitor.isRecording.toggle()
+                        monitor.voiceService.toggle()
                     }
                     .accessibilityLabel(monitor.isRecording ? "Stop recording" : "Speak")
                     .offset(x: 18, y: 8)

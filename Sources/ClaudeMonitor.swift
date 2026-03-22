@@ -62,6 +62,8 @@ final class ClaudeMonitor: ObservableObject {
                 restartFileWatcher()
                 setupGlobalHotkeys()
             } else {
+                // Stop any active recording before tearing down
+                voiceService.stopIfRecording()
                 // Tear down all monitoring
                 source?.cancel(); source = nil
                 try? fileHandle?.close(); fileHandle = nil
@@ -85,8 +87,10 @@ final class ClaudeMonitor: ObservableObject {
     /// Last summary text (Phase 11 populates; shows "Done" if nil).
     @Published var lastSummary: String? = nil
 
-    /// Whether voice is recording (Phase 10 sets this; Phase 9 reads for UI-03).
-    @Published var isRecording: Bool = false
+    /// Whether voice is recording — mirrored from VoiceService via Combine (read-only outside ClaudeMonitor).
+    @Published private(set) var isRecording: Bool = false
+
+    let voiceService = VoiceService()
 
     /// Whether auto-speak is enabled (Phase 11 uses this; Phase 9 shows toggle).
     @Published var autoSpeak: Bool = false {
@@ -134,6 +138,10 @@ final class ClaudeMonitor: ObservableObject {
         // Set after watcher is running so didSet fires only on external mutation
         autoSpeak = UserDefaults.standard.bool(forKey: "autoSpeak")
         isActive = UserDefaults.standard.object(forKey: "isActive") as? Bool ?? true
+        // Mirror VoiceService.isRecording into ClaudeMonitor.isRecording for UI binding
+        voiceService.$isRecording
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$isRecording)
     }
 
     /// Pre-populate sessionStates from sessions.json so the app picks up
@@ -445,8 +453,8 @@ final class ClaudeMonitor: ObservableObject {
         case 2:  // kVK_ANSI_D — Deny
             guard pendingPermission != nil else { return }
             DispatchQueue.main.async { self.respondToPermission(allow: false) }
-        case 1:  // kVK_ANSI_S — Speak (stub; Phase 10 wires actual recording)
-            DispatchQueue.main.async { self.isRecording.toggle() }
+        case 1:  // kVK_ANSI_S — Speak
+            DispatchQueue.main.async { self.voiceService.toggle() }
         case 5:  // kVK_ANSI_G — Go to terminal
             DispatchQueue.main.async { self.goToConversation() }
         default:
