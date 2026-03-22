@@ -23,9 +23,9 @@ struct ActionButton: View {
             ZStack {
                 // Recessed well the button sits in
                 Circle()
-                    .fill(Color.black.opacity(0.25))
+                    .fill(Color.black.opacity(0.35))
                     .frame(width: wellSize, height: wellSize)
-                    .blur(radius: 1)
+                    .blur(radius: 1.5)
 
                 // Button face — themed accent color
                 Circle()
@@ -47,7 +47,7 @@ struct ActionButton: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                .white.opacity(0.4),
+                                .white.opacity(0.55),
                                 .white.opacity(0.05),
                                 .clear,
                             ],
@@ -93,7 +93,7 @@ struct ActionButton: View {
             .frame(width: frameSize, height: frameSize)
             .scaleEffect(pulse && animating ? 1.08 : 1.0)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(SkeuomorphicButtonStyle())
         .disabled(!active)
         .onChange(of: pulse) {
             if pulse {
@@ -104,5 +104,16 @@ struct ActionButton: View {
                 withAnimation(.none) { animating = false }
             }
         }
+    }
+}
+
+// MARK: - Skeuomorphic Button Style
+
+struct SkeuomorphicButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.92 : 1.0)
+            .brightness(configuration.isPressed ? -0.05 : 0)
+            .animation(.easeOut(duration: 0.08), value: configuration.isPressed)
     }
 }

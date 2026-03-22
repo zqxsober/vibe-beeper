@@ -11,10 +11,10 @@ struct ContentView: View {
         ZStack {
             // Diffused drop shadow
             Ellipse()
-                .fill(.black.opacity(0.3))
+                .fill(.black.opacity(0.45))
                 .frame(width: shellW + 10, height: shellH + 10)
-                .blur(radius: 20)
-                .offset(y: 6)
+                .blur(radius: 28)
+                .offset(y: 10)
 
             // Main shell body
             Ellipse()
@@ -31,7 +31,7 @@ struct ContentView: View {
             NoiseView()
                 .frame(width: shellW, height: shellH)
                 .clipShape(Ellipse())
-                .opacity(0.08)
+                .opacity(0.15)
                 .allowsHitTesting(false)
 
             // Top-left glossy highlight
@@ -55,7 +55,7 @@ struct ContentView: View {
                 .strokeBorder(
                     LinearGradient(
                         colors: [
-                            .white.opacity(themeManager.darkMode ? 0.15 : 0.35),
+                            .white.opacity(themeManager.darkMode ? 0.20 : 0.45),
                             .white.opacity(themeManager.darkMode ? 0.04 : 0.1),
                             .clear,
                             .black.opacity(0.12),
@@ -64,7 +64,7 @@ struct ContentView: View {
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
-                    lineWidth: 1.5
+                    lineWidth: 2.0
                 )
                 .frame(width: shellW, height: shellH)
 
@@ -83,12 +83,28 @@ struct ContentView: View {
                         .frame(width: 116, height: 88)
                         .clipShape(RoundedRectangle(cornerRadius: 5))
 
+                    // Outer bezel ring
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    .white.opacity(0.15),
+                                    .clear,
+                                    .black.opacity(0.1),
+                                ],
+                                startPoint: .topLeading, endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                        .frame(width: 120, height: 92)
+                        .allowsHitTesting(false)
+
                     // Inner shadow — crisp stroke
                     RoundedRectangle(cornerRadius: 5)
                         .strokeBorder(
                             LinearGradient(
                                 colors: [
-                                    .black.opacity(0.6),
+                                    .black.opacity(0.7),
                                     .black.opacity(0.15),
                                     .black.opacity(0.03),
                                     .black.opacity(0.08),
@@ -123,42 +139,48 @@ struct ContentView: View {
 
                 Spacer().frame(height: 6)
 
-                // Buttons — V-shaped layout (middle slightly lower)
-                HStack(alignment: .top, spacing: 5) {
-                    if monitor.autoAccept {
-                        // YOLO mode: bolt (disable) + go-to-convo — centered, no V
-                        ActionButton(
-                            symbol: "bolt.slash.fill", size: 12,
-                            iconColor: .white,
-                            active: true
-                        ) { monitor.autoAccept = false }
-                        .accessibilityLabel("Disable YOLO mode")
+                // Buttons — two pairs with gap
+                HStack(alignment: .center, spacing: 5) {
+                    // Left pair: Deny + Accept
+                    ActionButton(
+                        symbol: "xmark", size: 11,
+                        iconColor: .white,
+                        active: monitor.state.needsAttention
+                    ) { monitor.respondToPermission(allow: false) }
+                    .accessibilityLabel("Deny permission")
 
-                        centerButton
-                    } else {
-                        // Normal mode: deny / center / allow
-                        ActionButton(
-                            symbol: "xmark", size: 12,
-                            iconColor: .white,
-                            active: monitor.state.needsAttention
-                        ) { monitor.respondToPermission(allow: false) }
-                        .accessibilityLabel("Deny permission")
+                    ActionButton(
+                        symbol: "checkmark", size: 11,
+                        iconColor: .white,
+                        active: monitor.state.needsAttention,
+                        pulse: monitor.state.needsAttention
+                    ) { monitor.respondToPermission(allow: true) }
+                    .accessibilityLabel("Accept permission")
 
-                        centerButton
-                            .offset(y: 5)
+                    Spacer().frame(width: 10) // visual gap between pairs
 
-                        ActionButton(
-                            symbol: "checkmark", size: 12,
-                            iconColor: .white,
-                            active: monitor.state.needsAttention,
-                            pulse: monitor.state.needsAttention
-                        ) { monitor.respondToPermission(allow: true) }
-                        .accessibilityLabel("Allow permission")
+                    // Right pair: Speak + Terminal
+                    ActionButton(
+                        symbol: monitor.isRecording ? "stop.fill" : "mic.fill",
+                        size: 11,
+                        iconColor: monitor.isRecording ? .red : .white,
+                        active: true,
+                        pulse: monitor.isRecording
+                    ) {
+                        // Phase 10 wires recording logic
+                        monitor.isRecording.toggle()
                     }
+                    .accessibilityLabel(monitor.isRecording ? "Stop recording" : "Speak")
+
+                    ActionButton(
+                        symbol: "arrow.up.forward", size: 11,
+                        iconColor: .white,
+                        active: monitor.state.canGoToConvo || monitor.state.needsAttention
+                    ) { monitor.goToConversation() }
+                    .accessibilityLabel("Go to terminal")
                 }
                 .animation(.easeInOut(duration: 0.3), value: monitor.state)
-                .animation(.easeInOut(duration: 0.3), value: monitor.autoAccept)
-                .frame(height: 40)
+                .frame(height: 36)
                 .offset(y: -8)
             }
         }
@@ -169,13 +191,4 @@ struct ContentView: View {
         }
     }
 
-    private var centerButton: some View {
-        ActionButton(
-            symbol: "arrow.up.forward", size: 12,
-            iconColor: .white,
-            active: monitor.state.canGoToConvo || monitor.state.needsAttention,
-            pulse: monitor.state.canGoToConvo
-        ) { monitor.goToConversation() }
-        .accessibilityLabel("Go to conversation")
-    }
 }
