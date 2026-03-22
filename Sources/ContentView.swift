@@ -4,200 +4,74 @@ struct ContentView: View {
     @EnvironmentObject var monitor: ClaudeMonitor
     @EnvironmentObject var themeManager: ThemeManager
 
-    private let shellW: CGFloat = 186
-    private let shellH: CGFloat = 230
+    // Shell image: egg only, no padding. 200×242 (from 800×970 @ 4x)
+    private let canvasW: CGFloat = 200
+    private let canvasH: CGFloat = 242
 
     var body: some View {
-        ZStack {
-            // Diffused drop shadow
-            Ellipse()
-                .fill(.black.opacity(0.45))
-                .frame(width: shellW + 10, height: shellH + 10)
-                .blur(radius: 28)
-                .offset(y: 10)
+        ZStack(alignment: .topLeading) {
+            // Shell background image (exported from Figma — includes bezel, title, speaker dots)
+            Image(nsImage: Self.shellImage)
+                .resizable()
+                .frame(width: canvasW, height: canvasH)
 
-            // Main shell body
-            Ellipse()
-                .fill(
-                    LinearGradient(
-                        colors: themeManager.shellColors,
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .frame(width: shellW, height: shellH)
-
-            // Noise texture overlay for plastic grain
-            NoiseView()
-                .frame(width: shellW, height: shellH)
-                .clipShape(Ellipse())
-                .opacity(0.15)
+            // LCD screen content — centered horizontally, top=54, 120×88 (from Figma)
+            ScreenView()
+                .frame(width: 116, height: 84)
+                .clipShape(RoundedRectangle(cornerRadius: 1))
+                .position(x: canvasW / 2, y: 99)
                 .allowsHitTesting(false)
 
-            // Top-left glossy highlight
-            Ellipse()
-                .fill(
-                    RadialGradient(
-                        colors: [
-                            .white.opacity(0.35),
-                            .white.opacity(0.08),
-                            .clear,
-                        ],
-                        center: UnitPoint(x: 0.3, y: 0.12),
-                        startRadius: 0,
-                        endRadius: 90
-                    )
-                )
-                .frame(width: shellW, height: shellH)
+            // Buttons — positioned at Figma centers
+            // Arrow/Terminal (top-left) — further out
+            LeftActionButton(
+                symbol: "arrow.up.forward",
+                active: true
+            ) { monitor.goToConversation() }
+            .position(x: 46, y: 172)
+            .accessibilityLabel("Go to terminal")
 
-            // Rim bevel
-            Ellipse()
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [
-                            .white.opacity(themeManager.darkMode ? 0.20 : 0.45),
-                            .white.opacity(themeManager.darkMode ? 0.04 : 0.1),
-                            .clear,
-                            .black.opacity(0.12),
-                            .black.opacity(0.2),
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 2.0
-                )
-                .frame(width: shellW, height: shellH)
+            // Record/Mic (bottom-left) — closer to center
+            LeftActionButton(
+                symbol: monitor.isRecording ? "stop.fill" : "mic.fill",
+                active: true,
+                pulse: monitor.isRecording,
+                iconColor: monitor.isRecording ? Color(hex: "FF2929") : nil
+            ) { monitor.voiceService.toggle() }
+            .position(x: 68, y: 204)
+            .accessibilityLabel(monitor.isRecording ? "Stop recording" : "Speak")
 
-            // Content layout
-            VStack(spacing: 4) {
-                // Pixel title
-                PixelTitle()
-                    .frame(width: 140, height: 12)
-                    .padding(.top, 14)
-                    .padding(.bottom, 2)
+            // Check/Accept (top-right) — further out
+            ActionButton(
+                symbol: "checkmark",
+                active: monitor.state.needsAttention,
+                pulse: monitor.state.needsAttention
+            ) { monitor.respondToPermission(allow: true) }
+            .position(x: 154, y: 172)
+            .accessibilityLabel("Accept permission")
 
-                // Screen — matching Figma proportions
-                ZStack {
-                    // LCD screen
-                    ScreenView()
-                        .frame(width: 130, height: 82)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-
-                    // Outer bezel ring
-                    RoundedRectangle(cornerRadius: 5)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [
-                                    .white.opacity(0.15),
-                                    .clear,
-                                    .black.opacity(0.1),
-                                ],
-                                startPoint: .topLeading, endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                        .frame(width: 134, height: 86)
-                        .allowsHitTesting(false)
-
-                    // Inner shadow — crisp stroke
-                    RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [
-                                    .black.opacity(0.7),
-                                    .black.opacity(0.15),
-                                    .black.opacity(0.03),
-                                    .black.opacity(0.08),
-                                    .black.opacity(0.3),
-                                ],
-                                startPoint: .top, endPoint: .bottom
-                            ),
-                            lineWidth: 2.5
-                        )
-                        .frame(width: 130, height: 82)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                        .allowsHitTesting(false)
-
-                    // Side inner shadow
-                    RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [
-                                    .black.opacity(0.2),
-                                    .clear,
-                                    .clear,
-                                    .black.opacity(0.12),
-                                ],
-                                startPoint: .leading, endPoint: .trailing
-                            ),
-                            lineWidth: 2
-                        )
-                        .frame(width: 130, height: 82)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                        .allowsHitTesting(false)
-                }
-
-                Spacer().frame(height: 6)
-
-                // Buttons — W-shape matching Figma exactly
-                // Outer two (Deny, Terminal) higher + bigger
-                // Inner two (Accept, Speak) lower + smaller
-                ZStack {
-                    // Deny — far left, higher
-                    ActionButton(
-                        symbol: "xmark", size: 11,
-                        iconColor: .white,
-                        active: monitor.state.needsAttention,
-                        buttonSize: 28
-                    ) { monitor.respondToPermission(allow: false) }
-                    .accessibilityLabel("Deny permission")
-                    .offset(x: -50, y: -8)
-
-                    // Accept — center-left, lower
-                    ActionButton(
-                        symbol: "checkmark", size: 11,
-                        iconColor: .white,
-                        active: monitor.state.needsAttention,
-                        pulse: monitor.state.needsAttention,
-                        buttonSize: 28
-                    ) { monitor.respondToPermission(allow: true) }
-                    .accessibilityLabel("Accept permission")
-                    .offset(x: -18, y: 8)
-
-                    // Speak — center-right, lower
-                    ActionButton(
-                        symbol: monitor.isRecording ? "stop.fill" : "mic.fill",
-                        size: 11,
-                        iconColor: monitor.isRecording ? .red : .white,
-                        active: true,
-                        pulse: monitor.isRecording,
-                        buttonSize: 28
-                    ) {
-                        monitor.voiceService.toggle()
-                    }
-                    .accessibilityLabel(monitor.isRecording ? "Stop recording" : "Speak")
-                    .offset(x: 18, y: 8)
-
-                    // Terminal — far right, higher
-                    ActionButton(
-                        symbol: "arrow.up.forward", size: 11,
-                        iconColor: .white,
-                        active: true,
-                        buttonSize: 28
-                    ) { monitor.goToConversation() }
-                    .accessibilityLabel("Go to terminal")
-                    .offset(x: 50, y: -8)
-                }
-                .animation(.easeInOut(duration: 0.3), value: monitor.state)
-                .frame(height: 44)
-                .offset(y: -2)
-            }
+            // X/Deny (bottom-right) — closer to center
+            ActionButton(
+                symbol: "xmark",
+                active: monitor.state.needsAttention
+            ) { monitor.respondToPermission(allow: false) }
+            .position(x: 132, y: 204)
+            .accessibilityLabel("Deny permission")
         }
-        .frame(width: 220, height: 270)
+        .frame(width: canvasW, height: canvasH)
         .background(Color.clear)
         .contextMenu {
             Button("Quit Claumagotchi") { NSApplication.shared.terminate(nil) }
         }
     }
 
+
+    // Load the shell PNG — try bundle Resources, then source tree (dev fallback)
+    private static let shellImage: NSImage = {
+        if let path = Bundle.main.resourcePath,
+           let img = NSImage(contentsOfFile: path + "/shell.png") { return img }
+        if let img = NSImage(contentsOfFile: "/Users/vcartier/Desktop/Claumagotchi/Sources/shell.png") { return img }
+        return NSImage()
+    }()
 }
+

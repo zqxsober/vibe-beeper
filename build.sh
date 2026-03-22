@@ -15,6 +15,11 @@ echo "Creating app bundle..."
 mkdir -p "$APP_DIR" "$RESOURCES_DIR"
 cp "$BINARY" "$APP_DIR/"
 
+# Copy shell image asset
+if [ -f "Sources/shell.png" ]; then
+    cp Sources/shell.png "$RESOURCES_DIR/"
+fi
+
 # Generate app icon from icon.png (transparent, no background)
 if [ -f "icon.png" ] && command -v iconutil &>/dev/null; then
     ICONSET="/tmp/claumagotchi-iconset.iconset"
@@ -59,11 +64,15 @@ cat > Claumagotchi.app/Contents/Info.plist << 'PLIST'
     <string>AppIcon</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Claumagotchi needs microphone access to record your voice for transcription.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Claumagotchi uses on-device speech recognition to transcribe your voice.</string>
 </dict>
 </plist>
 PLIST
 
 echo "Built Claumagotchi.app"
 
-codesign --force --deep --sign - Claumagotchi.app
-echo "Signed Claumagotchi.app (ad-hoc)"
+codesign --force --deep --sign "Apple Development" Claumagotchi.app
+echo "Signed Claumagotchi.app (Apple Development)"
