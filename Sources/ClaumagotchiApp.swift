@@ -20,35 +20,26 @@ struct ClaumagotchiApp: App {
         .defaultPosition(.topTrailing)
 
         MenuBarExtra {
-            Text("Status: \(monitor.autoAccept ? "YOLO MODE" : monitor.state.label)")
-            if let pending = monitor.pendingPermission {
-                Divider()
-                Text("\(pending.tool): \(pending.summary)")
-                    .font(.caption)
-                Button("Allow") { monitor.respondToPermission(allow: true) }
-                    .keyboardShortcut("a")
-                Button("Deny") { monitor.respondToPermission(allow: false) }
-                    .keyboardShortcut("d")
-            }
-            if monitor.state.canGoToConvo {
-                Divider()
-                Button("Go to Conversation") { monitor.goToConversation() }
-                    .keyboardShortcut("g")
-            }
+            // SECTION 1: Status
+            Text("Sessions: \(monitor.sessionCount)")
+            Text(monitor.autoAccept ? "YOLO MODE" : monitor.state.label)
+                .foregroundColor(.secondary)
+
             Divider()
-            Button(monitor.autoAccept ? "Disable YOLO Mode" : "Enable YOLO Mode") {
-                monitor.autoAccept.toggle()
-            }
-            .keyboardShortcut("a", modifiers: [.command, .shift])
-            Button(monitor.soundEnabled ? "Disable Sounds" : "Enable Sounds") {
-                monitor.soundEnabled.toggle()
-            }
-            .keyboardShortcut("s")
-            Button(monitor.notificationsEnabled ? "Disable Notifications" : "Enable Notifications") {
-                monitor.notificationsEnabled.toggle()
-            }
-            .keyboardShortcut("n")
+
+            // SECTION 2: Controls
+            Toggle("YOLO Mode", isOn: $monitor.autoAccept)
+                .keyboardShortcut("y")
+            Toggle("Auto-Speak", isOn: $monitor.autoSpeak)
+                .keyboardShortcut("k")
+            Toggle("Sound Effects", isOn: $monitor.soundEnabled)
+                .keyboardShortcut("s")
+            Toggle("Notifications", isOn: $monitor.notificationsEnabled)
+                .keyboardShortcut("n")
+
             Divider()
+
+            // SECTION 3: App
             Menu("Theme") {
                 Picker("Color", selection: $themeManager.currentThemeId) {
                     ForEach(ThemeManager.themes) { theme in
@@ -58,19 +49,35 @@ struct ClaumagotchiApp: App {
                 Divider()
                 Toggle("Dark Mode", isOn: $themeManager.darkMode)
             }
-            Divider()
+
+            Button("Show / Hide Widget") {
+                Self.toggleMainWindow()
+            }
+            .keyboardShortcut("h", modifiers: [.command, .shift])
+
+            Button(monitor.isActive ? "Power Off" : "Power On") {
+                monitor.isActive.toggle()
+                if !monitor.isActive {
+                    Self.hideMainWindow()
+                } else {
+                    Self.showMainWindow()
+                }
+            }
+            .keyboardShortcut("p")
+
             if !AXIsProcessTrusted() {
                 Button("Enable Global Hotkeys...") {
                     let opts = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
                     _ = AXIsProcessTrustedWithOptions(opts)
                 }
             }
-            Button("Show / Hide") { Self.toggleMainWindow() }
-                .keyboardShortcut("h", modifiers: [.command, .shift])
+
+            Divider()
+
             Button("Quit Claumagotchi") { NSApp.terminate(nil) }
                 .keyboardShortcut("q")
         } label: {
-            Image(nsImage: EggIcon.image(state: monitor.yoloIconState))
+            Image(nsImage: EggIcon.image(state: monitor.menuBarIconState))
         }
         .menuBarExtraStyle(.menu)
     }
@@ -91,6 +98,14 @@ struct ClaumagotchiApp: App {
             return
         }
     }
+
+    /// Hide the main window without toggling (used by Power Off).
+    static func hideMainWindow() {
+        for window in NSApp.windows where window.identifier?.rawValue == "main" {
+            window.orderOut(nil)
+            return
+        }
+    }
 }
 
 // MARK: - Egg-shaped menu bar icon
@@ -99,6 +114,7 @@ enum EggIconState {
     case normal
     case attention   // needsYou — orange
     case yolo        // autoAccept — purple
+    case hidden      // powered off — dimmed
 }
 
 enum EggIcon {
@@ -108,6 +124,7 @@ enum EggIcon {
         case .normal:    .black
         case .attention: .systemOrange
         case .yolo:      .systemPurple
+        case .hidden:    .gray
         }
 
         let img = NSImage(size: size, flipped: true) { _ in
