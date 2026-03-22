@@ -66,29 +66,29 @@ Requirements for the Game Boy milestone. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UI-01 | — | Pending |
-| UI-02 | — | Pending |
-| UI-03 | — | Pending |
-| UI-04 | — | Pending |
-| VOICE-01 | — | Pending |
-| VOICE-02 | — | Pending |
-| VOICE-03 | — | Pending |
-| VOICE-04 | — | Pending |
-| CTRL-01 | — | Pending |
-| CTRL-02 | — | Pending |
-| CTRL-03 | — | Pending |
-| CTRL-04 | — | Pending |
-| CTRL-05 | — | Pending |
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
-| INFRA-03 | — | Pending |
-| INFRA-04 | — | Pending |
-| INFRA-05 | — | Pending |
+| UI-01 | Phase 9 | Pending |
+| UI-02 | Phase 9 | Pending |
+| UI-03 | Phase 9 | Pending |
+| UI-04 | Phase 9 | Pending |
+| VOICE-01 | Phase 11 | Pending |
+| VOICE-02 | Phase 11 | Pending |
+| VOICE-03 | Phase 12 | Pending |
+| VOICE-04 | Phase 12 | Pending |
+| CTRL-01 | Phase 13 | Pending |
+| CTRL-02 | Phase 13 | Pending |
+| CTRL-03 | Phase 13 | Pending |
+| CTRL-04 | Phase 13 | Pending |
+| CTRL-05 | Phase 13 | Pending |
+| INFRA-01 | Phase 10 | Pending |
+| INFRA-02 | Phase 13 | Pending |
+| INFRA-03 | Phase 13 | Pending |
+| INFRA-04 | Phase 10 | Pending |
+| INFRA-05 | Phase 10 | Pending |
 
 **Coverage:**
 - v2.0 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-21*
