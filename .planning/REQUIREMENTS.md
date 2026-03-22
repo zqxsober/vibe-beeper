@@ -15,8 +15,8 @@ Requirements for the Voice Loop milestone. Each maps to roadmap phases.
 
 ### Voice
 
-- [ ] **VOICE-01**: User can toggle voice recording (tap to start, tap to stop) via Speak button or hotkey
-- [ ] **VOICE-02**: Transcribed voice text is injected into the terminal and submitted (Enter), then the previous app is refocused — user never sees the terminal switch
+- [x] **VOICE-01**: User can toggle voice recording (tap to start, tap to stop) via Speak button or hotkey
+- [x] **VOICE-02**: Transcribed voice text is injected into the terminal and submitted (Enter), then the previous app is refocused — user never sees the terminal switch
 - [ ] **VOICE-03**: When Claude finishes and auto-speak is enabled, the last response is summarized via Apple Intelligence and spoken aloud using Ava Premium TTS
 - [ ] **VOICE-04**: User can stop TTS mid-sentence by pressing Speak (which also starts recording) or via hotkey
 
@@ -33,7 +33,7 @@ Requirements for the Voice Loop milestone. Each maps to roadmap phases.
 - [ ] **INFRA-01**: A Python hook fires on Claude Code stop events, extracts the last assistant text from the session JSONL, and writes it to `~/.claude/claumagotchi/last_summary.txt`
 - [x] **INFRA-02**: Every button action has a keyboard shortcut (hotkey)
 - [x] **INFRA-03**: Menu bar provides toggles for: show/hide widget, sound effects, auto-speak, YOLO mode, and power on/off
-- [ ] **INFRA-04**: All features work across all projects and Claude Code sessions on the same machine
+- [x] **INFRA-04**: All features work across all projects and Claude Code sessions on the same machine
 
 ## Future Requirements
 
@@ -69,8 +69,8 @@ Requirements for the Voice Loop milestone. Each maps to roadmap phases.
 | UI-01 | Phase 9 | Complete |
 | UI-02 | Phase 9 | Complete |
 | UI-03 | Phase 9 | Complete |
-| VOICE-01 | Phase 10 | Pending |
-| VOICE-02 | Phase 10 | Pending |
+| VOICE-01 | Phase 10 | Complete |
+| VOICE-02 | Phase 10 | Complete |
 | VOICE-03 | Phase 11 | Pending |
 | VOICE-04 | Phase 11 | Pending |
 | CTRL-01 | Phase 9 | Complete (09-01) |
@@ -81,7 +81,7 @@ Requirements for the Voice Loop milestone. Each maps to roadmap phases.
 | INFRA-01 | Phase 11 | Pending |
 | INFRA-02 | Phase 9 | Complete (09-01) |
 | INFRA-03 | Phase 9 | Complete |
-| INFRA-04 | Phase 10 | Pending |
+| INFRA-04 | Phase 10 | Complete |
 
 **Coverage:**
 - v2.0 requirements: 16 total

@@ -58,7 +58,7 @@ completed: 2026-03-22
 - **Duration:** 8 min
 - **Started:** 2026-03-22T14:13:16Z
 - **Completed:** 2026-03-22T14:21:17Z
-- **Tasks:** 2 of 3 complete (Task 3 = human verification checkpoint)
+- **Tasks:** 3 of 3 complete (human verification approved)
 - **Files modified:** 3
 
 ## Accomplishments
@@ -73,7 +73,7 @@ Each task was committed atomically:
 
 1. **Task 1: Create VoiceService with recording, transcription, and injection** - `18add60` (feat)
 2. **Task 2: Wire VoiceService into ClaudeMonitor and ContentView** - `08b52de` (feat)
-3. **Task 3: Verify voice input end-to-end** - awaiting human verification
+3. **Task 3: Verify voice input end-to-end** - approved (human verification passed)
 
 ## Files Created/Modified
 
@@ -104,9 +104,9 @@ None - no external service configuration required.
 
 ## Next Phase Readiness
 
-- Voice pipeline (recording + injection + refocus) is complete and compiled
-- Human verification required (Task 3 checkpoint): grant mic + speech permissions, test end-to-end flow in Xcode
-- After verification: Phase 11 (auto-speak) can wire into voiceService.isRecording to avoid interrupting recording
+- Voice pipeline is complete and human-verified: recording, transcription, CGEvent injection, Enter submission, and previous-app refocus all confirmed working
+- Phase 11 (auto-speak) can begin — VoiceService.toggle() should stop any active TTS before starting recording; Phase 11 will need to wire TTS state into VoiceService or use a shared coordinator
+- The stopIfRecording() public method is available for Phase 11 to call defensively before TTS playback
 
 ---
 *Phase: 10-voice-input-injection*

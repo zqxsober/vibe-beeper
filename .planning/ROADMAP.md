@@ -60,7 +60,7 @@ Plans:
 **Requirements**: VOICE-01, VOICE-02, INFRA-04
 **Plans:** 1/1 plans complete
 Plans:
-- [ ] 10-01-PLAN.md -- Create VoiceService + wire into ClaudeMonitor and ContentView
+- [x] 10-01-PLAN.md -- Create VoiceService + wire into ClaudeMonitor and ContentView
 **Success Criteria** (what must be TRUE):
   1. Pressing Speak button (or hotkey) starts recording; pressing again stops and submits
   2. Transcribed text is injected into the terminal via CGEvent HID and Enter is pressed
