@@ -53,6 +53,52 @@ final class ClaudeMonitor: ObservableObject {
     }
     @Published var sessionCount: Int = 0
 
+    /// Controls whether the widget is active. False = hidden + monitoring stopped.
+    @Published var isActive: Bool = true {
+        didSet {
+            UserDefaults.standard.set(isActive, forKey: "isActive")
+            if isActive {
+                // Guard against double-setup — restartFileWatcher handles cleanup
+                restartFileWatcher()
+                setupGlobalHotkeys()
+            } else {
+                // Tear down all monitoring
+                source?.cancel(); source = nil
+                try? fileHandle?.close(); fileHandle = nil
+                idleWork?.cancel()
+                // Remove hotkey monitors so keypresses don't fire when powered off
+                if let m = globalKeyMonitor { NSEvent.removeMonitor(m); globalKeyMonitor = nil }
+                if let m = localKeyMonitor { NSEvent.removeMonitor(m); localKeyMonitor = nil }
+                state = .idle
+                pendingPermission = nil
+                awaitingUserAction = false
+            }
+        }
+    }
+
+    /// When THINKING started — drives elapsed time display.
+    @Published var thinkingStartTime: Date? = nil
+
+    /// Current tool name being used — populated from pre_tool/post_tool events.
+    @Published var currentTool: String? = nil
+
+    /// Last summary text (Phase 11 populates; shows "Done" if nil).
+    @Published var lastSummary: String? = nil
+
+    /// Whether voice is recording (Phase 10 sets this; Phase 9 reads for UI-03).
+    @Published var isRecording: Bool = false
+
+    /// Whether auto-speak is enabled (Phase 11 uses this; Phase 9 shows toggle).
+    @Published var autoSpeak: Bool = false {
+        didSet { UserDefaults.standard.set(autoSpeak, forKey: "autoSpeak") }
+    }
+
+    /// Computed: seconds elapsed since thinking started.
+    var elapsedSeconds: Int {
+        guard let start = thinkingStartTime else { return 0 }
+        return Int(Date().timeIntervalSince(start))
+    }
+
     /// True when a permission has been requested and user hasn't acted yet.
     /// This is the source of truth — never cleared by timeouts or external events.
     private var awaitingUserAction = false
@@ -84,6 +130,9 @@ final class ClaudeMonitor: ObservableObject {
         rehydrateSessions()
         setupFileWatcher()
         setupGlobalHotkeys()
+        // Set after watcher is running so didSet fires only on external mutation
+        autoSpeak = UserDefaults.standard.bool(forKey: "autoSpeak")
+        isActive = UserDefaults.standard.object(forKey: "isActive") as? Bool ?? true
     }
 
     /// Pre-populate sessionStates from sessions.json so the app picks up
@@ -279,6 +328,12 @@ final class ClaudeMonitor: ObservableObject {
 
         switch type {
         case "pre_tool", "post_tool":
+            let tool = event["tool"] as? String
+            if let tool { currentTool = tool }
+            // Only reset thinkingStartTime when transitioning INTO thinking
+            if sessionStates[sid] != .thinking {
+                thinkingStartTime = Date()
+            }
             if !sid.isEmpty { sessionStates[sid] = .thinking }
             updateAggregateState()
         case "post_tool_error":
@@ -290,6 +345,8 @@ final class ClaudeMonitor: ObservableObject {
             }
         case "stop":
             if !sid.isEmpty { sessionStates[sid] = .finished }
+            thinkingStartTime = nil
+            currentTool = nil
             updateAggregateState()
             if state == .finished {
                 playDoneChime()
@@ -378,14 +435,19 @@ final class ClaudeMonitor: ObservableObject {
     }
 
     private func handleHotKey(_ event: NSEvent) {
-        guard pendingPermission != nil else { return }
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         guard flags == .option else { return }
         switch event.keyCode {
-        case 0:  // kVK_ANSI_A
+        case 0:  // kVK_ANSI_A — Accept
+            guard pendingPermission != nil else { return }
             DispatchQueue.main.async { self.respondToPermission(allow: true) }
-        case 2:  // kVK_ANSI_D
+        case 2:  // kVK_ANSI_D — Deny
+            guard pendingPermission != nil else { return }
             DispatchQueue.main.async { self.respondToPermission(allow: false) }
+        case 1:  // kVK_ANSI_S — Speak (stub; Phase 10 wires actual recording)
+            DispatchQueue.main.async { self.isRecording.toggle() }
+        case 5:  // kVK_ANSI_G — Go to terminal
+            DispatchQueue.main.async { self.goToConversation() }
         default:
             break
         }
