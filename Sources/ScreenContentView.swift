@@ -16,25 +16,29 @@ struct ScreenContentView: View {
         ZStack {
             Rectangle().fill(themeManager.lcdBg)
 
-            VStack(spacing: 0) {
-                // Character animation — fixed size, centered
+            VStack(spacing: 2) {
+                Spacer(minLength: 2)
+
+                // Character animation — centered
                 PixelCharacterView(state: monitor.state, frame: animFrame,
                                    onColor: themeManager.lcdOn,
                                    isYolo: isYoloActive)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 50)
+                    .frame(height: 44)
 
-                // Status text — 1-2 lines, fixed height, centered
+                // Status text — 1 line, centered
                 Text(statusText)
-                    .font(.system(size: 8, weight: .black, design: .monospaced))
+                    .font(.system(size: 9, weight: .bold, design: .monospaced))
                     .foregroundColor(themeManager.lcdOn)
                     .opacity(monitor.state.needsAttention
                              ? (animFrame % 2 == 0 ? 1 : 0.15) : 1)
-                    .lineLimit(2)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                     .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24, alignment: .center)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.horizontal, 4)
-                    .padding(.bottom, 3)
+
+                Spacer(minLength: 2)
             }
             .padding(.horizontal, 4)
 
@@ -85,20 +89,35 @@ struct ScreenContentView: View {
         }
         switch monitor.state {
         case .thinking:
-            let tool = truncate(monitor.currentTool ?? "Working", to: 12)
+            let tool = humanToolName(monitor.currentTool ?? "Working")
             let elapsed = monitor.elapsedSeconds
-            return "\(tool) \u{00B7} \(elapsed)s"
+            return "\(tool) · \(elapsed)s"
         case .finished:
-            return monitor.lastSummary ?? "Done"
+            return monitor.lastSummary ?? "Done!"
         case .needsYou:
             if let p = monitor.pendingPermission {
-                let toolName = p.tool
-                let fileName = truncateFilename(p.summary)
-                return "\(toolName) \u{00B7} \(fileName)"
+                let tool = humanToolName(p.tool)
+                let file = truncateFilename(p.summary)
+                return "\(tool) · \(file)"
             }
-            return "NEEDS YOU!"
+            return "Needs you!"
         case .idle:
             return "ZZZ..."
+        }
+    }
+
+    private func humanToolName(_ tool: String) -> String {
+        switch tool.lowercased() {
+        case "bash": return "Running"
+        case "read": return "Reading"
+        case "write": return "Writing"
+        case "edit": return "Editing"
+        case "grep": return "Searching"
+        case "glob": return "Finding"
+        case "agent": return "Thinking"
+        case "webfetch": return "Fetching"
+        case "websearch": return "Searching"
+        default: return truncate(tool, to: 12)
         }
     }
 

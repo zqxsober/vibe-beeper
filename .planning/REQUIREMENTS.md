@@ -9,9 +9,9 @@ Requirements for the Voice Loop milestone. Each maps to roadmap phases.
 
 ### UI
 
-- [ ] **UI-01**: Screen shows state-specific content: THINKING (tool + elapsed), DONE (1-line summary), NEEDS YOU (tool + file + risk label), IDLE (character)
-- [ ] **UI-02**: Four buttons below the screen: Deny (left), Accept (left-center), Speak (right-center), Go to terminal (right) — same egg shell, same size
-- [ ] **UI-03**: Mic button shows clear recording state (color change, pulse) when voice input is active
+- [x] **UI-01**: Screen shows state-specific content: THINKING (tool + elapsed), DONE (1-line summary), NEEDS YOU (tool + file + risk label), IDLE (character)
+- [x] **UI-02**: Four buttons below the screen: Deny (left), Accept (left-center), Speak (right-center), Go to terminal (right) — same egg shell, same size
+- [x] **UI-03**: Mic button shows clear recording state (color change, pulse) when voice input is active
 
 ### Voice
 
@@ -66,9 +66,9 @@ Requirements for the Voice Loop milestone. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UI-01 | Phase 9 | Pending |
-| UI-02 | Phase 9 | Pending |
-| UI-03 | Phase 9 | Pending |
+| UI-01 | Phase 9 | Complete |
+| UI-02 | Phase 9 | Complete |
+| UI-03 | Phase 9 | Complete |
 | VOICE-01 | Phase 10 | Pending |
 | VOICE-02 | Phase 10 | Pending |
 | VOICE-03 | Phase 11 | Pending |

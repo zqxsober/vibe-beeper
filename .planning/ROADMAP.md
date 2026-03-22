@@ -39,7 +39,7 @@ v1.1 hardened the foundation. The first v2.0 attempt was reverted due to reliabi
 **Goal**: The egg has 4 buttons (Deny/Accept/Speak/Terminal), smarter screen content per state, and all control toggles in the menu bar
 **Depends on**: v1.1 (phases 1-4)
 **Requirements**: UI-01, UI-02, UI-03, CTRL-01, CTRL-02, CTRL-03, CTRL-04, CTRL-05, INFRA-02, INFRA-03
-**Plans:** 3 plans
+**Plans:** 2/3 plans executed
 Plans:
 - [x] 09-01-PLAN.md -- Extract components + extend ClaudeMonitor with new properties and hotkeys
 - [ ] 09-02-PLAN.md -- 4-button layout, state-specific screen content, skeuomorphic enhancements
@@ -86,6 +86,6 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status |
 |-------|-----------|----------------|--------|
-| 9. UI + Controls | v2.0 | 1/3 | In Progress |
+| 9. UI + Controls | 2/3 | In Progress|  |
 | 10. Voice Input + Injection | v2.0 | 0/? | Pending |
 | 11. Auto-Speak + Summary Hook | v2.0 | 0/? | Pending |

@@ -5,7 +5,7 @@ struct ContentView: View {
     @EnvironmentObject var themeManager: ThemeManager
 
     private let shellW: CGFloat = 186
-    private let shellH: CGFloat = 224
+    private let shellH: CGFloat = 230
 
     var body: some View {
         ZStack {
@@ -72,19 +72,19 @@ struct ContentView: View {
             VStack(spacing: 4) {
                 // Pixel title
                 PixelTitle()
-                    .frame(width: 160, height: 14)
-                    .padding(.top, 18)
-                    .padding(.bottom, 4)
+                    .frame(width: 140, height: 12)
+                    .padding(.top, 14)
+                    .padding(.bottom, 2)
 
-                // Screen
+                // Screen — matching Figma proportions
                 ZStack {
                     // LCD screen
                     ScreenView()
-                        .frame(width: 116, height: 88)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .frame(width: 130, height: 82)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
 
                     // Outer bezel ring
-                    RoundedRectangle(cornerRadius: 6)
+                    RoundedRectangle(cornerRadius: 5)
                         .strokeBorder(
                             LinearGradient(
                                 colors: [
@@ -96,11 +96,11 @@ struct ContentView: View {
                             ),
                             lineWidth: 1.5
                         )
-                        .frame(width: 120, height: 92)
+                        .frame(width: 134, height: 86)
                         .allowsHitTesting(false)
 
                     // Inner shadow — crisp stroke
-                    RoundedRectangle(cornerRadius: 5)
+                    RoundedRectangle(cornerRadius: 4)
                         .strokeBorder(
                             LinearGradient(
                                 colors: [
@@ -114,12 +114,12 @@ struct ContentView: View {
                             ),
                             lineWidth: 2.5
                         )
-                        .frame(width: 116, height: 88)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .frame(width: 130, height: 82)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
                         .allowsHitTesting(false)
 
                     // Side inner shadow
-                    RoundedRectangle(cornerRadius: 5)
+                    RoundedRectangle(cornerRadius: 4)
                         .strokeBorder(
                             LinearGradient(
                                 colors: [
@@ -132,59 +132,68 @@ struct ContentView: View {
                             ),
                             lineWidth: 2
                         )
-                        .frame(width: 116, height: 88)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .frame(width: 130, height: 82)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
                         .allowsHitTesting(false)
-                    }
+                }
 
                 Spacer().frame(height: 6)
 
-                // Buttons — two pairs with gap
-                HStack(alignment: .center, spacing: 5) {
-                    // Left pair: Deny + Accept
+                // Buttons — W-shape matching Figma exactly
+                // Outer two (Deny, Terminal) higher + bigger
+                // Inner two (Accept, Speak) lower + smaller
+                ZStack {
+                    // Deny — far left, higher
                     ActionButton(
                         symbol: "xmark", size: 11,
                         iconColor: .white,
-                        active: monitor.state.needsAttention
+                        active: monitor.state.needsAttention,
+                        buttonSize: 28
                     ) { monitor.respondToPermission(allow: false) }
                     .accessibilityLabel("Deny permission")
+                    .offset(x: -50, y: -8)
 
+                    // Accept — center-left, lower
                     ActionButton(
                         symbol: "checkmark", size: 11,
                         iconColor: .white,
                         active: monitor.state.needsAttention,
-                        pulse: monitor.state.needsAttention
+                        pulse: monitor.state.needsAttention,
+                        buttonSize: 28
                     ) { monitor.respondToPermission(allow: true) }
                     .accessibilityLabel("Accept permission")
+                    .offset(x: -18, y: 8)
 
-                    Spacer().frame(width: 10) // visual gap between pairs
-
-                    // Right pair: Speak + Terminal
+                    // Speak — center-right, lower
                     ActionButton(
                         symbol: monitor.isRecording ? "stop.fill" : "mic.fill",
                         size: 11,
                         iconColor: monitor.isRecording ? .red : .white,
                         active: true,
-                        pulse: monitor.isRecording
+                        pulse: monitor.isRecording,
+                        buttonSize: 28
                     ) {
-                        // Phase 10 wires recording logic
                         monitor.isRecording.toggle()
                     }
                     .accessibilityLabel(monitor.isRecording ? "Stop recording" : "Speak")
+                    .offset(x: 18, y: 8)
 
+                    // Terminal — far right, higher
                     ActionButton(
                         symbol: "arrow.up.forward", size: 11,
                         iconColor: .white,
-                        active: monitor.state.canGoToConvo || monitor.state.needsAttention
+                        active: true,
+                        buttonSize: 28
                     ) { monitor.goToConversation() }
                     .accessibilityLabel("Go to terminal")
+                    .offset(x: 50, y: -8)
                 }
                 .animation(.easeInOut(duration: 0.3), value: monitor.state)
-                .frame(height: 36)
-                .offset(y: -8)
+                .frame(height: 44)
+                .offset(y: -2)
             }
         }
-        .frame(width: 250, height: 300)
+        .frame(width: 220, height: 270)
         .background(Color.clear)
         .contextMenu {
             Button("Quit Claumagotchi") { NSApplication.shared.terminate(nil) }
