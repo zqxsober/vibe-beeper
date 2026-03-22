@@ -22,16 +22,68 @@ struct ContentView: View {
                 .position(x: canvasW / 2, y: 99)
                 .allowsHitTesting(false)
 
-            // Buttons — positioned at Figma centers
-            // Arrow/Terminal (top-left) — further out
+            // 5 buttons: top row (stop speaking, go terminal, accept), bottom row (mic, deny)
+            // Center button is 4px lower than flanking top buttons
+
+            // Stop Speaking (top-left)
             LeftActionButton(
-                symbol: "arrow.up.forward",
-                active: true
-            ) { monitor.goToConversation() }
+                symbol: "speaker.slash.fill",
+                active: monitor.ttsService.isSpeaking
+            ) { monitor.ttsService.stopSpeaking() }
             .position(x: 46, y: 172)
+            .accessibilityLabel("Stop speaking")
+
+            // Go to Terminal (top-center, 4px lower, no rotation)
+            Button(action: { monitor.goToConversation() }) {
+                ZStack {
+                    Ellipse()
+                        .fill(LinearGradient(
+                            colors: [Color.black.opacity(0.56), Color.black.opacity(0)],
+                            startPoint: .top, endPoint: .bottom
+                        ))
+                        .frame(width: 40, height: 28)
+                        .blur(radius: 2)
+
+                    Ellipse()
+                        .fill(Color(hex: "1C1C1C"))
+                        .frame(width: 36, height: 24)
+
+                    Ellipse()
+                        .fill(LinearGradient(
+                            colors: [.white.opacity(0.10), .clear],
+                            startPoint: .top, endPoint: .center
+                        ))
+                        .frame(width: 30, height: 16)
+                        .offset(y: -2)
+
+                    Ellipse()
+                        .stroke(LinearGradient(
+                            colors: [.white.opacity(0.06), .clear, .clear, .black.opacity(0.15)],
+                            startPoint: .top, endPoint: .bottom
+                        ), lineWidth: 0.75)
+                        .frame(width: 35, height: 23)
+
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(Color(white: 0.72, opacity: 0.80))
+                        .shadow(color: Color(red: 0, green: 0.07, blue: 0.18).opacity(0.32), radius: 4)
+                }
+                .frame(width: 46, height: 34)
+            }
+            .buttonStyle(ShellButtonStyle())
+            .position(x: 100, y: 176)
             .accessibilityLabel("Go to terminal")
 
-            // Record/Mic (bottom-left) — closer to center
+            // Accept (top-right)
+            ActionButton(
+                symbol: "checkmark",
+                active: monitor.state.needsAttention,
+                pulse: monitor.state.needsAttention
+            ) { monitor.respondToPermission(allow: true) }
+            .position(x: 154, y: 172)
+            .accessibilityLabel("Accept permission")
+
+            // Record/Mic (bottom-left)
             LeftActionButton(
                 symbol: monitor.isRecording ? "stop.fill" : "mic.fill",
                 active: true,
@@ -41,16 +93,7 @@ struct ContentView: View {
             .position(x: 68, y: 204)
             .accessibilityLabel(monitor.isRecording ? "Stop recording" : "Speak")
 
-            // Check/Accept (top-right) — further out
-            ActionButton(
-                symbol: "checkmark",
-                active: monitor.state.needsAttention,
-                pulse: monitor.state.needsAttention
-            ) { monitor.respondToPermission(allow: true) }
-            .position(x: 154, y: 172)
-            .accessibilityLabel("Accept permission")
-
-            // X/Deny (bottom-right) — closer to center
+            // Deny (bottom-right)
             ActionButton(
                 symbol: "xmark",
                 active: monitor.state.needsAttention

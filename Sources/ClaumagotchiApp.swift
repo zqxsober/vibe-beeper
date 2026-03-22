@@ -174,6 +174,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         Self.writePID()
+
+        // One-time Accessibility prompt on first launch
+        if !AXIsProcessTrusted() {
+            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
+            AXIsProcessTrustedWithOptions(options)
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {

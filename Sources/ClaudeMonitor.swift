@@ -222,10 +222,6 @@ final class ClaudeMonitor: ObservableObject {
     }
 
     func goToConversation() {
-        idleWork?.cancel()
-        pendingPermission = nil
-        awaitingUserAction = false
-        state = .finished
         activateTerminal()
     }
 

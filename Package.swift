@@ -8,6 +8,9 @@ let package = Package(
         .executableTarget(
             name: "Claumagotchi",
             path: "Sources",
+            swiftSettings: [
+                .swiftLanguageMode(.v5),
+            ],
             linkerSettings: [
                 .linkedFramework("FoundationModels")
             ]

@@ -4,8 +4,7 @@ import Speech
 import AppKit
 import ApplicationServices
 
-@MainActor
-final class VoiceService: ObservableObject {
+final class VoiceService: ObservableObject, @unchecked Sendable {
 
     @Published var isRecording: Bool = false
     @Published var lastTranscriptPreview: String = ""
@@ -18,6 +17,7 @@ final class VoiceService: ObservableObject {
     private var recognitionTask: SFSpeechRecognitionTask?
     private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
     private var lastTranscript: String = ""
+    private var recordingStartTime: Date?
     private var previousAppPID: pid_t? = nil
 
     // MARK: - Logging
@@ -56,6 +56,10 @@ final class VoiceService: ObservableObject {
 
     private func startRecording() {
         log("=== START ===")
+
+        // Check Accessibility — log but don't prompt every time
+        let axTrusted = AXIsProcessTrusted()
+        log("AX trusted: \(axTrusted)")
 
         // Recording has absolute priority — kill TTS first
         if let tts = ttsService, tts.isSpeaking {
@@ -114,17 +118,25 @@ final class VoiceService: ObservableObject {
         log("tap installed")
 
         recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
+            guard let self else { return }
             if let result {
-                Task { @MainActor in
-                    self?.lastTranscript = result.bestTranscription.formattedString
+                let text = result.bestTranscription.formattedString
+                self.lastTranscript = text
+
+                // When we get the final result (after endAudio), inject it
+                if result.isFinal {
+                    self.recognitionTask = nil
+                    self.log("final transcript: '\(text)'")
+                    self.lastTranscriptPreview = text
+                    if !text.isEmpty {
+                        self.injectAndSubmit(text)
+                    }
                 }
             }
             if let error {
                 let code = (error as NSError).code
-                if code != 216 { // 216 = cancelled, expected on stop
-                    Task { @MainActor in
-                        self?.log("recognition error: \(code)")
-                    }
+                if code != 216 { // 216 = cancelled, expected
+                    self.log("recognition error: \(code)")
                 }
             }
         }
@@ -134,6 +146,7 @@ final class VoiceService: ObservableObject {
         do {
             try audioEngine.start()
             isRecording = true
+            recordingStartTime = Date()
             log("recording...")
         } catch {
             log("engine failed: \(error)")
@@ -144,25 +157,33 @@ final class VoiceService: ObservableObject {
         log("=== STOP ===")
         guard isRecording else { return }
         audioEngine.inputNode.removeTap(onBus: 0)
+        audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.stop()
         recognitionRequest?.endAudio()
         recognitionRequest = nil
-        recognitionTask?.cancel()
-        recognitionTask = nil
+        // Don't cancel the recognition task — let it deliver the final result
         // Recreate engine per session — prevents corruption on subsequent recordings
         audioEngine = AVAudioEngine()
         isRecording = false
+        log("stopped — waiting for final result")
 
-        let text = lastTranscript
-        lastTranscript = ""
-        log("stopped, transcript: '\(text)'")
-
-        DispatchQueue.main.async {
-            self.lastTranscriptPreview = text
-        }
-
-        if !text.isEmpty {
-            injectAndSubmit(text)
+        // Wait up to 2 seconds for the final transcript to arrive via the callback
+        // The recognition callback will set lastTranscript and call injectAndSubmit
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            guard let self else { return }
+            // If the callback already handled it, recognitionTask will be nil
+            if self.recognitionTask != nil {
+                // Timed out — use whatever partial we have
+                let text = self.lastTranscript
+                self.lastTranscript = ""
+                self.recognitionTask?.cancel()
+                self.recognitionTask = nil
+                self.log("timeout, using partial: '\(text)'")
+                if !text.isEmpty {
+                    self.lastTranscriptPreview = text
+                    self.injectAndSubmit(text)
+                }
+            }
         }
     }
 

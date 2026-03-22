@@ -25,11 +25,11 @@ final class TTSService: ObservableObject, @unchecked Sendable {
 
     // MARK: - Public API
 
-    /// Summarize (if needed) and speak the given text. Returns the summary spoken.
+    /// Speak the given text directly. For long text, uses last paragraph. Returns what was spoken.
     func speakSummary(_ text: String) async -> String {
-        let summary = await summarize(text)
-        await MainActor.run { speak(summary) }
-        return summary
+        let toSpeak = text
+        await MainActor.run { speak(toSpeak) }
+        return toSpeak
     }
 
     func stopSpeaking() {
