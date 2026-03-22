@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Voice Loop
-status: phase-complete
-stopped_at: Completed 09-03-PLAN.md
-last_updated: "2026-03-22T13:56:29.643Z"
+status: unknown
+stopped_at: "Checkpoint: Task 3 human-verify (10-01-PLAN.md)"
+last_updated: "2026-03-22T14:22:29.626Z"
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
-**Current focus:** Phase 09 — ui-controls
+**Current focus:** Phase 10 — voice-input-injection
 
 ## Current Position
 
-Phase: 09 (ui-controls) — COMPLETE (3/3 plans)
-Next: Phase 10 — Voice Input + Injection
+Phase: 10 (voice-input-injection) — EXECUTING
+Plan: 1 of 1
 
 ## Accumulated Context
 
@@ -42,6 +42,8 @@ Next: Phase 10 — Voice Input + Injection
 - [Phase 09-ui-controls]: ScreenContentView drives state-specific status text; ScreenView is a thin passthrough wrapper
 - [Phase 09-ui-controls]: Show/Hide Widget and Power Off are independent controls — Show/Hide preserves isActive, Power Off sets it false
 - [Phase 09-ui-controls]: Menu bar icon greyed only when powered off (EggIconState.hidden) — not when widget is merely hidden
+- [Phase 10-voice-input-injection]: VoiceService uses format:nil in installTap, nil CGEvent source, keyboardSetUnicodeString on keyDown+keyUp, /usr/bin/open -a for terminal focus — exact VoiceLoop prototype patterns
+- [Phase 10-voice-input-injection]: isRecording on ClaudeMonitor is private(set), driven exclusively by Combine from VoiceService; previousAppPID captured before startRecording for correct refocus target
 
 ### Pending Todos
 
@@ -55,6 +57,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T13:56:29.633Z
-Stopped at: Completed 09-03-PLAN.md
+Last session: 2026-03-22T14:22:29.609Z
+Stopped at: Checkpoint: Task 3 human-verify (10-01-PLAN.md)
 Resume file: None

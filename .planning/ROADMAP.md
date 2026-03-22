@@ -58,7 +58,7 @@ Plans:
 **Goal**: Users can speak to Claude from any app — voice is recorded, transcribed on-device, and injected into the terminal without the user seeing the switch
 **Depends on**: Phase 9
 **Requirements**: VOICE-01, VOICE-02, INFRA-04
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 10-01-PLAN.md -- Create VoiceService + wire into ClaudeMonitor and ContentView
 **Success Criteria** (what must be TRUE):
@@ -90,5 +90,5 @@ Plans:
 | Phase | Milestone | Plans Complete | Status |
 |-------|-----------|----------------|--------|
 | 9. UI + Controls | 3/3 | Complete   | 2026-03-22 |
-| 10. Voice Input + Injection | v2.0 | 0/1 | Planned |
+| 10. Voice Input + Injection | 1/1 | Complete   | 2026-03-22 |
 | 11. Auto-Speak + Summary Hook | v2.0 | 0/? | Pending |
