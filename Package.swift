@@ -19,6 +19,11 @@ let package = Package(
             linkerSettings: [
                 .linkedFramework("FoundationModels")
             ]
+        ),
+        .testTarget(
+            name: "ClaumagotchiTests",
+            dependencies: [],
+            path: "Tests/ClaumagotchiTests"
         )
     ]
 )
