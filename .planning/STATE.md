@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: Completed 14-02-PLAN.md
-last_updated: "2026-03-24T20:46:30.369Z"
+stopped_at: Completed 15-01-PLAN.md
+last_updated: "2026-03-24T21:57:37.198Z"
 progress:
   total_phases: 7
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 10
+  completed_plans: 9
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
-**Current focus:** Phase 14 — Menu Bar Popover
+**Current focus:** Phase 15 — Voice Fixes
 
 ## Current Position
 
-Phase: 14 (Menu Bar Popover) — EXECUTING
-Plan: 1 of 2
+Phase: 15 (Voice Fixes) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ Plan: 1 of 2
 | Phase 13-onboarding P03 | 25 | 2 tasks | 1 files |
 | Phase 14-menu-bar-popover P01 | 2 | 2 tasks | 6 files |
 | Phase 14-menu-bar-popover P02 | 45 | 2 tasks | 9 files |
+| Phase 15-voice-fixes P01 | 3 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,9 @@ Plan: 1 of 2
 - [Phase 14-menu-bar-popover]: Settings window scene added alongside existing main/onboarding windows with id: settings
 - [Phase 14-menu-bar-popover]: Reverted to .menuBarExtraStyle(.menu) dropdown — .window popover not native-feeling on macOS
 - [Phase 14-menu-bar-popover]: ClaudeMonitor permission gate checks pending.json freshness (<5s) and ignores safe tools (AskUserQuestion etc) to prevent false needsYou triggers
+- [Phase 15-voice-fixes]: KeychainService as caseless enum, test file embeds stub due to @testable import unavailability for .executableTarget
+- [Phase 15-voice-fixes]: Groq auth requires lowercase 'bearer' header (not 'Bearer') — critical per Groq docs to avoid 401
+- [Phase 15-voice-fixes]: kSecAttrSynchronizable: false prevents third-party API keys from syncing to iCloud Keychain
 
 ### Pending Todos
 
@@ -87,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T20:46:30.365Z
-Stopped at: Completed 14-02-PLAN.md
+Last session: 2026-03-24T21:57:37.195Z
+Stopped at: Completed 15-01-PLAN.md
 Resume file: None
