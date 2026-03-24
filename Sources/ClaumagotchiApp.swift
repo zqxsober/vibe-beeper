@@ -38,64 +38,24 @@ struct ClaumagotchiApp: App {
         .defaultPosition(.center)
         .defaultSize(width: 480, height: 400)
 
+        Window("Settings", id: "settings") {
+            SettingsView()
+                .environmentObject(monitor)
+                .environmentObject(themeManager)
+        }
+        .windowStyle(.titleBar)
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
+        .defaultSize(width: 460, height: 520)
+
         MenuBarExtra {
-            // SECTION 1: Status
-            Text("Sessions: \(monitor.sessionCount)")
-            Text(monitor.autoAccept ? "YOLO MODE" : monitor.state.label)
-                .foregroundColor(.secondary)
-
-            Divider()
-
-            // SECTION 2: Controls
-            Toggle("YOLO Mode", isOn: $monitor.autoAccept)
-                .keyboardShortcut("y")
-            Toggle("Auto-Speak", isOn: $monitor.autoSpeak)
-                .keyboardShortcut("k")
-            Toggle("Sound Effects", isOn: $monitor.soundEnabled)
-                .keyboardShortcut("s")
-            Toggle("Vibration", isOn: $monitor.vibrationEnabled)
-                .keyboardShortcut("v")
-
-            Divider()
-
-            // SECTION 3: App
-            Menu("Theme") {
-                Picker("Color", selection: $themeManager.currentThemeId) {
-                    ForEach(ThemeManager.themes) { theme in
-                        Text(theme.name).tag(theme.id)
-                    }
-                }
-                Divider()
-                Toggle("Dark Mode", isOn: $themeManager.darkMode)
-            }
-
-            Button("Show / Hide Widget") {
-                Self.toggleMainWindow()
-            }
-            .keyboardShortcut("h", modifiers: [.command, .shift])
-
-            Button(monitor.isActive ? "Power Off" : "Power On") {
-                monitor.isActive.toggle()
-                if !monitor.isActive {
-                    Self.hideMainWindow()
-                } else {
-                    Self.showMainWindow()
-                }
-            }
-            .keyboardShortcut("p")
-
-            Button("Setup...") {
-                openWindow(id: "onboarding")
-            }
-
-            Divider()
-
-            Button("Quit Claumagotchi") { NSApp.terminate(nil) }
-                .keyboardShortcut("q")
+            MenuBarPopoverView()
+                .environmentObject(monitor)
+                .environmentObject(themeManager)
         } label: {
             Image(nsImage: EggIcon.image(state: monitor.menuBarIconState))
         }
-        .menuBarExtraStyle(.menu)
+        .menuBarExtraStyle(.window)
     }
 
     static func toggleMainWindow() {
