@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: Completed 12-02-PLAN.md
-last_updated: "2026-03-24T10:19:39.494Z"
+stopped_at: Completed 13-00-PLAN.md
+last_updated: "2026-03-24T18:17:16.286Z"
 progress:
   total_phases: 7
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 6
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
-**Current focus:** Phase 12 — Code Quality
+**Current focus:** Phase 13 — Onboarding
 
 ## Current Position
 
-Phase: 12 (Code Quality) — EXECUTING
-Plan: 1 of 2
+Phase: 13 (Onboarding) — EXECUTING
+Plan: 1 of 4
 
 ## Performance Metrics
 
@@ -42,6 +42,7 @@ Plan: 1 of 2
 *Updated after each plan completion*
 | Phase 12-code-quality P01 | 10 | 2 tasks | 13 files |
 | Phase 12-code-quality P02 | 3 | 2 tasks | 5 files |
+| Phase 13-onboarding P00 | 2 | 1 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -57,6 +58,7 @@ Plan: 1 of 2
 - [Phase 12-code-quality]: Package.swift exclude: shells, buttons, shell.svg — suppress 36 unhandled files warning
 - [Phase 12-code-quality]: BuzzService takes vibrationEnabled/soundEnabled as parameters — no direct ClaudeMonitor reference, one-directional dependency
 - [Phase 12-code-quality]: AppDelegate colocated with @main ClaumagotchiApp — acceptable exception to one-type-per-file rule
+- [Phase 13-onboarding]: testTarget has no dependencies on executable target — @testable import not supported for .executableTarget; stubs use XCTest only
 
 ### Pending Todos
 
@@ -69,6 +71,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T10:19:39.492Z
-Stopped at: Completed 12-02-PLAN.md
+Last session: 2026-03-24T18:17:16.279Z
+Stopped at: Completed 13-00-PLAN.md
 Resume file: None
