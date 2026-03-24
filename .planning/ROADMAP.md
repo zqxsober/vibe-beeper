@@ -172,7 +172,7 @@ Note: Phase 15 (Voice Fixes) depends only on Phase 12 and can be executed in par
 | 9. UI + Controls | v2.0 Voice Loop | 3/3 | Complete | 2026-03-22 |
 | 10. Voice Input + Injection | v2.0 Voice Loop | 1/1 | Complete | 2026-03-22 |
 | 11. Auto-Speak + Summary Hook | v2.0 Voice Loop | 2/2 | Complete | 2026-03-22 |
-| 12. Code Quality | v3.0 Public Launch | 0/2 | In progress | - |
+| 12. Code Quality | 1/2 | In Progress|  | - |
 | 13. Onboarding | v3.0 Public Launch | 0/TBD | Not started | - |
 | 14. Menu Bar Popover | v3.0 Public Launch | 0/TBD | Not started | - |
 | 15. Voice Fixes | v3.0 Public Launch | 0/TBD | Not started | - |

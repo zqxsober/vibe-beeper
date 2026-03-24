@@ -1,92 +1,128 @@
-# Requirements: Claumagotchi
+# Requirements: CC-Beeper (Claumagotchi)
 
-**Defined:** 2026-03-22
+**Defined:** 2026-03-24
 **Core Value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
 
-## v2.0 Requirements
+## v3.0 Requirements
 
-Requirements for the Voice Loop milestone. Each maps to roadmap phases.
+Requirements for Public Launch milestone. Each maps to roadmap phases.
 
-### UI
+### Onboarding
 
-- [x] **UI-01**: Screen shows state-specific content: THINKING (tool + elapsed), DONE (1-line summary), NEEDS YOU (tool + file + risk label), IDLE (character)
-- [x] **UI-02**: Four buttons below the screen: Deny (left), Accept (left-center), Speak (right-center), Go to terminal (right) — same egg shell, same size
-- [x] **UI-03**: Mic button shows clear recording state (color change, pulse) when voice input is active
+- [ ] **ONBD-01**: Welcome screen with illustration, title, description of what CC-Beeper does, and "Get Started" button
+- [ ] **ONBD-02**: Step 1 — Scan for Claude Code CLI + hooks installation. Shows toggle that turns green when detected/installed
+- [ ] **ONBD-03**: Step 2 — Permissions: Voice/Microphone/Accessibility with toggles that redirect to System Settings and turn green when granted. User can skip and do later
+- [ ] **ONBD-04**: Step 3 — Download premium voices with link to System Settings > Spoken Content
+- [ ] **ONBD-05**: Success screen — "All set! Restart Claude Code to activate hooks"
+- [ ] **ONBD-06**: App installs to /Applications on first launch (wherever DMG was opened from)
+- [ ] **ONBD-07**: Menu bar "Setup..." entry re-opens onboarding wizard
 
-### Voice
+### Menu Bar (Popover)
 
-- [x] **VOICE-01**: User can toggle voice recording (tap to start, tap to stop) via Speak button or hotkey
-- [x] **VOICE-02**: Transcribed voice text is injected into the terminal and submitted (Enter), then the previous app is refocused — user never sees the terminal switch
-- [x] **VOICE-03**: When Claude finishes and auto-speak is enabled, the last response is summarized via Apple Intelligence and spoken aloud using Ava Premium TTS
-- [x] **VOICE-04**: User can stop TTS mid-sentence by pressing Speak (which also starts recording) or via hotkey
+- [ ] **MENU-01**: Click menu bar icon opens rich popover panel (replaces dropdown menu)
+- [ ] **MENU-02**: Quick toggles at top of popover: YOLO mode, mute/sound, hide widget, quit
+- [ ] **MENU-03**: Advanced settings section: theme picker, dark mode, auto-speak, vibration, notifications
+- [ ] **MENU-04**: Permissions section with live status toggles (re-trigger from here)
+- [ ] **MENU-05**: About section with version, GitHub link
+- [ ] **MENU-06**: "Setup..." and "Download Voices..." entries in popover
 
-### Controls
+### Code Quality
 
-- [x] **CTRL-01**: User can accept a pending permission via Accept button or hotkey
-- [x] **CTRL-02**: User can deny a pending permission via Deny button or hotkey
-- [x] **CTRL-03**: User can toggle YOLO mode (auto-accept all permissions) from the menu bar
-- [x] **CTRL-04**: User can power off the companion (visible but dormant — no monitoring, no sounds, no permissions) and power back on, from the menu bar
-- [x] **CTRL-05**: User can hide the widget to the menu bar and restore it from the menu — hidden mode still monitors and speaks if enabled
-
-### Infrastructure
-
-- [x] **INFRA-01**: A Python hook fires on Claude Code stop events, extracts the last assistant text from the session JSONL, and writes it to `~/.claude/claumagotchi/last_summary.txt`
-- [x] **INFRA-02**: Every button action has a keyboard shortcut (hotkey)
-- [x] **INFRA-03**: Menu bar provides toggles for: show/hide widget, sound effects, auto-speak, YOLO mode, and power on/off
-- [x] **INFRA-04**: All features work across all projects and Claude Code sessions on the same machine
-
-## Future Requirements
-
-### Quality of Life
-
-- **QOL-01**: Custom TTS voice selection (beyond Ava Premium)
-- **QOL-02**: Per-project settings (different YOLO/voice preferences per project)
-- **QOL-03**: Conversation history panel (past summaries)
-- **QOL-04**: Hotkey remapping from menu bar
+- [x] **CODE-01**: All hardcoded `/Users/vcartier/` fallback paths removed from image loaders
+- [x] **CODE-02**: Old egg shell assets (shell-*.png) deleted from Sources/shells/
+- [x] **CODE-03**: All compiler warnings fixed (Sendable closures, unused variables)
+- [ ] **CODE-04**: Vibration/buzz logic extracted into dedicated BuzzService
+- [ ] **CODE-05**: Clean file organization (one type per file, consistent naming)
 
 ### Distribution
 
-- **DIST-01**: Automated test suite
-- **DIST-02**: App Store distribution
+- [ ] **DIST-01**: DMG package builds via `make dmg` with app icon and /Applications symlink
+- [ ] **DIST-02**: GitHub Release workflow with DMG artifact upload
+- [ ] **DIST-03**: Notarization via `notarytool` so Gatekeeper doesn't block the app
+- [ ] **DIST-04**: Auto-copy to /Applications on first launch
+
+### GitHub
+
+- [ ] **GH-01**: Landing-style README with hero GIF showing the beeper in action
+- [ ] **GH-02**: Feature grid with icons (monitoring, voice, permissions, themes)
+- [ ] **GH-03**: One-liner install command + DMG download link
+- [ ] **GH-04**: Screenshots of all shell color themes
+- [ ] **GH-05**: Contributing guide and license
+
+### Visual Polish
+
+- [ ] **VFX-01**: Smooth state transitions on LCD (fade between states, not instant swap)
+- [ ] **VFX-02**: Dark mode shell variants render correctly with LCD overlay
+- [ ] **VFX-03**: Consistent button press feedback across all buttons
+
+### Voice
+
+- [ ] **VOICE-05**: Voice recording uses Groq Whisper API (WAV file → API → text) instead of SFSpeech
+- [ ] **VOICE-06**: API key stored in macOS Keychain (prompted during onboarding if voice enabled)
+- [ ] **VOICE-07**: Summary flow: manual "Summarize" button when Claude finishes, not just auto-speak
+
+## Future Requirements
+
+### Post-Launch
+
+- **POST-01**: Homebrew tap (`brew install cc-beeper`)
+- **POST-02**: Per-project settings
+- **POST-03**: Hotkey remapping
+- **POST-04**: Conversation history panel
+- **POST-05**: Custom TTS voice selection
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Game Boy Color form factor | Keeping the egg shell — familiar, compact |
-| Larger screen | Current size is enough with 2-line state content |
-| Settings window | Controls live on widget + menu bar |
-| Activity feed UI | Summaries replace raw activity log |
-| Hotkey remapping | Ship with fixed hotkeys, remap later |
-| BYOK API keys | Apple Intelligence is free and on-device |
-| External TTS | Ava Premium is free and adequate |
 | iOS/iPad companion | macOS only |
+| App Store distribution | GitHub + DMG for v3.0 |
+| BYOK API keys (beyond Groq) | Groq free tier sufficient |
+| External TTS (OpenAI, ElevenLabs) | Ava Premium is adequate |
+| Dropdown menu | Replaced by popover panel |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UI-01 | Phase 9 | Complete |
-| UI-02 | Phase 9 | Complete |
-| UI-03 | Phase 9 | Complete |
-| VOICE-01 | Phase 10 | Complete |
-| VOICE-02 | Phase 10 | Complete |
-| VOICE-03 | Phase 11 | Complete |
-| VOICE-04 | Phase 11 | Complete |
-| CTRL-01 | Phase 9 | Complete (09-01) |
-| CTRL-02 | Phase 9 | Complete (09-01) |
-| CTRL-03 | Phase 9 | Complete |
-| CTRL-04 | Phase 9 | Complete (09-01) |
-| CTRL-05 | Phase 9 | Complete (09-01) |
-| INFRA-01 | Phase 11 | Complete |
-| INFRA-02 | Phase 9 | Complete (09-01) |
-| INFRA-03 | Phase 9 | Complete |
-| INFRA-04 | Phase 10 | Complete |
+| ONBD-01 | Phase 13 | Pending |
+| ONBD-02 | Phase 13 | Pending |
+| ONBD-03 | Phase 13 | Pending |
+| ONBD-04 | Phase 13 | Pending |
+| ONBD-05 | Phase 13 | Pending |
+| ONBD-06 | Phase 13 | Pending |
+| ONBD-07 | Phase 13 | Pending |
+| MENU-01 | Phase 14 | Pending |
+| MENU-02 | Phase 14 | Pending |
+| MENU-03 | Phase 14 | Pending |
+| MENU-04 | Phase 14 | Pending |
+| MENU-05 | Phase 14 | Pending |
+| MENU-06 | Phase 14 | Pending |
+| CODE-01 | Phase 12 | Complete |
+| CODE-02 | Phase 12 | Complete |
+| CODE-03 | Phase 12 | Complete |
+| CODE-04 | Phase 12 | Pending |
+| CODE-05 | Phase 12 | Pending |
+| DIST-01 | Phase 17 | Pending |
+| DIST-02 | Phase 17 | Pending |
+| DIST-03 | Phase 17 | Pending |
+| DIST-04 | Phase 17 | Pending |
+| GH-01 | Phase 18 | Pending |
+| GH-02 | Phase 18 | Pending |
+| GH-03 | Phase 18 | Pending |
+| GH-04 | Phase 18 | Pending |
+| GH-05 | Phase 18 | Pending |
+| VFX-01 | Phase 16 | Pending |
+| VFX-02 | Phase 16 | Pending |
+| VFX-03 | Phase 16 | Pending |
+| VOICE-05 | Phase 15 | Pending |
+| VOICE-06 | Phase 15 | Pending |
+| VOICE-07 | Phase 15 | Pending |
 
 **Coverage:**
-- v2.0 requirements: 16 total
-- Mapped to phases: 16
+- v3.0 requirements: 33 total
+- Mapped to phases: 33
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-03-22*
+*Requirements defined: 2026-03-24*
