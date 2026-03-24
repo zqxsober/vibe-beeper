@@ -49,9 +49,6 @@ final class ClaudeMonitor: ObservableObject {
     @Published var autoAccept: Bool {
         didSet { UserDefaults.standard.set(autoAccept, forKey: "autoAccept") }
     }
-    @Published var notificationsEnabled: Bool {
-        didSet { UserDefaults.standard.set(notificationsEnabled, forKey: "notificationsEnabled") }
-    }
     @Published var vibrationEnabled: Bool {
         didSet { UserDefaults.standard.set(vibrationEnabled, forKey: "vibrationEnabled") }
     }
@@ -132,8 +129,6 @@ final class ClaudeMonitor: ObservableObject {
     /// Per-session state tracking — key is session ID, value is last known state.
     private var sessionStates: [String: ClaudeState] = [:]
 
-    private let notificationManager = NotificationManager()
-
     private var fileHandle: FileHandle?
     private var source: DispatchSourceFileSystemObject?
     private var idleWork: DispatchWorkItem?
@@ -144,10 +139,8 @@ final class ClaudeMonitor: ObservableObject {
     init() {
         soundEnabled = UserDefaults.standard.object(forKey: "soundEnabled") as? Bool ?? true
         autoAccept = UserDefaults.standard.object(forKey: "autoAccept") as? Bool ?? false
-        notificationsEnabled = UserDefaults.standard.object(forKey: "notificationsEnabled") as? Bool ?? true
         vibrationEnabled = UserDefaults.standard.object(forKey: "vibrationEnabled") as? Bool ?? true
         ensureIPCDir()
-        notificationManager.requestPermission()
         rehydrateSessions()
         setupFileWatcher()
         setupSummaryWatcher()
@@ -358,12 +351,6 @@ final class ClaudeMonitor: ObservableObject {
                     self?.respondToPermission(allow: true)
                 }
             } else {
-                if notificationsEnabled {
-                    notificationManager.sendPermissionRequest(
-                        tool: pendingPermission?.tool ?? "Unknown",
-                        summary: pendingPermission?.summary ?? ""
-                    )
-                }
                 if !sid.isEmpty { sessionStates[sid] = .needsYou }
                 sessionCount = sessionStates.count
                 awaitingUserAction = true
@@ -382,12 +369,6 @@ final class ClaudeMonitor: ObservableObject {
                     self?.respondToPermission(allow: true)
                 }
             } else {
-                if notificationsEnabled {
-                    notificationManager.sendPermissionRequest(
-                        tool: pendingPermission?.tool ?? "Unknown",
-                        summary: pendingPermission?.summary ?? ""
-                    )
-                }
                 if !sid.isEmpty { sessionStates[sid] = .needsYou }
                 sessionCount = sessionStates.count
                 awaitingUserAction = true
@@ -397,9 +378,6 @@ final class ClaudeMonitor: ObservableObject {
             return
         }
         if type == "permission_timeout" {
-            if notificationsEnabled {
-                notificationManager.sendPermissionTimeout()
-            }
             return
         }
 
@@ -421,10 +399,6 @@ final class ClaudeMonitor: ObservableObject {
         case "post_tool_error":
             if !sid.isEmpty { sessionStates[sid] = .thinking }
             updateAggregateState()
-            if notificationsEnabled {
-                let tool = event["tool"] as? String ?? "Tool"
-                notificationManager.sendToolError(tool: tool)
-            }
         case "stop":
             if !sid.isEmpty { sessionStates[sid] = .finished }
             thinkingStartTime = nil
@@ -432,9 +406,6 @@ final class ClaudeMonitor: ObservableObject {
             updateAggregateState()
             if state == .finished {
                 playDoneChime()
-                if notificationsEnabled {
-                    notificationManager.sendSessionDone()
-                }
                 startIdleTimer(interval: 60)
             }
         case "session_start":
