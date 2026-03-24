@@ -7,6 +7,8 @@ struct ClaumagotchiApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var monitor = ClaudeMonitor()
     @StateObject private var themeManager = ThemeManager()
+    @Environment(\.openWindow) private var openWindow
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     var body: some Scene {
         Window("Claumagotchi", id: "main") {
@@ -14,6 +16,15 @@ struct ClaumagotchiApp: App {
                 .environmentObject(monitor)
                 .environmentObject(themeManager)
                 .background(WindowConfigurator())
+                .onAppear {
+                    if !hasCompletedOnboarding {
+                        // Hide beeper, open onboarding
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            Self.hideMainWindow()
+                            openWindow(id: "onboarding")
+                        }
+                    }
+                }
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
@@ -74,11 +85,7 @@ struct ClaumagotchiApp: App {
             .keyboardShortcut("p")
 
             Button("Setup...") {
-                for window in NSApp.windows where window.identifier?.rawValue == "onboarding" {
-                    window.makeKeyAndOrderFront(nil)
-                    NSApp.activate(ignoringOtherApps: true)
-                    return
-                }
+                openWindow(id: "onboarding")
             }
 
             Divider()
@@ -137,28 +144,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // ONBD-06: Prompt to move to /Applications if not there
         AppMover.moveToApplicationsIfNeeded()
 
-        // First-launch onboarding
+        // AX prompt for returning users (onboarding handles first-launch)
         let hasOnboarded = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
-        if !hasOnboarded {
-            // Hide main widget, show onboarding.
-            // DispatchQueue.main.asyncAfter ensures SwiftUI Window scenes have
-            // had time to create their NSWindows before we look them up.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                for window in NSApp.windows {
-                    if window.identifier?.rawValue == "main" {
-                        window.orderOut(nil)
-                    }
-                    if window.identifier?.rawValue == "onboarding" {
-                        window.makeKeyAndOrderFront(nil)
-                        NSApp.activate(ignoringOtherApps: true)
-                    }
-                }
-            }
-            return  // Skip AX prompt — handled by onboarding wizard
-        }
-
-        // Returning user: prompt for AX if not yet granted (existing behavior)
-        if !AXIsProcessTrusted() {
+        if hasOnboarded && !AXIsProcessTrusted() {
             let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
             AXIsProcessTrustedWithOptions(options)
         }
