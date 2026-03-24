@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-03-24T10:14:54.351Z"
+stopped_at: Completed 12-02-PLAN.md
+last_updated: "2026-03-24T10:19:39.494Z"
 progress:
   total_phases: 7
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -41,6 +41,7 @@ Plan: 1 of 2
 
 *Updated after each plan completion*
 | Phase 12-code-quality P01 | 10 | 2 tasks | 13 files |
+| Phase 12-code-quality P02 | 3 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -54,6 +55,8 @@ Plan: 1 of 2
 - [Phase 12-code-quality]: Bundle.main.resourcePath-only image loading — no fallback to developer source paths
 - [Phase 12-code-quality]: Delete legacy shell-*.png (9 files) — replaced by beeper-*.png in v3 redesign
 - [Phase 12-code-quality]: Package.swift exclude: shells, buttons, shell.svg — suppress 36 unhandled files warning
+- [Phase 12-code-quality]: BuzzService takes vibrationEnabled/soundEnabled as parameters — no direct ClaudeMonitor reference, one-directional dependency
+- [Phase 12-code-quality]: AppDelegate colocated with @main ClaumagotchiApp — acceptable exception to one-type-per-file rule
 
 ### Pending Todos
 
@@ -66,6 +69,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T10:14:54.347Z
-Stopped at: Completed 12-01-PLAN.md
+Last session: 2026-03-24T10:19:39.492Z
+Stopped at: Completed 12-02-PLAN.md
 Resume file: None

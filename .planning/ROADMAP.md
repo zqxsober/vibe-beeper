@@ -65,7 +65,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 
 **Milestone Goal:** Make CC-Beeper ready for strangers — first-launch onboarding, clean code, rich menu popover, Groq voice, visual polish, DMG distribution, and a landing-style GitHub README for the HN/Reddit/Twitter launch.
 
-- [ ] **Phase 12: Code Quality** - Remove hardcoded paths, delete dead assets, fix warnings, extract BuzzService
+- [x] **Phase 12: Code Quality** - Remove hardcoded paths, delete dead assets, fix warnings, extract BuzzService (completed 2026-03-24)
 - [ ] **Phase 13: Onboarding** - First-launch wizard guiding users through CLI detection, permissions, hooks, and voice setup
 - [ ] **Phase 14: Menu Bar Popover** - Replace dropdown with rich popover panel (toggles, settings, permissions, about)
 - [ ] **Phase 15: Voice Fixes** - Upgrade voice recording to Groq Whisper, store API key in Keychain, add manual summary trigger
@@ -172,7 +172,7 @@ Note: Phase 15 (Voice Fixes) depends only on Phase 12 and can be executed in par
 | 9. UI + Controls | v2.0 Voice Loop | 3/3 | Complete | 2026-03-22 |
 | 10. Voice Input + Injection | v2.0 Voice Loop | 1/1 | Complete | 2026-03-22 |
 | 11. Auto-Speak + Summary Hook | v2.0 Voice Loop | 2/2 | Complete | 2026-03-22 |
-| 12. Code Quality | 1/2 | In Progress|  | - |
+| 12. Code Quality | 2/2 | Complete   | 2026-03-24 | - |
 | 13. Onboarding | v3.0 Public Launch | 0/TBD | Not started | - |
 | 14. Menu Bar Popover | v3.0 Public Launch | 0/TBD | Not started | - |
 | 15. Voice Fixes | v3.0 Public Launch | 0/TBD | Not started | - |

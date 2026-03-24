@@ -31,8 +31,8 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 - [x] **CODE-01**: All hardcoded `/Users/vcartier/` fallback paths removed from image loaders
 - [x] **CODE-02**: Old egg shell assets (shell-*.png) deleted from Sources/shells/
 - [x] **CODE-03**: All compiler warnings fixed (Sendable closures, unused variables)
-- [ ] **CODE-04**: Vibration/buzz logic extracted into dedicated BuzzService
-- [ ] **CODE-05**: Clean file organization (one type per file, consistent naming)
+- [x] **CODE-04**: Vibration/buzz logic extracted into dedicated BuzzService
+- [x] **CODE-05**: Clean file organization (one type per file, consistent naming)
 
 ### Distribution
 
@@ -101,8 +101,8 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 | CODE-01 | Phase 12 | Complete |
 | CODE-02 | Phase 12 | Complete |
 | CODE-03 | Phase 12 | Complete |
-| CODE-04 | Phase 12 | Pending |
-| CODE-05 | Phase 12 | Pending |
+| CODE-04 | Phase 12 | Complete |
+| CODE-05 | Phase 12 | Complete |
 | DIST-01 | Phase 17 | Pending |
 | DIST-02 | Phase 17 | Pending |
 | DIST-03 | Phase 17 | Pending |
