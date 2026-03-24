@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: "Checkpoint Task 2: 14-02 human-verify"
-last_updated: "2026-03-24T20:27:13.254Z"
+stopped_at: Completed 14-02-PLAN.md
+last_updated: "2026-03-24T20:46:30.369Z"
 progress:
   total_phases: 7
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -47,6 +47,7 @@ Plan: 1 of 2
 | Phase 13-onboarding P02 | 3 | 2 tasks | 9 files |
 | Phase 13-onboarding P03 | 25 | 2 tasks | 1 files |
 | Phase 14-menu-bar-popover P01 | 2 | 2 tasks | 6 files |
+| Phase 14-menu-bar-popover P02 | 45 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,8 @@ Plan: 1 of 2
 - [Phase 13-onboarding]: @Environment(\.openWindow) must live in App struct not AppDelegate — AppDelegate is not in the SwiftUI environment
 - [Phase 14-menu-bar-popover]: MenuBarExtra uses .window style (not .menu) to render SwiftUI popover instead of native dropdown
 - [Phase 14-menu-bar-popover]: Settings window scene added alongside existing main/onboarding windows with id: settings
+- [Phase 14-menu-bar-popover]: Reverted to .menuBarExtraStyle(.menu) dropdown — .window popover not native-feeling on macOS
+- [Phase 14-menu-bar-popover]: ClaudeMonitor permission gate checks pending.json freshness (<5s) and ignores safe tools (AskUserQuestion etc) to prevent false needsYou triggers
 
 ### Pending Todos
 
@@ -84,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T20:27:13.244Z
-Stopped at: Checkpoint Task 2: 14-02 human-verify
+Last session: 2026-03-24T20:46:30.365Z
+Stopped at: Completed 14-02-PLAN.md
 Resume file: None

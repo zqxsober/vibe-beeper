@@ -21,9 +21,9 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 
 - [x] **MENU-01**: Click menu bar icon opens rich popover panel (replaces dropdown menu)
 - [x] **MENU-02**: Quick toggles at top of popover: YOLO mode, mute/sound, hide widget, quit
-- [ ] **MENU-03**: Advanced settings section: theme picker, dark mode, auto-speak, vibration, notifications
-- [ ] **MENU-04**: Permissions section with live status toggles (re-trigger from here)
-- [ ] **MENU-05**: About section with version, GitHub link
+- [x] **MENU-03**: Advanced settings section: theme picker, dark mode, auto-speak, vibration, notifications
+- [x] **MENU-04**: Permissions section with live status toggles (re-trigger from here)
+- [x] **MENU-05**: About section with version, GitHub link
 - [x] **MENU-06**: "Setup..." and "Download Voices..." entries in popover
 
 ### Code Quality
@@ -94,9 +94,9 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 | ONBD-07 | Phase 13 | Complete |
 | MENU-01 | Phase 14 | Complete |
 | MENU-02 | Phase 14 | Complete |
-| MENU-03 | Phase 14 | Pending |
-| MENU-04 | Phase 14 | Pending |
-| MENU-05 | Phase 14 | Pending |
+| MENU-03 | Phase 14 | Complete |
+| MENU-04 | Phase 14 | Complete |
+| MENU-05 | Phase 14 | Complete |
 | MENU-06 | Phase 14 | Complete |
 | CODE-01 | Phase 12 | Complete |
 | CODE-02 | Phase 12 | Complete |
