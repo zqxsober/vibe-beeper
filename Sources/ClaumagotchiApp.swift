@@ -19,6 +19,14 @@ struct ClaumagotchiApp: App {
         .windowResizability(.contentSize)
         .defaultPosition(.topTrailing)
 
+        Window("Setup CC-Beeper", id: "onboarding") {
+            OnboardingView()
+        }
+        .windowStyle(.titleBar)
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
+        .defaultSize(width: 480, height: 400)
+
         MenuBarExtra {
             // SECTION 1: Status
             Text("Sessions: \(monitor.sessionCount)")
@@ -65,11 +73,11 @@ struct ClaumagotchiApp: App {
             }
             .keyboardShortcut("p")
 
-            if !AXIsProcessTrusted() {
-                Button("Enable Global Hotkeys...") {
-                    let key = "AXTrustedCheckOptionPrompt" as CFString
-                    let opts = [key as String: true] as CFDictionary
-                    _ = AXIsProcessTrustedWithOptions(opts)
+            Button("Setup...") {
+                for window in NSApp.windows where window.identifier?.rawValue == "onboarding" {
+                    window.makeKeyAndOrderFront(nil)
+                    NSApp.activate(ignoringOtherApps: true)
+                    return
                 }
             }
 
@@ -126,7 +134,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         Self.writePID()
 
-        // One-time Accessibility prompt on first launch
+        // ONBD-06: Prompt to move to /Applications if not there
+        AppMover.moveToApplicationsIfNeeded()
+
+        // First-launch onboarding
+        let hasOnboarded = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+        if !hasOnboarded {
+            // Hide main widget, show onboarding.
+            // DispatchQueue.main.asyncAfter ensures SwiftUI Window scenes have
+            // had time to create their NSWindows before we look them up.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                for window in NSApp.windows {
+                    if window.identifier?.rawValue == "main" {
+                        window.orderOut(nil)
+                    }
+                    if window.identifier?.rawValue == "onboarding" {
+                        window.makeKeyAndOrderFront(nil)
+                        NSApp.activate(ignoringOtherApps: true)
+                    }
+                }
+            }
+            return  // Skip AX prompt — handled by onboarding wizard
+        }
+
+        // Returning user: prompt for AX if not yet granted (existing behavior)
         if !AXIsProcessTrusted() {
             let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
             AXIsProcessTrustedWithOptions(options)
@@ -174,4 +205,3 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         kill(pid, 0) == 0
     }
 }
-

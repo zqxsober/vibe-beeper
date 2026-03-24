@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: Completed 13-01-PLAN.md
-last_updated: "2026-03-24T18:23:04.873Z"
+stopped_at: Completed 13-02-PLAN.md
+last_updated: "2026-03-24T18:28:00Z"
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-24)
 ## Current Position
 
 Phase: 13 (Onboarding) — EXECUTING
-Plan: 1 of 4
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -44,6 +44,7 @@ Plan: 1 of 4
 | Phase 12-code-quality P02 | 3 | 2 tasks | 5 files |
 | Phase 13-onboarding P00 | 2 | 1 tasks | 4 files |
 | Phase 13-onboarding P01 | 3 | 2 tasks | 8 files |
+| Phase 13-onboarding P02 | 3 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,9 @@ Plan: 1 of 4
 - [Phase 13-onboarding]: Hook script copied into Sources/ (not ../hooks/ path) — SPM resource path must be within target's path: directory
 - [Phase 13-onboarding]: AppMover uses fm.copyItem as primary operation — fm.moveItem fails cross-volume from DMG
 - [Phase 13-onboarding]: ClaudeDetector scans ~/.nvm/versions/node/ with contentsOfDirectory sorted newest-first — PATH in macOS app is minimal
+- [Phase 13-onboarding]: NotificationManager removed in coordinated sweep: deleted file + removed 4 call sites + notificationsEnabled + Toggle from menu
+- [Phase 13-onboarding]: Deep links live in OnboardingViewModel methods; step views call viewModel.open*Settings() — correct encapsulation
+- [Phase 13-onboarding]: Color.accentColor (not .accent) for foregroundStyle — ShapeStyle has no .accent member on macOS 26
 
 ### Pending Todos
 

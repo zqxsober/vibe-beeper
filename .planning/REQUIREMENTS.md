@@ -9,11 +9,11 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 
 ### Onboarding
 
-- [ ] **ONBD-01**: Welcome screen with illustration, title, description of what CC-Beeper does, and "Get Started" button
+- [x] **ONBD-01**: Welcome screen with illustration, title, description of what CC-Beeper does, and "Get Started" button
 - [x] **ONBD-02**: Step 1 — Scan for Claude Code CLI + hooks installation. Shows toggle that turns green when detected/installed
-- [ ] **ONBD-03**: Step 2 — Permissions: Voice/Microphone/Accessibility with toggles that redirect to System Settings and turn green when granted. User can skip and do later
-- [ ] **ONBD-04**: Step 3 — Download premium voices with link to System Settings > Spoken Content
-- [ ] **ONBD-05**: Success screen — "All set! Restart Claude Code to activate hooks"
+- [x] **ONBD-03**: Step 2 — Permissions: Voice/Microphone/Accessibility with toggles that redirect to System Settings and turn green when granted. User can skip and do later
+- [x] **ONBD-04**: Step 3 — Download premium voices with link to System Settings > Spoken Content
+- [x] **ONBD-05**: Success screen — "All set! Restart Claude Code to activate hooks"
 - [x] **ONBD-06**: App installs to /Applications on first launch (wherever DMG was opened from)
 - [ ] **ONBD-07**: Menu bar "Setup..." entry re-opens onboarding wizard
 
@@ -85,11 +85,11 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ONBD-01 | Phase 13 | Pending |
+| ONBD-01 | Phase 13 | Complete |
 | ONBD-02 | Phase 13 | Complete |
-| ONBD-03 | Phase 13 | Pending |
-| ONBD-04 | Phase 13 | Pending |
-| ONBD-05 | Phase 13 | Pending |
+| ONBD-03 | Phase 13 | Complete |
+| ONBD-04 | Phase 13 | Complete |
+| ONBD-05 | Phase 13 | Complete |
 | ONBD-06 | Phase 13 | Complete |
 | ONBD-07 | Phase 13 | Pending |
 | MENU-01 | Phase 14 | Pending |
