@@ -119,7 +119,10 @@ Plans:
   4. Permissions section shows live status for each permission and lets users re-trigger them from the popover
   5. About section shows the app version and a clickable GitHub link
   6. "Setup..." and "Download Voices..." entries are present and functional in the popover
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 14-01-PLAN.md — Replace dropdown with popover panel: quick actions, theme dots, dark mode, Setup/Quit + wire Settings window scene
+- [ ] 14-02-PLAN.md — Build Settings window sections: Audio, Permissions (live polling), Voice, About + human verification
 
 ### Phase 15: Voice Fixes
 **Goal**: Voice recording is reliable and uses Groq Whisper; the API key is stored securely; summary playback has a manual trigger
@@ -177,8 +180,8 @@ Note: Phase 15 (Voice Fixes) depends only on Phase 12 and can be executed in par
 | 10. Voice Input + Injection | v2.0 Voice Loop | 1/1 | Complete | 2026-03-22 |
 | 11. Auto-Speak + Summary Hook | v2.0 Voice Loop | 2/2 | Complete | 2026-03-22 |
 | 12. Code Quality | 2/2 | Complete    | 2026-03-24 | - |
-| 13. Onboarding | 4/4 | Complete   | 2026-03-24 | - |
-| 14. Menu Bar Popover | v3.0 Public Launch | 0/TBD | Not started | - |
+| 13. Onboarding | 4/4 | Complete    | 2026-03-24 | - |
+| 14. Menu Bar Popover | v3.0 Public Launch | 0/2 | Planned | - |
 | 15. Voice Fixes | v3.0 Public Launch | 0/TBD | Not started | - |
 | 16. Visual Polish | v3.0 Public Launch | 0/TBD | Not started | - |
 | 17. Distribution | v3.0 Public Launch | 0/TBD | Not started | - |
