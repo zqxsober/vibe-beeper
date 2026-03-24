@@ -13,9 +13,8 @@ struct ContentView: View {
     private let lcdW: CGFloat = 286
     private let lcdH: CGFloat = 45
 
-    // Vibration
-    @State private var lastVibrateState: ClaudeState?
-    @State private var reminderTimer: Timer?
+    // Buzz service
+    private let buzzService = BuzzService()
 
     // LED pulse
     @State private var ledPulse = false
@@ -100,37 +99,8 @@ struct ContentView: View {
             ledPulse = false
         }
 
-        // Vibration on done
-        if monitor.vibrationEnabled && newState == .finished && lastVibrateState != newState {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                vibrate()
-            }
-        }
-
-        // Needs permission: vibrate now + repeat every 15s
-        if newState == .needsYou {
-            if lastVibrateState != newState {
-                if monitor.vibrationEnabled {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                        vibrate()
-                    }
-                }
-                reminderTimer?.invalidate()
-                reminderTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak monitor] _ in
-                    Task { @MainActor in
-                        guard let monitor else { return }
-                        if monitor.state == .needsYou && monitor.vibrationEnabled {
-                            vibrate()
-                        }
-                    }
-                }
-            }
-        } else {
-            reminderTimer?.invalidate()
-            reminderTimer = nil
-        }
-
-        lastVibrateState = newState
+        // Buzz/vibration
+        buzzService.handleStateChange(newState, vibrationEnabled: monitor.vibrationEnabled, soundEnabled: monitor.soundEnabled)
     }
 
     // MARK: - LEDs
@@ -155,41 +125,6 @@ struct ContentView: View {
 
     private var ledAlertActive: Bool {
         monitor.state == .thinking || monitor.state == .needsYou
-    }
-
-    // MARK: - Vibration (window-based, no view offset)
-
-    private func vibrate() {
-        // 3 short beeps
-        playBeeps()
-
-        // Shake the window
-        guard let window = NSApp.windows.first(where: { $0.identifier?.rawValue == "main" }) else { return }
-        let origin = window.frame.origin
-        let shakes = 60
-        let distance: CGFloat = 3
-        let total = 3.0
-        let interval = total / Double(shakes)
-
-        for i in 0..<shakes {
-            DispatchQueue.main.asyncAfter(deadline: .now() + interval * Double(i)) {
-                let dx: CGFloat = (i % 2 == 0) ? distance : -distance
-                window.setFrameOrigin(NSPoint(x: origin.x + dx, y: origin.y))
-            }
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + total) {
-            window.setFrameOrigin(origin)
-        }
-    }
-
-    private func playBeeps() {
-        guard monitor.soundEnabled else { return }
-        // 3 short beeps with pauses
-        for i in 0..<3 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.3) {
-                NSSound(named: "Tink")?.play()
-            }
-        }
     }
 
     private func loadShellImage(_ name: String) -> NSImage {
