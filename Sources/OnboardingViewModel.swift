@@ -11,7 +11,8 @@ final class OnboardingViewModel: ObservableObject {
         case cliAndHooks = 1
         case permissions = 2
         case voices = 3
-        case done = 4
+        case apiKeys = 4   // optional BYOK step
+        case done = 5
     }
 
     @Published var currentStep: Step = .welcome
