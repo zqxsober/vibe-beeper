@@ -109,6 +109,16 @@ None - no external service configuration required.
 - Hook script is bundled: Bundle.main.path(forResource: "claumagotchi-hook", ofType: "py") will return a valid path at runtime
 - Plan 02 should call AppMover.moveToApplicationsIfNeeded() in AppDelegate.applicationDidFinishLaunching before showing the onboarding window
 
+## Self-Check: PASSED
+
+- Sources/ClaudeDetector.swift: FOUND
+- Sources/HookInstaller.swift: FOUND
+- Sources/AppMover.swift: FOUND
+- Sources/claumagotchi-hook.py: FOUND
+- 13-01-SUMMARY.md: FOUND
+- Commit 8ede6f3: FOUND
+- Commit 051d004: FOUND
+
 ---
 *Phase: 13-onboarding*
 *Completed: 2026-03-24*

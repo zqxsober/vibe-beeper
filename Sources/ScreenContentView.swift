@@ -17,46 +17,46 @@ struct ScreenContentView: View {
             Rectangle().fill(themeManager.darkMode ? themeManager.lcdBg : Color.clear)
 
             HStack(spacing: 8) {
-                // Character — smaller
+                // Character
                 PixelCharacterView(
                     state: monitor.state,
                     frame: animFrame,
                     onColor: themeManager.lcdOn,
                     isYolo: isYoloActive
                 )
-                .frame(width: 34, height: 26)
+                .frame(width: 35, height: 30)
 
-                // Status: big title + small detail
+                // Status: big title + scrolling detail
                 VStack(alignment: .leading, spacing: 1) {
                     Text(titleText)
                         .font(.system(size: 13, weight: .heavy, design: .monospaced))
                         .foregroundColor(themeManager.lcdOn)
-                        .opacity(monitor.state.needsAttention
-                                 ? (animFrame % 2 == 0 ? 1 : 0.15) : 1)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
 
                     if let detail = detailText {
-                        Text(detail)
-                            .font(.system(size: 8, weight: .medium, design: .monospaced))
-                            .foregroundColor(themeManager.lcdOn.opacity(0.7))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.6)
+                        MarqueeText(text: detail, font: .system(size: 8, weight: .medium, design: .monospaced), color: themeManager.lcdOn.opacity(0.7))
+                            .frame(height: 10)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 // YOLO badge
                 if isYoloActive {
-                    Text("YOLO")
-                        .font(.system(size: 6, weight: .black, design: .monospaced))
-                        .foregroundColor(themeManager.lcdOn.opacity(0.6))
-                        .padding(.horizontal, 3)
-                        .padding(.vertical, 1)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 2)
-                                .stroke(themeManager.lcdOn.opacity(0.3), lineWidth: 0.5)
-                        )
+                    HStack(spacing: 2) {
+                        Image(systemName: "hare.fill")
+                            .font(.system(size: 6))
+                        Text("YOLO")
+                            .font(.system(size: 6, weight: .black, design: .monospaced))
+                    }
+                    .foregroundColor(themeManager.lcdOn.opacity(0.6))
+                    .padding(.horizontal, 3)
+                    .padding(.vertical, 1)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 2)
+                            .stroke(themeManager.lcdOn.opacity(0.3), lineWidth: 0.5)
+                    )
+                    .offset(x: -2, y: -10)
                 }
             }
             .padding(.leading, 10)
@@ -122,14 +122,10 @@ struct ScreenContentView: View {
 
     private var titleText: String {
         switch monitor.state {
-        case .thinking:
-            return "Working..."
-        case .finished:
-            return "Done!"
-        case .needsYou:
-            return "Needs you!"
-        case .idle:
-            return "ZZZ..."
+        case .thinking: return "Working..."
+        case .finished: return "Done!"
+        case .needsYou: return "Needs you!"
+        case .idle: return "ZZZ..."
         }
     }
 
@@ -142,13 +138,12 @@ struct ScreenContentView: View {
         case .needsYou:
             if let p = monitor.pendingPermission {
                 let tool = humanToolName(p.tool)
-                let file = truncateFilename(p.summary)
-                return "\(tool) · \(file)"
+                return "\(tool) · \(p.summary)"
             }
             return nil
         case .finished:
             if let summary = monitor.lastSummary, summary != "Done!" {
-                return truncate(summary, to: 36)
+                return summary
             }
             return nil
         case .idle:
@@ -167,16 +162,87 @@ struct ScreenContentView: View {
         case "agent": return "Thinking"
         case "webfetch": return "Fetching"
         case "websearch": return "Searching"
-        default: return truncate(tool, to: 12)
+        default: return tool
+        }
+    }
+}
+
+// MARK: - Marquee Scrolling Text
+
+struct MarqueeText: View {
+    let text: String
+    let font: Font
+    let color: Color
+    let speed: Double = 30
+
+    @State private var textWidth: CGFloat = 0
+    @State private var containerWidth: CGFloat = 0
+    @State private var offset: CGFloat = 0
+    @State private var scrollTimer: Timer?
+
+    private var needsScroll: Bool { textWidth > containerWidth }
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Text(text)
+                    .font(font)
+                    .foregroundColor(color)
+                    .lineLimit(1)
+                    .fixedSize()
+                    .offset(x: needsScroll ? offset : 0)
+                    .onAppear {
+                        containerWidth = geo.size.width
+                    }
+                    .onChange(of: geo.size.width) {
+                        containerWidth = geo.size.width
+                    }
+                    .background(
+                        GeometryReader { textGeo in
+                            Color.clear.onAppear {
+                                textWidth = textGeo.size.width
+                                startScrollIfNeeded()
+                            }
+                            .onChange(of: text) {
+                                textWidth = textGeo.size.width
+                                offset = 0
+                                startScrollIfNeeded()
+                            }
+                        }
+                    )
+            }
+            .frame(width: geo.size.width, alignment: .leading)
+            .clipped()
+            .mask(
+                HStack(spacing: 0) {
+                    LinearGradient(colors: [.clear, .white], startPoint: .leading, endPoint: .trailing)
+                        .frame(width: needsScroll ? 8 : 0)
+                    Rectangle().fill(Color.white)
+                    LinearGradient(colors: [.white, .clear], startPoint: .leading, endPoint: .trailing)
+                        .frame(width: needsScroll ? 8 : 0)
+                }
+            )
         }
     }
 
-    private func truncate(_ s: String, to n: Int) -> String {
-        s.count <= n ? s : String(s.prefix(n - 1)) + "\u{2026}"
-    }
+    private func startScrollIfNeeded() {
+        scrollTimer?.invalidate()
+        guard needsScroll else { return }
 
-    private func truncateFilename(_ s: String) -> String {
-        let last = s.split(separator: "/").last.map(String.init) ?? s
-        return truncate(last, to: 22)
+        let totalDistance = textWidth - containerWidth + 20
+
+        scrollTimer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in
+            if offset > -totalDistance {
+                offset -= 0.9
+            } else {
+                timer.invalidate()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    offset = 0
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        startScrollIfNeeded()
+                    }
+                }
+            }
+        }
     }
 }

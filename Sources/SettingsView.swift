@@ -20,7 +20,8 @@ struct SettingsView: View {
                 SettingsAboutSection()
             }
         }
-        .frame(width: 460, height: 520)
+        .formStyle(.grouped)
+        .frame(minWidth: 400, minHeight: 450)
         .onAppear { viewModel.startPolling() }
         .onDisappear { viewModel.stopPolling() }
     }

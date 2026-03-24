@@ -4,24 +4,23 @@ struct QuickActionButton: View {
     let icon: String
     let label: String
     let isActive: Bool
-    let activeColor: Color
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 4) {
+            VStack(spacing: 3) {
                 Image(systemName: icon)
-                    .font(.system(size: 20))
-                    .foregroundStyle(isActive ? activeColor : Color.secondary)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(isActive ? .white : .secondary)
+                    .frame(width: 32, height: 32)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(isActive ? Color.accentColor : Color(.controlBackgroundColor))
+                    )
                 Text(label)
-                    .font(.system(size: 10))
-                    .foregroundStyle(isActive ? activeColor : Color.secondary)
+                    .font(.system(size: 9))
+                    .foregroundStyle(.secondary)
             }
-            .frame(width: 56, height: 52)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isActive ? activeColor.opacity(0.12) : Color.clear)
-            )
         }
         .buttonStyle(.plain)
     }

@@ -340,29 +340,31 @@ final class ClaudeMonitor: ObservableObject {
 
         let sid = event["sid"] as? String ?? ""
 
-        // Permission ALWAYS wins
-        if type == "permission" {
-            idleWork?.cancel()
-            loadPendingPermission()
-            setupGlobalHotkeys()
-            if autoAccept {
-                Task { @MainActor [weak self] in
-                    try? await Task.sleep(nanoseconds: 300_000_000)
-                    self?.respondToPermission(allow: true)
-                }
-            } else {
-                if !sid.isEmpty { sessionStates[sid] = .needsYou }
-                sessionCount = sessionStates.count
-                awaitingUserAction = true
-                state = .needsYou
-                playAlert()
+        // Permission — only trigger needsYou if pending.json has fresh data for a real tool
+        if type == "permission" || (type == "notification" && event["type"] as? String == "permission_prompt") {
+            // Check if pending.json exists and is fresh (less than 5 seconds old)
+            let fm = FileManager.default
+            guard let attrs = try? fm.attributesOfItem(atPath: Self.pendingFile),
+                  let modDate = attrs[.modificationDate] as? Date,
+                  Date().timeIntervalSince(modDate) < 5,
+                  let data = fm.contents(atPath: Self.pendingFile),
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  json["id"] is String else {
+                // No fresh pending permission — this was likely auto-approved by Claude Code
+                return
             }
-            return
-        }
-        if type == "notification", event["type"] as? String == "permission_prompt" {
+
+            // Ignore interactive-but-safe tools (not real permissions)
+            let safeTool = (json["tool"] as? String ?? "").lowercased()
+            let ignoredTools = ["askuserquestion", "taskcreate", "taskupdate", "taskget", "tasklist"]
+            if ignoredTools.contains(safeTool) { return }
+
             idleWork?.cancel()
-            loadPendingPermission()
+            let tool = json["tool"] as? String ?? ""
+            let summary = json["summary"] as? String ?? tool.lowercased()
+            pendingPermission = PendingPermission(id: json["id"] as? String ?? "", tool: tool, summary: summary)
             setupGlobalHotkeys()
+
             if autoAccept {
                 Task { @MainActor [weak self] in
                     try? await Task.sleep(nanoseconds: 300_000_000)
