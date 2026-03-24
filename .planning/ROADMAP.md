@@ -68,7 +68,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 - [x] **Phase 12: Code Quality** - Remove hardcoded paths, delete dead assets, fix warnings, extract BuzzService (completed 2026-03-24)
 - [x] **Phase 13: Onboarding** - First-launch wizard guiding users through CLI detection, permissions, hooks, and voice setup (completed 2026-03-24)
 - [x] **Phase 14: Menu Bar Popover** - Replace dropdown with rich popover panel (toggles, settings, permissions, about) (completed 2026-03-24)
-- [ ] **Phase 15: Voice Fixes** - Upgrade voice recording to Groq Whisper, store API key in Keychain, add manual summary trigger
+- [ ] **Phase 15: Voice Fixes** - Polish on-device SFSpeech, add optional BYOK Groq Whisper + OpenAI TTS, store API keys in Keychain
 - [ ] **Phase 16: Visual Polish** - Smooth LCD transitions, dark mode shell variants, consistent button press feedback
 - [ ] **Phase 17: Distribution** - DMG packaging, code signing, notarization, auto-install to /Applications
 - [ ] **Phase 18: GitHub README** - Landing-style README with hero GIF, feature grid, install command, theme screenshots
@@ -125,15 +125,18 @@ Plans:
 - [ ] 14-02-PLAN.md — Build Settings window sections: Audio, Permissions (live polling), Voice, About + human verification
 
 ### Phase 15: Voice Fixes
-**Goal**: Voice recording is reliable and uses Groq Whisper; the API key is stored securely; summary playback has a manual trigger
+**Goal**: On-device voice works reliably by default; optional BYOK API keys (Groq Whisper for transcription, OpenAI for TTS) unlock higher quality; keys are stored securely in Keychain and configurable in Settings and onboarding
 **Depends on**: Phase 12
 **Requirements**: VOICE-05, VOICE-06, VOICE-07
 **Success Criteria** (what must be TRUE):
-  1. Pressing Speak records audio to a WAV file and sends it to Groq Whisper API — not SFSpeechRecognizer
-  2. The Groq API key is stored in macOS Keychain and prompted for (with explanation) if not yet set
-  3. A "Summarize" button appears when Claude finishes — user can trigger summary on demand, not only automatically
-  4. Auto-speak and manual summarize can coexist: auto-speak fires if enabled, manual button always present
-**Plans**: TBD
+  1. With no API keys set, pressing Speak records and transcribes using on-device SFSpeechRecognizer (no regression)
+  2. With a Groq API key set, pressing Speak records a WAV file and sends it to Groq Whisper API for transcription
+  3. With an OpenAI API key set, TTS uses the OpenAI API instead of AVSpeechSynthesizer
+  4. API keys are stored in macOS Keychain, editable in Settings > Voice, and promptable in an optional onboarding step
+**Plans**: 2 plans
+Plans:
+- [ ] 15-01-PLAN.md — Create KeychainService, GroqTranscriptionService, and add API Keys section to Settings Voice panel
+- [ ] 15-02-PLAN.md — Wire Groq path into VoiceService, OpenAI path into TTSService, add onboarding API Keys step
 
 ### Phase 16: Visual Polish
 **Goal**: The Code Beeper looks and feels finished — smooth LCD transitions, correct dark mode rendering, tactile button feedback
@@ -181,8 +184,8 @@ Note: Phase 15 (Voice Fixes) depends only on Phase 12 and can be executed in par
 | 11. Auto-Speak + Summary Hook | v2.0 Voice Loop | 2/2 | Complete | 2026-03-22 |
 | 12. Code Quality | 2/2 | Complete    | 2026-03-24 | - |
 | 13. Onboarding | 4/4 | Complete    | 2026-03-24 | - |
-| 14. Menu Bar Popover | 2/2 | Complete   | 2026-03-24 | - |
-| 15. Voice Fixes | v3.0 Public Launch | 0/TBD | Not started | - |
+| 14. Menu Bar Popover | 2/2 | Complete    | 2026-03-24 | - |
+| 15. Voice Fixes | v3.0 Public Launch | 0/2 | Not started | - |
 | 16. Visual Polish | v3.0 Public Launch | 0/TBD | Not started | - |
 | 17. Distribution | v3.0 Public Launch | 0/TBD | Not started | - |
 | 18. GitHub README | v3.0 Public Launch | 0/TBD | Not started | - |
