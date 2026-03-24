@@ -15,7 +15,7 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 - [x] **ONBD-04**: Step 3 — Download premium voices with link to System Settings > Spoken Content
 - [x] **ONBD-05**: Success screen — "All set! Restart Claude Code to activate hooks"
 - [x] **ONBD-06**: App installs to /Applications on first launch (wherever DMG was opened from)
-- [ ] **ONBD-07**: Menu bar "Setup..." entry re-opens onboarding wizard
+- [x] **ONBD-07**: Menu bar "Setup..." entry re-opens onboarding wizard
 
 ### Menu Bar (Popover)
 
@@ -91,7 +91,7 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 | ONBD-04 | Phase 13 | Complete |
 | ONBD-05 | Phase 13 | Complete |
 | ONBD-06 | Phase 13 | Complete |
-| ONBD-07 | Phase 13 | Pending |
+| ONBD-07 | Phase 13 | Complete |
 | MENU-01 | Phase 14 | Pending |
 | MENU-02 | Phase 14 | Pending |
 | MENU-03 | Phase 14 | Pending |

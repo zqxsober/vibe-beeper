@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: Completed 13-02-PLAN.md
-last_updated: "2026-03-24T18:28:00Z"
+stopped_at: Completed 13-03-PLAN.md
+last_updated: "2026-03-24T19:00:25.579Z"
 progress:
   total_phases: 7
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -45,6 +45,7 @@ Plan: 2 of 4
 | Phase 13-onboarding P00 | 2 | 1 tasks | 4 files |
 | Phase 13-onboarding P01 | 3 | 2 tasks | 8 files |
 | Phase 13-onboarding P02 | 3 | 2 tasks | 9 files |
+| Phase 13-onboarding P03 | 25 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,7 @@ Plan: 2 of 4
 - [Phase 13-onboarding]: NotificationManager removed in coordinated sweep: deleted file + removed 4 call sites + notificationsEnabled + Toggle from menu
 - [Phase 13-onboarding]: Deep links live in OnboardingViewModel methods; step views call viewModel.open*Settings() — correct encapsulation
 - [Phase 13-onboarding]: Color.accentColor (not .accent) for foregroundStyle — ShapeStyle has no .accent member on macOS 26
+- [Phase 13-onboarding]: @Environment(\.openWindow) must live in App struct not AppDelegate — AppDelegate is not in the SwiftUI environment
 
 ### Pending Todos
 
@@ -79,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T18:23:04.869Z
-Stopped at: Completed 13-01-PLAN.md
+Last session: 2026-03-24T19:00:25.575Z
+Stopped at: Completed 13-03-PLAN.md
 Resume file: None
