@@ -68,7 +68,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 - [x] **Phase 12: Code Quality** - Remove hardcoded paths, delete dead assets, fix warnings, extract BuzzService (completed 2026-03-24)
 - [x] **Phase 13: Onboarding** - First-launch wizard guiding users through CLI detection, permissions, hooks, and voice setup (completed 2026-03-24)
 - [x] **Phase 14: Menu Bar Popover** - Replace dropdown with rich popover panel (toggles, settings, permissions, about) (completed 2026-03-24)
-- [ ] **Phase 15: Voice Fixes** - Polish on-device SFSpeech, add optional BYOK Groq Whisper + OpenAI TTS, store API keys in Keychain
+- [x] **Phase 15: Voice Fixes** - Polish on-device SFSpeech, add optional BYOK Groq Whisper + OpenAI TTS, store API keys in Keychain (completed 2026-03-25)
 - [ ] **Phase 16: Visual Polish** - Smooth LCD transitions, dark mode shell variants, consistent button press feedback
 - [ ] **Phase 17: Distribution** - DMG packaging, code signing, notarization, auto-install to /Applications
 - [ ] **Phase 18: GitHub README** - Landing-style README with hero GIF, feature grid, install command, theme screenshots
@@ -185,7 +185,7 @@ Note: Phase 15 (Voice Fixes) depends only on Phase 12 and can be executed in par
 | 12. Code Quality | 2/2 | Complete    | 2026-03-24 | - |
 | 13. Onboarding | 4/4 | Complete    | 2026-03-24 | - |
 | 14. Menu Bar Popover | 2/2 | Complete    | 2026-03-24 | - |
-| 15. Voice Fixes | 1/2 | In Progress|  | - |
+| 15. Voice Fixes | 2/2 | Complete   | 2026-03-25 | - |
 | 16. Visual Polish | v3.0 Public Launch | 0/TBD | Not started | - |
 | 17. Distribution | v3.0 Public Launch | 0/TBD | Not started | - |
 | 18. GitHub README | v3.0 Public Launch | 0/TBD | Not started | - |

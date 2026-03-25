@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: Completed 15-01-PLAN.md
-last_updated: "2026-03-24T21:57:37.198Z"
+stopped_at: Completed 15-02-PLAN.md — Phase 15 voice fixes complete
+last_updated: "2026-03-25T08:32:01.604Z"
 progress:
   total_phases: 7
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 10
-  completed_plans: 9
+  completed_plans: 10
 ---
 
 # Project State
@@ -49,6 +49,7 @@ Plan: 2 of 2
 | Phase 14-menu-bar-popover P01 | 2 | 2 tasks | 6 files |
 | Phase 14-menu-bar-popover P02 | 45 | 2 tasks | 9 files |
 | Phase 15-voice-fixes P01 | 3 | 2 tasks | 4 files |
+| Phase 15-voice-fixes P02 | 45 | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,9 @@ Plan: 2 of 2
 - [Phase 15-voice-fixes]: KeychainService as caseless enum, test file embeds stub due to @testable import unavailability for .executableTarget
 - [Phase 15-voice-fixes]: Groq auth requires lowercase 'bearer' header (not 'Bearer') — critical per Groq docs to avoid 401
 - [Phase 15-voice-fixes]: kSecAttrSynchronizable: false prevents third-party API keys from syncing to iCloud Keychain
+- [Phase 15-voice-fixes]: Groq path skips SFSpeech entirely in startRecording — prevents timeout race between Groq transcription and 2-second SFSpeech fallback
+- [Phase 15-voice-fixes]: AVAudioPlayer stored as TTSService instance property (not local) — prevents ARC deallocation during OpenAI MP3 playback
+- [Phase 15-voice-fixes]: WAV recording uses native AVAudioEngine format without AVAudioConverter — Groq auto-downsamples, simplifies implementation
 
 ### Pending Todos
 
@@ -91,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T21:57:37.195Z
-Stopped at: Completed 15-01-PLAN.md
+Last session: 2026-03-25T08:32:01.587Z
+Stopped at: Completed 15-02-PLAN.md — Phase 15 voice fixes complete
 Resume file: None

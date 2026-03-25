@@ -57,7 +57,7 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 
 ### Voice
 
-- [ ] **VOICE-05**: Voice recording uses Groq Whisper API (WAV file → API → text) instead of SFSpeech
+- [x] **VOICE-05**: Voice recording uses Groq Whisper API (WAV file → API → text) instead of SFSpeech
 - [x] **VOICE-06**: API key stored in macOS Keychain (prompted during onboarding if voice enabled)
 - [x] **VOICE-07**: Summary flow: manual "Summarize" button when Claude finishes, not just auto-speak
 
@@ -115,7 +115,7 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 | VFX-01 | Phase 16 | Pending |
 | VFX-02 | Phase 16 | Pending |
 | VFX-03 | Phase 16 | Pending |
-| VOICE-05 | Phase 15 | Pending |
+| VOICE-05 | Phase 15 | Complete |
 | VOICE-06 | Phase 15 | Complete |
 | VOICE-07 | Phase 15 | Complete |
 
