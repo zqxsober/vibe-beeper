@@ -36,10 +36,10 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 
 ### Distribution
 
-- [ ] **DIST-01**: DMG package builds via `make dmg` with app icon and /Applications symlink
+- [x] **DIST-01**: DMG package builds via `make dmg` with app icon and /Applications symlink
 - [ ] **DIST-02**: GitHub Release workflow with DMG artifact upload
-- [ ] **DIST-03**: Notarization via `notarytool` so Gatekeeper doesn't block the app
-- [ ] **DIST-04**: Auto-copy to /Applications on first launch
+- [x] **DIST-03**: Notarization via `notarytool` so Gatekeeper doesn't block the app
+- [x] **DIST-04**: Auto-copy to /Applications on first launch
 
 ### GitHub
 
@@ -103,10 +103,10 @@ Requirements for Public Launch milestone. Each maps to roadmap phases.
 | CODE-03 | Phase 12 | Complete |
 | CODE-04 | Phase 12 | Complete |
 | CODE-05 | Phase 12 | Complete |
-| DIST-01 | Phase 17 | Pending |
+| DIST-01 | Phase 17 | Complete |
 | DIST-02 | Phase 17 | Pending |
-| DIST-03 | Phase 17 | Pending |
-| DIST-04 | Phase 17 | Pending |
+| DIST-03 | Phase 17 | Complete |
+| DIST-04 | Phase 17 | Complete |
 | GH-01 | Phase 18 | Pending |
 | GH-02 | Phase 18 | Pending |
 | GH-03 | Phase 18 | Pending |

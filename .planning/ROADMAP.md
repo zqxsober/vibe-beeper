@@ -164,7 +164,10 @@ Plans:
   2. The DMG artifact is attached to a GitHub Release automatically via the release workflow
   3. Opening the app on a clean Mac with no developer tools passes Gatekeeper — no "unidentified developer" warning
   4. On first launch from the DMG, the app copies itself to /Applications without user having to drag it manually
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 17-01-PLAN.md — Update DMG scripts and Makefile for CC-Beeper, configurable code signing
+- [ ] 17-02-PLAN.md — GitHub Actions release workflow + notarization documentation
 
 ### Phase 18: GitHub README
 **Goal**: The GitHub repository looks like a product landing page — a stranger visiting it immediately understands what CC-Beeper is and wants to install it
@@ -193,6 +196,6 @@ Note: Phase 15 (Voice Fixes) depends only on Phase 12 and can be executed in par
 | 13. Onboarding | 4/4 | Complete    | 2026-03-24 | - |
 | 14. Menu Bar Popover | 2/2 | Complete    | 2026-03-24 | - |
 | 15. Voice Fixes | 2/2 | Complete    | 2026-03-25 | - |
-| 16. Visual Polish | 3/3 | Complete   | 2026-03-25 | - |
-| 17. Distribution | v3.0 Public Launch | 0/TBD | Not started | - |
+| 16. Visual Polish | 3/3 | Complete    | 2026-03-25 | - |
+| 17. Distribution | 1/2 | In Progress|  | - |
 | 18. GitHub README | v3.0 Public Launch | 0/TBD | Not started | - |

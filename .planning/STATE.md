@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: Completed 16-02-PLAN.md — visual polish bounce animation and vibration fixes
-last_updated: "2026-03-25T09:46:45.828Z"
+stopped_at: Completed 17-01-PLAN.md — DMG packaging scripts updated for CC-Beeper distribution
+last_updated: "2026-03-25T10:57:30.642Z"
 progress:
   total_phases: 7
   completed_phases: 5
-  total_plans: 13
-  completed_plans: 13
+  total_plans: 15
+  completed_plans: 14
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
-**Current focus:** Phase 16 — Visual Polish
+**Current focus:** Phase 17 — Distribution
 
 ## Current Position
 
-Phase: 16 (Visual Polish) — EXECUTING
-Plan: 1 of 3
+Phase: 17 (Distribution) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Plan: 1 of 3
 | Phase 16-visual-polish P01 | 7 | 2 tasks | 19 files |
 | Phase 16-visual-polish P02 | 2 | 2 tasks | 3 files |
 | Phase 16 P03 | 4 | 1 tasks | 2 files |
+| Phase 17-distribution P01 | 38min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,8 @@ Plan: 1 of 3
 - [Phase 16-visual-polish P02]: Shake reset uses current window frame.origin (not captured) — correct position after drag-during-shake
 - [Phase 16-visual-polish]: SettingsTab enum placed in SettingsView.swift (not separate file) — only used by SettingsView, no external consumers
 - [Phase 16-visual-polish]: Settings window frame updated to 580x420 — wider for sidebar+detail layout, shorter since only one section visible at a time
+- [Phase 17-distribution]: Ad-hoc signing (-) is the SIGNING_IDENTITY default — local users never need a Developer ID; distribution builds override via env var
+- [Phase 17-distribution]: autoupdate plist retains legacy name com.claumagotchi.autoupdate.plist — rename out of scope for distribution plan
 
 ### Pending Todos
 
@@ -106,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T09:46:45.824Z
-Stopped at: Completed 16-02-PLAN.md — visual polish bounce animation and vibration fixes
+Last session: 2026-03-25T10:57:30.638Z
+Stopped at: Completed 17-01-PLAN.md — DMG packaging scripts updated for CC-Beeper distribution
 Resume file: None
