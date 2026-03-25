@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: Completed Tasks 1-2 of 18-01-PLAN.md — awaiting human-verify checkpoint for README review
-last_updated: "2026-03-25T13:00:24.962Z"
+stopped_at: Completed 18-01-PLAN.md — Phase 18 complete, v3.0 Public Launch milestone done
+last_updated: "2026-03-25T13:34:34.572Z"
 progress:
   total_phases: 7
   completed_phases: 7
@@ -56,6 +56,7 @@ Plan: 1 of 1
 | Phase 17-distribution P01 | 38min | 2 tasks | 3 files |
 | Phase 17-distribution P02 | 6min | 2 tasks | 2 files |
 | Phase 18-github-readme P01 | 2min | 2 tasks | 1 files |
+| Phase 18-github-readme P01 | 10 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,7 @@ Plan: 1 of 1
 - [Phase 17-distribution]: Notarization is opt-in (commented out in workflow) — Apple Developer Program enrollment required, not assumed
 - [Phase 17-distribution]: softprops/action-gh-release@v2 used for GitHub Release creation (actions/create-release is deprecated)
 - [Phase 18-github-readme]: README uses GitHub repo URL (vecartier/Claumagotchi) for DMG link; product name CC-Beeper used in all prose — repo rename out of scope
+- [Phase 18-github-readme]: Cover image placed at docs/cover.png — committed after human-verify approval, renders immediately on GitHub
 
 ### Pending Todos
 
@@ -114,6 +116,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T13:00:24.960Z
-Stopped at: Completed Tasks 1-2 of 18-01-PLAN.md — awaiting human-verify checkpoint for README review
+Last session: 2026-03-25T13:34:34.568Z
+Stopped at: Completed 18-01-PLAN.md — Phase 18 complete, v3.0 Public Launch milestone done
 Resume file: None

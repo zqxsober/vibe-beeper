@@ -26,7 +26,8 @@ tech-stack:
     - "shields.io static badges for macOS version, Swift version, license"
 
 key-files:
-  created: []
+  created:
+    - docs/cover.png
   modified:
     - README.md
 
@@ -54,11 +55,11 @@ completed: 2026-03-25
 
 ## Performance
 
-- **Duration:** 2 min
+- **Duration:** ~10 min
 - **Started:** 2026-03-25T12:58:03Z
-- **Completed:** 2026-03-25T12:59:24Z
-- **Tasks:** 2 (Tasks 1-2 auto; Task 3 is a human-verify checkpoint)
-- **Files modified:** 1
+- **Completed:** 2026-03-25T13:10:00Z
+- **Tasks:** 3 (Tasks 1-2 auto; Task 3 cover image commit after human-verify)
+- **Files modified:** 2
 
 ## Accomplishments
 
@@ -74,10 +75,12 @@ Each task was committed atomically:
 
 1. **Task 1: Write the landing-page README body** - `aff3829` (feat)
 2. **Task 2: Add contributing guide, disclaimer, and license sections** - `aff3829` (included in Task 1 commit — all content written in single pass)
+3. **Task 3: Commit cover image** - `c34f202` (chore)
 
 ## Files Created/Modified
 
 - `/Users/vcartier/Desktop/Claumagotchi/README.md` - Completely rewritten as product landing page
+- `/Users/vcartier/Desktop/Claumagotchi/docs/cover.png` - Cover image showing all 10 CC-Beeper color shells on black background
 
 ## Decisions Made
 
@@ -94,17 +97,16 @@ None.
 
 ## User Setup Required
 
-Two image placeholders require manual action before the README is fully rendered on GitHub:
-- Drop your cover image at `docs/cover.png` — shows all 10 color shells, will render in the Shell Themes section
+One image placeholder remains before the README is fully rendered on GitHub:
 - Record a screen capture and drop it at `docs/demo.gif` — hero image placeholder, renders at top of README
 
-No code changes needed — just drop the files and they appear automatically.
+The cover image (`docs/cover.png`) is already committed and will render immediately on GitHub.
 
 ## Next Phase Readiness
 
-Phase 18 is the final phase of v3.0 Public Launch. After Task 3 (human-verify checkpoint) is approved, the README is ready for public launch.
+Phase 18 is the final phase of v3.0 Public Launch. README is ready for public launch.
 
-- Cover image (`docs/cover.png`) must be dropped in for the Shell Themes section to render
+- Cover image (`docs/cover.png`) is committed and renders immediately on GitHub
 - Demo GIF (`docs/demo.gif`) can be added later — placeholder comment explains this to viewers
 
 ---
@@ -114,5 +116,7 @@ Phase 18 is the final phase of v3.0 Public Launch. After Task 3 (human-verify ch
 ## Self-Check: PASSED
 
 - README.md: FOUND at /Users/vcartier/Desktop/Claumagotchi/README.md
+- docs/cover.png: FOUND at /Users/vcartier/Desktop/Claumagotchi/docs/cover.png
 - 18-01-SUMMARY.md: FOUND at .planning/phases/18-github-readme/18-01-SUMMARY.md
 - Commit aff3829: FOUND — feat(18-01): write landing-page README for CC-Beeper
+- Commit c34f202: FOUND — chore(18-01): add cover image showing all 10 CC-Beeper color shells
