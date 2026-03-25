@@ -1,28 +1,54 @@
 import SwiftUI
 
+enum SettingsTab: String, CaseIterable, Identifiable {
+    case audio = "Audio"
+    case permissions = "Permissions"
+    case voice = "Voice"
+    case about = "About"
+
+    var id: String { rawValue }
+
+    var icon: String {
+        switch self {
+        case .audio: return "speaker.wave.2.fill"
+        case .permissions: return "lock.shield.fill"
+        case .voice: return "mic.fill"
+        case .about: return "info.circle.fill"
+        }
+    }
+}
+
 struct SettingsView: View {
     @EnvironmentObject var monitor: ClaudeMonitor
     @EnvironmentObject var themeManager: ThemeManager
     @StateObject private var viewModel = SettingsViewModel()
+    @State private var selectedTab: SettingsTab = .audio
 
     var body: some View {
-        Form {
-            Section("Audio") {
-                SettingsAudioSection()
+        NavigationSplitView {
+            List(SettingsTab.allCases, selection: $selectedTab) { tab in
+                Label(tab.rawValue, systemImage: tab.icon)
+                    .tag(tab)
             }
-            Section("Permissions") {
-                SettingsPermissionsSection(viewModel: viewModel)
+            .listStyle(.sidebar)
+            .navigationSplitViewColumnWidth(min: 150, ideal: 170, max: 200)
+        } detail: {
+            Form {
+                switch selectedTab {
+                case .audio:
+                    SettingsAudioSection()
+                case .permissions:
+                    SettingsPermissionsSection(viewModel: viewModel)
+                case .voice:
+                    SettingsVoiceSection(viewModel: viewModel)
+                case .about:
+                    SettingsAboutSection()
+                }
             }
-            Section("Voice") {
-                SettingsVoiceSection(viewModel: viewModel)
-            }
-            Section("About") {
-                SettingsAboutSection()
-            }
+            .formStyle(.grouped)
+            .scrollContentBackground(.visible)
         }
-        .formStyle(.grouped)
-        .frame(width: 460, height: 520)
-        .scrollContentBackground(.visible)
+        .frame(width: 580, height: 420)
         .onAppear { viewModel.startPolling() }
         .onDisappear { viewModel.stopPolling() }
     }

@@ -45,7 +45,7 @@ struct CCBeeperApp: App {
         .windowStyle(.titleBar)
         .windowResizability(.contentSize)
         .defaultPosition(.center)
-        .defaultSize(width: 460, height: 520)
+        .defaultSize(width: 580, height: 420)
 
         MenuBarExtra {
             // Status
