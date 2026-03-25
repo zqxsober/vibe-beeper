@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Public Launch
 status: unknown
-stopped_at: Completed 16-01-PLAN.md — CC-Beeper deep rename complete
-last_updated: "2026-03-25T09:41:16.263Z"
+stopped_at: Completed 16-03-PLAN.md — Settings NavigationSplitView sidebar
+last_updated: "2026-03-25T09:45:36.198Z"
 progress:
   total_phases: 7
   completed_phases: 4
   total_plans: 13
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Project State
@@ -51,6 +51,7 @@ Plan: 1 of 3
 | Phase 15-voice-fixes P01 | 3 | 2 tasks | 4 files |
 | Phase 15-voice-fixes P02 | 45 | 3 tasks | 10 files |
 | Phase 16-visual-polish P01 | 7 | 2 tasks | 19 files |
+| Phase 16 P03 | 4 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,8 @@ Plan: 1 of 3
 - [Phase 16-visual-polish]: PixelTitle LCD screen updated from CLAUMAGOTCHI to CC-BEEPER with new pixel font glyphs for B, E, P, R, dash
 - [Phase 16-visual-polish]: IPC directory migration runs in applicationDidFinishLaunching before PID check — ensures existing users' data carries over to cc-beeper path
 - [Phase 16-visual-polish]: Keychain migration is lazy (load-time per account, not startup sweep) — com.claumagotchi.apikeys falls back to com.vecartier.cc-beeper.apikeys
+- [Phase 16-visual-polish]: SettingsTab enum placed in SettingsView.swift (not separate file) — only used by SettingsView, no external consumers
+- [Phase 16-visual-polish]: Settings window frame updated to 580x420 — wider for sidebar+detail layout, shorter since only one section visible at a time
 
 ### Pending Todos
 
@@ -99,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T09:41:16.259Z
-Stopped at: Completed 16-01-PLAN.md — CC-Beeper deep rename complete
+Last session: 2026-03-25T09:45:36.193Z
+Stopped at: Completed 16-03-PLAN.md — Settings NavigationSplitView sidebar
 Resume file: None
