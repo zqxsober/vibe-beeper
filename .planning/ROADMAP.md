@@ -69,7 +69,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 - [x] **Phase 13: Onboarding** - First-launch wizard guiding users through CLI detection, permissions, hooks, and voice setup (completed 2026-03-24)
 - [x] **Phase 14: Menu Bar Popover** - Replace dropdown with rich popover panel (toggles, settings, permissions, about) (completed 2026-03-24)
 - [x] **Phase 15: Voice Fixes** - Polish on-device SFSpeech, add optional BYOK Groq Whisper + OpenAI TTS, store API keys in Keychain (completed 2026-03-25)
-- [ ] **Phase 16: Visual Polish** - Smooth LCD transitions, dark mode shell variants, consistent button press feedback
+- [ ] **Phase 16: Visual Polish** - Deep rename to CC-Beeper, LCD bounce animation, dark mode verification, button feedback, vibration bug fixes, Settings sidebar
 - [ ] **Phase 17: Distribution** - DMG packaging, code signing, notarization, auto-install to /Applications
 - [ ] **Phase 18: GitHub README** - Landing-style README with hero GIF, feature grid, install command, theme screenshots
 
@@ -139,14 +139,21 @@ Plans:
 - [ ] 15-02-PLAN.md — Wire Groq path into VoiceService, OpenAI path into TTSService, add onboarding API Keys step
 
 ### Phase 16: Visual Polish
-**Goal**: The Code Beeper looks and feels finished — smooth LCD transitions, correct dark mode rendering, tactile button feedback
-**Depends on**: Phase 14
+**Goal**: CC-Beeper looks and feels finished — deep rename from Claumagotchi, LCD bounce animation, dark mode verification, button feedback, vibration fixes, Xcode-style Settings sidebar
+**Depends on**: Phase 14, Phase 15
 **Requirements**: VFX-01, VFX-02, VFX-03
 **Success Criteria** (what must be TRUE):
-  1. LCD content fades smoothly between states (thinking → done → idle) instead of snapping instantly
-  2. Dark mode shell variants display correctly with the LCD overlay — no tinting artifacts or misalignment
-  3. Every button (Accept, Deny, Speak, Terminal, mute) produces the same press-feedback animation on tap
-**Plans**: TBD
+  1. All references to "Claumagotchi" replaced with "CC-Beeper" (bundle ID, binary, Package.swift, user-facing strings, hook scripts, build scripts)
+  2. Pixel character does a quick vertical bounce when LCD state changes (retro feel, not text crossfade)
+  3. Dark mode shell variants display correctly with the LCD overlay — no tinting artifacts or misalignment
+  4. Every button produces identical PNG-swap press feedback on tap
+  5. Clicking the beeper window stops the current vibration; window remains draggable during shake
+  6. Settings window has Xcode-style sidebar with 4 tabs (Audio, Permissions, Voice, About)
+**Plans**: 3 plans
+Plans:
+- [ ] 16-01-PLAN.md — Deep rename Claumagotchi to CC-Beeper across all files, add IPC/Keychain migration
+- [ ] 16-02-PLAN.md — VFX polish (bounce, dark mode, button feedback) + vibration bug fixes
+- [ ] 16-03-PLAN.md — Settings window Xcode-style sidebar with NavigationSplitView
 
 ### Phase 17: Distribution
 **Goal**: Anyone can download and install CC-Beeper in under 60 seconds — no Gatekeeper warnings, no manual drag-to-Applications
@@ -185,7 +192,7 @@ Note: Phase 15 (Voice Fixes) depends only on Phase 12 and can be executed in par
 | 12. Code Quality | 2/2 | Complete    | 2026-03-24 | - |
 | 13. Onboarding | 4/4 | Complete    | 2026-03-24 | - |
 | 14. Menu Bar Popover | 2/2 | Complete    | 2026-03-24 | - |
-| 15. Voice Fixes | 2/2 | Complete   | 2026-03-25 | - |
-| 16. Visual Polish | v3.0 Public Launch | 0/TBD | Not started | - |
+| 15. Voice Fixes | 2/2 | Complete    | 2026-03-25 | - |
+| 16. Visual Polish | v3.0 Public Launch | 0/3 | Not started | - |
 | 17. Distribution | v3.0 Public Launch | 0/TBD | Not started | - |
 | 18. GitHub README | v3.0 Public Launch | 0/TBD | Not started | - |
