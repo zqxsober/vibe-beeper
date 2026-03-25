@@ -10,7 +10,7 @@ final class KeychainServiceTests: XCTestCase {
     // MARK: - Local stub matching KeychainService implementation
 
     private enum TestableKeychainService {
-        private static let service = "com.claumagotchi.apikeys"
+        private static let service = "com.vecartier.cc-beeper.apikeys"
 
         static func save(_ value: String, account: String) {
             guard !value.isEmpty else { delete(account: account); return }

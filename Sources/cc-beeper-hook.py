@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Claumagotchi hook — forwards Claude Code events, handles permissions, auto-launches app."""
+"""CC-Beeper hook — forwards Claude Code events, handles permissions, auto-launches app."""
 
 import json
 import os
@@ -8,13 +8,13 @@ import subprocess
 import sys
 import time
 
-IPC_DIR = os.path.expanduser("~/.claude/claumagotchi")
+IPC_DIR = os.path.expanduser("~/.claude/cc-beeper")
 EVENT_FILE = os.path.join(IPC_DIR, "events.jsonl")
 PENDING_FILE = os.path.join(IPC_DIR, "pending.json")
 RESPONSE_FILE = os.path.join(IPC_DIR, "response.json")
 SESSIONS_FILE = os.path.join(IPC_DIR, "sessions.json")
-APP_PATH_FILE = os.path.expanduser("~/.claude/hooks/claumagotchi-app-path")
-PID_FILE = os.path.join(IPC_DIR, "claumagotchi.pid")
+APP_PATH_FILE = os.path.expanduser("~/.claude/hooks/cc-beeper-app-path")
+PID_FILE = os.path.join(IPC_DIR, "cc-beeper.pid")
 
 PERMISSION_TIMEOUT = 55  # seconds (hook timeout is 60s)
 
@@ -91,7 +91,7 @@ def is_pid_alive(pid):
 
 
 def is_app_running_by_pid():
-    """Check the PID file to see if Claumagotchi is already running."""
+    """Check the PID file to see if CC-Beeper is already running."""
     try:
         if os.path.exists(PID_FILE):
             with open(PID_FILE) as f:
@@ -110,12 +110,12 @@ def get_app_path():
             if os.path.exists(path):
                 return path
     for candidate in [
-        "/Applications/Claumagotchi.app",
-        os.path.expanduser("~/Applications/Claumagotchi.app"),
-        os.path.expanduser("~/Desktop/Claumagotchi/Claumagotchi.app"),
-        os.path.expanduser("~/Claumagotchi/Claumagotchi.app"),
-        os.path.expanduser("~/Projects/Claumagotchi/Claumagotchi.app"),
-        os.path.expanduser("~/Developer/Claumagotchi/Claumagotchi.app"),
+        "/Applications/CC-Beeper.app",
+        os.path.expanduser("~/Applications/CC-Beeper.app"),
+        os.path.expanduser("~/Desktop/Claumagotchi/CC-Beeper.app"),
+        os.path.expanduser("~/Claumagotchi/CC-Beeper.app"),
+        os.path.expanduser("~/Projects/Claumagotchi/CC-Beeper.app"),
+        os.path.expanduser("~/Developer/Claumagotchi/CC-Beeper.app"),
     ]:
         if os.path.exists(candidate):
             return candidate
@@ -160,7 +160,7 @@ def track_session(session_id, action):
 
 
 def ensure_app_running():
-    """Launch Claumagotchi if not already running, with lock to prevent race conditions."""
+    """Launch CC-Beeper if not already running, with lock to prevent race conditions."""
     # Fast path: PID file says it's already running — no need for pgrep or locking.
     if is_app_running_by_pid():
         return
@@ -181,7 +181,7 @@ def ensure_app_running():
         if is_app_running_by_pid():
             return
 
-        result = subprocess.run(["pgrep", "-x", "Claumagotchi"], capture_output=True)
+        result = subprocess.run(["pgrep", "-x", "CC-Beeper"], capture_output=True)
         if result.returncode != 0:
             app_path = get_app_path()
             if app_path:
@@ -253,7 +253,7 @@ def handle_permission(data, session_id=""):
                             "hookEventName": "PermissionRequest",
                             "decision": {
                                 "behavior": decision,
-                                "message": f"{'Approved' if decision == 'allow' else 'Denied'} via Claumagotchi",
+                                "message": f"{'Approved' if decision == 'allow' else 'Denied'} via CC-Beeper",
                             },
                         }
                     }

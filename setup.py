@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sets up Claumagotchi hooks in Claude Code settings."""
+"""Sets up CC-Beeper hooks in Claude Code settings."""
 
 import json
 import os
@@ -7,9 +7,9 @@ import shutil
 
 SETTINGS_PATH = os.path.expanduser("~/.claude/settings.json")
 HOOKS_DIR = os.path.expanduser("~/.claude/hooks")
-IPC_DIR = os.path.expanduser("~/.claude/claumagotchi")
-HOOK_SCRIPT = os.path.join(HOOKS_DIR, "claumagotchi-hook.py")
-APP_PATH_FILE = os.path.join(HOOKS_DIR, "claumagotchi-app-path")
+IPC_DIR = os.path.expanduser("~/.claude/cc-beeper")
+HOOK_SCRIPT = os.path.join(HOOKS_DIR, "cc-beeper-hook.py")
+APP_PATH_FILE = os.path.join(HOOKS_DIR, "cc-beeper-app-path")
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Events and their hook configs
@@ -36,7 +36,7 @@ def main():
 
     # Install hook script
     os.makedirs(HOOKS_DIR, exist_ok=True)
-    src = os.path.join(SCRIPT_DIR, "hooks", "claumagotchi-hook.py")
+    src = os.path.join(SCRIPT_DIR, "hooks", "cc-beeper-hook.py")
     if not os.path.exists(src):
         print(f"  ERROR: Hook script not found at {src}")
         return
@@ -46,10 +46,10 @@ def main():
 
     # Write app path so hook knows where to find the .app bundle
     # Prefer /Applications if installed there, otherwise use local build
-    if os.path.exists("/Applications/Claumagotchi.app"):
-        app_path = "/Applications/Claumagotchi.app"
+    if os.path.exists("/Applications/CC-Beeper.app"):
+        app_path = "/Applications/CC-Beeper.app"
     else:
-        app_path = os.path.join(SCRIPT_DIR, "Claumagotchi.app")
+        app_path = os.path.join(SCRIPT_DIR, "CC-Beeper.app")
     with open(APP_PATH_FILE, "w") as f:
         f.write(app_path)
     print(f"  App path saved -> {APP_PATH_FILE}")
@@ -64,16 +64,16 @@ def main():
             print(f"  WARNING: Could not parse {SETTINGS_PATH}, starting fresh")
             settings = {}
 
-    # Remove old claumagotchi hooks, then add fresh ones
+    # Remove old cc-beeper hooks, then add fresh ones
     hooks = settings.get("hooks", {})
     cmd = f"python3 {HOOK_SCRIPT}"
 
     for event, cfg in HOOK_CONFIGS.items():
         existing = hooks.get(event, [])
-        # Remove previous claumagotchi entries
+        # Remove previous cc-beeper entries
         existing = [
             rule for rule in existing
-            if not any("claumagotchi-hook.py" in h.get("command", "") for h in rule.get("hooks", []))
+            if not any("cc-beeper-hook.py" in h.get("command", "") for h in rule.get("hooks", []))
         ]
         # Add fresh entry
         hook_entry = {"type": "command", "command": cmd}
@@ -89,7 +89,7 @@ def main():
 
     print(f"  Hooks configured in {SETTINGS_PATH}")
     print()
-    print("  Claumagotchi is ready!")
+    print("  CC-Beeper is ready!")
     print("  The app auto-launches when you start a Claude Code session.")
     print(f"  You can also launch manually: open {app_path}")
 

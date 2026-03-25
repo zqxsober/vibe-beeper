@@ -19,12 +19,12 @@ final class HookInstallerTests: XCTestCase {
         try? FileManager.default.removeItem(at: tempDir)
     }
 
-    /// isInstalled detection: returns false when settings.json has no claumagotchi-hook.py entry.
+    /// isInstalled detection: returns false when settings.json has no cc-beeper-hook.py entry.
     func testIsInstalledReturnsFalseWhenNoHookEntry() throws {
         let settingsURL = tempDir.appendingPathComponent("settings.json")
-        let hookScriptURL = tempDir.appendingPathComponent("claumagotchi-hook.py")
+        let hookScriptURL = tempDir.appendingPathComponent("cc-beeper-hook.py")
 
-        // Write a settings.json with no claumagotchi hooks
+        // Write a settings.json with no cc-beeper hooks
         let settings: [String: Any] = ["hooks": ["PreToolUse": []]]
         let data = try JSONSerialization.data(withJSONObject: settings)
         try data.write(to: settingsURL)
@@ -47,18 +47,18 @@ final class HookInstallerTests: XCTestCase {
             guard let rules = value as? [[String: Any]] else { continue }
             for rule in rules {
                 guard let hs = rule["hooks"] as? [[String: Any]] else { continue }
-                for h in hs where (h["command"] as? String)?.contains("claumagotchi-hook.py") == true {
+                for h in hs where (h["command"] as? String)?.contains("cc-beeper-hook.py") == true {
                     found = true
                 }
             }
         }
-        XCTAssertFalse(found, "Expected no claumagotchi hook entries in settings.json")
+        XCTAssertFalse(found, "Expected no cc-beeper hook entries in settings.json")
     }
 
-    /// isInstalled detection: returns true when settings.json contains a claumagotchi-hook.py entry.
+    /// isInstalled detection: returns true when settings.json contains a cc-beeper-hook.py entry.
     func testIsInstalledReturnsTrueWhenHookEntryPresent() throws {
         let settingsURL = tempDir.appendingPathComponent("settings.json")
-        let hookScriptURL = tempDir.appendingPathComponent("claumagotchi-hook.py")
+        let hookScriptURL = tempDir.appendingPathComponent("cc-beeper-hook.py")
 
         // Write a settings.json that mirrors what HookInstaller.install() would produce
         let hookEntry: [String: Any] = [
@@ -86,12 +86,12 @@ final class HookInstallerTests: XCTestCase {
             guard let rules = value as? [[String: Any]] else { continue }
             for rule in rules {
                 guard let hs = rule["hooks"] as? [[String: Any]] else { continue }
-                for h in hs where (h["command"] as? String)?.contains("claumagotchi-hook.py") == true {
+                for h in hs where (h["command"] as? String)?.contains("cc-beeper-hook.py") == true {
                     found = true
                 }
             }
         }
-        XCTAssertTrue(found, "Expected to find claumagotchi hook entry in settings.json")
+        XCTAssertTrue(found, "Expected to find cc-beeper hook entry in settings.json")
     }
 
     /// Verifies all 8 event names required by setup.py are accounted for.

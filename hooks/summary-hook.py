@@ -2,14 +2,14 @@
 """
 Claude Code hook: fires on 'stop' event.
 Reads the current session's JSONL, extracts the last assistant text message,
-writes it to ~/.claude/claumagotchi/last_summary.txt
+writes it to ~/.claude/cc-beeper/last_summary.txt
 """
 import json
 import os
 import sys
 import glob
 
-SUMMARY_DIR = os.path.expanduser("~/.claude/claumagotchi")
+SUMMARY_DIR = os.path.expanduser("~/.claude/cc-beeper")
 SUMMARY_FILE = os.path.join(SUMMARY_DIR, "last_summary.txt")
 CLAUDE_DIR = os.path.expanduser("~/.claude/projects")
 

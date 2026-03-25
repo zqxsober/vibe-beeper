@@ -3,13 +3,13 @@ set -e
 
 cd "$(dirname "$0")"
 
-echo "Building Claumagotchi..."
+echo "Building CC-Beeper..."
 swift build -c release 2>&1
 
-BINARY=".build/release/Claumagotchi"
-APP_DIR="Claumagotchi.app/Contents/MacOS"
+BINARY=".build/release/CC-Beeper"
+APP_DIR="CC-Beeper.app/Contents/MacOS"
 
-RESOURCES_DIR="Claumagotchi.app/Contents/Resources"
+RESOURCES_DIR="CC-Beeper.app/Contents/Resources"
 
 echo "Creating app bundle..."
 mkdir -p "$APP_DIR" "$RESOURCES_DIR"
@@ -23,7 +23,7 @@ cp Sources/buttons/*.png "$RESOURCES_DIR/" 2>/dev/null
 
 # Generate app icon from icon.png (transparent, no background)
 if [ -f "icon.png" ] && command -v iconutil &>/dev/null; then
-    ICONSET="/tmp/claumagotchi-iconset.iconset"
+    ICONSET="/tmp/cc-beeper-iconset.iconset"
     rm -rf "$ICONSET"
     mkdir -p "$ICONSET"
     for s in 16 32 64 128 256 512 1024; do
@@ -44,17 +44,17 @@ if [ -f "icon.png" ] && command -v iconutil &>/dev/null; then
     rm -rf "$ICONSET"
 fi
 
-cat > Claumagotchi.app/Contents/Info.plist << 'PLIST'
+cat > CC-Beeper.app/Contents/Info.plist << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
     <key>CFBundleExecutable</key>
-    <string>Claumagotchi</string>
+    <string>CC-Beeper</string>
     <key>CFBundleIdentifier</key>
-    <string>com.claumagotchi.app</string>
+    <string>com.vecartier.cc-beeper</string>
     <key>CFBundleName</key>
-    <string>Claumagotchi</string>
+    <string>CC-Beeper</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleVersion</key>
@@ -66,14 +66,14 @@ cat > Claumagotchi.app/Contents/Info.plist << 'PLIST'
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Claumagotchi needs microphone access to record your voice for transcription.</string>
+    <string>CC-Beeper needs microphone access to record your voice for transcription.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>Claumagotchi uses on-device speech recognition to transcribe your voice.</string>
+    <string>CC-Beeper uses on-device speech recognition to transcribe your voice.</string>
 </dict>
 </plist>
 PLIST
 
-echo "Built Claumagotchi.app"
+echo "Built CC-Beeper.app"
 
-codesign --force --deep --sign "Apple Development" Claumagotchi.app
-echo "Signed Claumagotchi.app (Apple Development)"
+codesign --force --deep --sign "Apple Development" CC-Beeper.app
+echo "Signed CC-Beeper.app (Apple Development)"
