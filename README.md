@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/vecartier/Claumagotchi/releases/latest"><strong>⬇ Download DMG</strong></a>
+  <a href="https://github.com/vecartier/cc-beeper/releases/latest"><strong>⬇ Download DMG</strong></a>
 </p>
 
 ---
@@ -25,13 +25,13 @@
 
 ### Download (recommended)
 
-[Download CC-Beeper.dmg](https://github.com/vecartier/Claumagotchi/releases/latest) — open, double-click CC-Beeper.app, and follow the setup wizard. No Terminal required.
+[Download CC-Beeper.dmg](https://github.com/vecartier/cc-beeper/releases/latest) — open, double-click CC-Beeper.app, and follow the setup wizard. No Terminal required.
 
 ### Build from source
 
 ```bash
-git clone https://github.com/vecartier/Claumagotchi.git
-cd Claumagotchi
+git clone https://github.com/vecartier/cc-beeper.git
+cd cc-beeper
 make install
 ```
 
