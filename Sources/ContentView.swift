@@ -78,6 +78,11 @@ struct ContentView: View {
         .frame(width: shellW, height: shellH)
         .padding(40)
         .background(Color.clear)
+        .onTapGesture {
+            if buzzService.isVibrating {
+                buzzService.cancelVibration()
+            }
+        }
         .contextMenu {
             Button("Quit CC-Beeper") { NSApplication.shared.terminate(nil) }
         }
