@@ -78,7 +78,7 @@ Requirements for Polish & Fixes milestone.
 
 ### Bug Fixes
 
-- [ ] **FIX-01**: Auto-speak TTS works end-to-end — Claude Code stops → summary-hook fires → TTS speaks the summary
+- [x] **FIX-01**: Auto-speak TTS works end-to-end — Claude Code stops → summary-hook fires → TTS speaks the summary
 - [ ] **FIX-02**: TTS falls back gracefully (OpenAI TTS if key set, Apple Ava if not)
 
 ### Branding
@@ -148,7 +148,7 @@ Requirements for Polish & Fixes milestone.
 | GH2-01 | Phase 21 | Pending |
 | GH2-02 | Phase 21 | Pending |
 | GH2-03 | Phase 21 | Pending |
-| FIX-01 | Phase 20 | Pending |
+| FIX-01 | Phase 20 | Complete |
 | FIX-02 | Phase 20 | Pending |
 | BRD-01 | Phase 21 | Pending |
 | BRD-02 | Phase 22 | Pending |

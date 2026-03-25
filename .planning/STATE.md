@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
-status: Phase complete — ready for verification
-stopped_at: Completed 19-cleanup-02-PLAN.md
-last_updated: "2026-03-25T16:43:15.120Z"
+status: Ready to execute
+stopped_at: Completed 20-01-PLAN.md
+last_updated: "2026-03-25T22:40:13.855Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 4
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
-**Current focus:** Phase 19 — Cleanup
+**Current focus:** Phase 20 — Fix Auto-Speak TTS
 
 ## Current Position
 
-Phase: 19 (Cleanup) — EXECUTING
+Phase: 20 (Fix Auto-Speak TTS) — EXECUTING
 Plan: 2 of 2
 
 ## Performance Metrics
@@ -48,6 +48,7 @@ Plan: 2 of 2
 *Updated after each plan completion*
 | Phase 19-cleanup P01 | 5 | 2 tasks | 2 files |
 | Phase 19-cleanup P02 | 5 | 2 tasks | 4 files |
+| Phase 20-fix-auto-speak-tts P01 | 1 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -60,6 +61,7 @@ Plan: 2 of 2
 - [v3.1 planning]: Phase 22 (Final Branding) blocked until user provides Figma app icon export
 - [Phase 19-cleanup]: feedback_claumagotchi_applications.md renamed to feedback_cc_beeper_applications.md with updated CC-Beeper build path
 - [Phase 19-cleanup]: CLN-02: Zero Claumagotchi matches in all production code; migration code removed after clean break
+- [Phase 20-fix-auto-speak-tts]: D-01: Merged summary extraction into cc-beeper-hook.py Stop handler — hooks/summary-hook.py deleted, HookInstaller unchanged
 
 ### Pending Todos
 
@@ -72,6 +74,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T16:43:15.114Z
-Stopped at: Completed 19-cleanup-02-PLAN.md
+Last session: 2026-03-25T22:40:13.851Z
+Stopped at: Completed 20-01-PLAN.md
 Resume file: None

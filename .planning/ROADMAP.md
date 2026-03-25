@@ -191,7 +191,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 20-01-PLAN.md — Merge summary extraction into cc-beeper-hook.py Stop handler, delete standalone summary-hook.py
+- [x] 20-01-PLAN.md — Merge summary extraction into cc-beeper-hook.py Stop handler, delete standalone summary-hook.py
 - [ ] 20-02-PLAN.md — Add Groq TTS provider, provider-based routing, Settings dropdown, fallback hardening
 
 ### Phase 21: GitHub & Branding
@@ -244,6 +244,6 @@ Note: Phase 20 (Fix Auto-Speak TTS) and Phase 21 (GitHub & Branding) both depend
 | 17. Distribution | v3.0 Public Launch | 2/2 | Complete | 2026-03-25 |
 | 18. GitHub README | v3.0 Public Launch | 1/1 | Complete | 2026-03-25 |
 | 19. Cleanup | v3.1 Polish & Fixes | 2/2 | Complete    | 2026-03-25 |
-| 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 0/2 | Not started | - |
+| 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 1/2 | In Progress|  |
 | 21. GitHub & Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
 | 22. Final Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
