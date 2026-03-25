@@ -1,15 +1,16 @@
-# Roadmap: Claumagotchi
+# Roadmap: CC-Beeper
 
 ## Milestones
 
 - ✅ **v1.1 Polish + Hardening** - Phases 1-4 (shipped 2026-03-20)
 - ❌ **v2.0 Voice & Intelligence** - Phases 5-8 (reverted 2026-03-21)
 - ✅ **v2.0 Voice Loop** - Phases 9-11 (shipped 2026-03-22)
-- 🚧 **v3.0 Public Launch** - Phases 12-18 (in progress)
+- ✅ **v3.0 Public Launch** - Phases 12-18 (shipped 2026-03-25)
+- 🚧 **v3.1 Polish & Fixes** - Phases 19-22 (in progress)
 
 ## Overview
 
-v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and auto-speak summaries. v3.0 Public Launch makes CC-Beeper ready for strangers: code cleanup removes all hardcoded paths, onboarding guides first-time users through permissions and setup, a rich menu bar popover replaces the old dropdown, voice recording is upgraded to Groq Whisper, visual polish completes the Code Beeper aesthetic, DMG packaging enables one-click distribution, and a landing-style GitHub README drives discovery on HN/Reddit/Twitter.
+v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and auto-speak summaries. v3.0 Public Launch made CC-Beeper ready for strangers: code cleanup, onboarding, rich menu popover, Groq voice, visual polish, DMG distribution, and a landing-style GitHub README. v3.1 Polish & Fixes erases all Claumagotchi traces (laptop-wide and in-repo), fixes the broken auto-speak TTS flow, refreshes the GitHub presence with new cover art and rewritten copy, and adds a beeper-shaped menu bar icon — closing with a full branding pass once the user provides the Figma-exported assets.
 
 ## Phases
 
@@ -61,19 +62,8 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 
 </details>
 
-### 🚧 v3.0 Public Launch (In Progress)
-
-**Milestone Goal:** Make CC-Beeper ready for strangers — first-launch onboarding, clean code, rich menu popover, Groq voice, visual polish, DMG distribution, and a landing-style GitHub README for the HN/Reddit/Twitter launch.
-
-- [x] **Phase 12: Code Quality** - Remove hardcoded paths, delete dead assets, fix warnings, extract BuzzService (completed 2026-03-24)
-- [x] **Phase 13: Onboarding** - First-launch wizard guiding users through CLI detection, permissions, hooks, and voice setup (completed 2026-03-24)
-- [x] **Phase 14: Menu Bar Popover** - Replace dropdown with rich popover panel (toggles, settings, permissions, about) (completed 2026-03-24)
-- [x] **Phase 15: Voice Fixes** - Polish on-device SFSpeech, add optional BYOK Groq Whisper + OpenAI TTS, store API keys in Keychain (completed 2026-03-25)
-- [x] **Phase 16: Visual Polish** - Deep rename to CC-Beeper, LCD bounce animation, dark mode verification, button feedback, vibration bug fixes, Settings sidebar (completed 2026-03-25)
-- [x] **Phase 17: Distribution** - DMG packaging, code signing, notarization, auto-install to /Applications (completed 2026-03-25)
-- [x] **Phase 18: GitHub README** - Landing-style README with hero GIF, feature grid, install command, theme screenshots (completed 2026-03-25)
-
-## Phase Details
+<details>
+<summary>✅ v3.0 Public Launch (Phases 12-18) - SHIPPED 2026-03-25</summary>
 
 ### Phase 12: Code Quality
 **Goal**: The codebase is clean, portable, and warning-free — no hardcoded user paths, no dead assets, no compiler noise
@@ -85,10 +75,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
   3. Xcode builds with zero warnings (Sendable, unused variables, all categories)
   4. Vibration/buzz behavior is managed by a dedicated BuzzService — no inline buzz logic scattered across views
   5. Each Swift file contains exactly one type, files are consistently named to match their type
-**Plans**: 2 plans
-Plans:
-- [ ] 12-01-PLAN.md — Remove hardcoded paths, delete dead shell assets, fix compiler warnings
-- [ ] 12-02-PLAN.md — Extract BuzzService, split multi-type files into one-type-per-file
+**Plans**: 2/2 complete
 
 ### Phase 13: Onboarding
 **Goal**: First-time users are guided through everything they need to start using CC-Beeper — no manual Terminal commands, no confusion
@@ -102,11 +89,7 @@ Plans:
   5. On success screen, user sees "Restart Claude Code to activate hooks" instruction
   6. App copies itself to /Applications on first launch (wherever it was opened from)
   7. "Setup..." entry in the menu bar re-opens the onboarding window at any time
-**Plans**: 3 plans
-Plans:
-- [ ] 13-01-PLAN.md — Create ClaudeDetector, HookInstaller, AppMover services + bundle hook script
-- [ ] 13-02-PLAN.md — Build OnboardingViewModel, container view, and all 5 step screens + remove NotificationManager
-- [ ] 13-03-PLAN.md — Wire onboarding into app lifecycle, add menu bar Setup entry, verify flow
+**Plans**: 4/4 complete
 
 ### Phase 14: Menu Bar Popover
 **Goal**: The menu bar icon opens a rich popover panel that replaces the old dropdown — all settings and controls in one place
@@ -119,10 +102,7 @@ Plans:
   4. Permissions section shows live status for each permission and lets users re-trigger them from the popover
   5. About section shows the app version and a clickable GitHub link
   6. "Setup..." and "Download Voices..." entries are present and functional in the popover
-**Plans**: 2 plans
-Plans:
-- [ ] 14-01-PLAN.md — Replace dropdown with popover panel: quick actions, theme dots, dark mode, Setup/Quit + wire Settings window scene
-- [ ] 14-02-PLAN.md — Build Settings window sections: Audio, Permissions (live polling), Voice, About + human verification
+**Plans**: 2/2 complete
 
 ### Phase 15: Voice Fixes
 **Goal**: On-device voice works reliably by default; optional BYOK API keys (Groq Whisper for transcription, OpenAI for TTS) unlock higher quality; keys are stored securely in Keychain and configurable in Settings and onboarding
@@ -133,10 +113,7 @@ Plans:
   2. With a Groq API key set, pressing Speak records a WAV file and sends it to Groq Whisper API for transcription
   3. With an OpenAI API key set, TTS uses the OpenAI API instead of AVSpeechSynthesizer
   4. API keys are stored in macOS Keychain, editable in Settings > Voice, and promptable in an optional onboarding step
-**Plans**: 2 plans
-Plans:
-- [ ] 15-01-PLAN.md — Create KeychainService, GroqTranscriptionService, and add API Keys section to Settings Voice panel
-- [ ] 15-02-PLAN.md — Wire Groq path into VoiceService, OpenAI path into TTSService, add onboarding API Keys step
+**Plans**: 2/2 complete
 
 ### Phase 16: Visual Polish
 **Goal**: CC-Beeper looks and feels finished — deep rename from Claumagotchi, LCD bounce animation, dark mode verification, button feedback, vibration fixes, Xcode-style Settings sidebar
@@ -149,11 +126,7 @@ Plans:
   4. Every button produces identical PNG-swap press feedback on tap
   5. Clicking the beeper window stops the current vibration; window remains draggable during shake
   6. Settings window has Xcode-style sidebar with 4 tabs (Audio, Permissions, Voice, About)
-**Plans**: 3 plans
-Plans:
-- [ ] 16-01-PLAN.md — Deep rename Claumagotchi to CC-Beeper across all files, add IPC/Keychain migration
-- [ ] 16-02-PLAN.md — VFX polish (bounce, dark mode, button feedback) + vibration bug fixes
-- [ ] 16-03-PLAN.md — Settings window Xcode-style sidebar with NavigationSplitView
+**Plans**: 3/3 complete
 
 ### Phase 17: Distribution
 **Goal**: Anyone can download and install CC-Beeper in under 60 seconds — no Gatekeeper warnings, no manual drag-to-Applications
@@ -164,10 +137,7 @@ Plans:
   2. The DMG artifact is attached to a GitHub Release automatically via the release workflow
   3. Opening the app on a clean Mac with no developer tools passes Gatekeeper — no "unidentified developer" warning
   4. On first launch from the DMG, the app copies itself to /Applications without user having to drag it manually
-**Plans**: 2 plans
-Plans:
-- [ ] 17-01-PLAN.md — Update DMG scripts and Makefile for CC-Beeper, configurable code signing
-- [ ] 17-02-PLAN.md — GitHub Actions release workflow + notarization documentation
+**Plans**: 2/2 complete
 
 ### Phase 18: GitHub README
 **Goal**: The GitHub repository looks like a product landing page — a stranger visiting it immediately understands what CC-Beeper is and wants to install it
@@ -179,25 +149,101 @@ Plans:
   3. A one-liner install command and a DMG download link are prominently placed above the fold
   4. Screenshots of all 10 shell color themes are displayed in the README
   5. A contributing guide and license section are present at the bottom
-**Plans**: 1 plan
+**Plans**: 1/1 complete
+
+</details>
+
+### 🚧 v3.1 Polish & Fixes (In Progress)
+
+**Milestone Goal:** Erase all Claumagotchi traces (laptop-wide + in-repo), fix the broken auto-speak TTS flow, refresh GitHub presence with new cover art and rewritten copy, add a beeper-shaped menu bar icon, and complete a final branding pass (app icon + DMG) once the user provides Figma-exported assets.
+
+- [ ] **Phase 19: Cleanup** - Purge all Claumagotchi references from the laptop and the codebase
+- [ ] **Phase 20: Fix Auto-Speak TTS** - Wire summary-hook into hook registration so TTS fires end-to-end
+- [ ] **Phase 21: GitHub & Branding** - Rewrite README with new cover image, update repo metadata, ship beeper menu bar icon
+- [ ] **Phase 22: Final Branding** - Integrate custom app icon and DMG branding once user provides Figma exports
+
+## Phase Details
+
+### Phase 19: Cleanup
+**Goal**: Every trace of "Claumagotchi" is gone — from the user's laptop (old .app, Desktop assets, memory files) and from the CC-Beeper codebase (code, comments, configs, scripts)
+**Depends on**: Phase 18
+**Requirements**: CLN-01, CLN-02
+**Success Criteria** (what must be TRUE):
+  1. No Claumagotchi .app exists in /Applications, and no Claumagotchi-era PNG assets remain on the Desktop
+  2. No entries in ~/.claude/memory/ reference "Claumagotchi" (entries updated or removed)
+  3. A grep of the entire CC-Beeper repo returns zero matches for the string "Claumagotchi" (case-insensitive) across all Swift files, Python scripts, configs, and comments
+  4. The app still builds and runs correctly after the in-repo cleanup
+**Plans**: 2 plans
+
 Plans:
-- [ ] 18-01-PLAN.md — Full landing-page README: hero, feature grid, install, themes, contributing, license
+- [ ] 19-01: Laptop-wide Claumagotchi purge — remove old .app, Desktop assets, .claude/memory refs
+- [ ] 19-02: In-repo code purge — sweep all Swift, Python, config, and comment files for remaining "Claumagotchi" strings
+
+### Phase 20: Fix Auto-Speak TTS
+**Goal**: When Claude Code finishes a session, the summary-hook fires automatically, and the app speaks the summary aloud — with a graceful fallback if no OpenAI key is set
+**Depends on**: Phase 19
+**Requirements**: FIX-01, FIX-02
+**Success Criteria** (what must be TRUE):
+  1. After Claude Code stops, summary-hook.py is invoked automatically — the user hears a spoken summary without pressing anything
+  2. The hook fires because HookInstaller now includes summary-hook in its registration list — the fix is verified by inspecting the installed hooks file
+  3. With an OpenAI API key set, TTS uses OpenAI voice; without a key, TTS falls back to Apple Ava Premium voice without an error or silence
+  4. If Ava Premium is not downloaded, the app falls back to the default system voice rather than crashing or staying silent
+**Plans**: 2 plans
+
+Plans:
+- [ ] 20-01: Register summary-hook.py in HookInstaller and verify end-to-end TTS trigger
+- [ ] 20-02: Harden TTS fallback chain (OpenAI → Ava Premium → system voice) with tests
+
+### Phase 21: GitHub & Branding
+**Goal**: The GitHub repo and menu bar icon reflect the CC-Beeper identity — the README features the new multi-shell cover image, the copy is exciting and concise, the repo metadata is updated, and the menu bar shows a beeper-shaped silhouette
+**Depends on**: Phase 19
+**Requirements**: GH2-01, GH2-02, GH2-03, BRD-01
+**Success Criteria** (what must be TRUE):
+  1. The README hero section displays the new multi-shell cover image (not the old placeholder or Claumagotchi era art)
+  2. README copy is rewritten — no mentions of Claumagotchi, language is exciting and concise, a first-time reader immediately understands what CC-Beeper does
+  3. The GitHub repository description, topics, and website field are updated to match CC-Beeper branding
+  4. The menu bar icon is a beeper-shaped silhouette (not a generic icon), visible and legible in both light and dark menu bars
+**Plans**: 2 plans
+
+Plans:
+- [ ] 21-01: Create beeper-shaped menu bar icon (silhouette asset + wire into app)
+- [ ] 21-02: Rewrite README with new cover image, refreshed copy, updated metadata; push repo description update
+
+### Phase 22: Final Branding
+**Goal**: CC-Beeper has a custom app icon and a branded DMG — completing the visual identity once the user delivers the Figma-exported assets
+**Depends on**: Phase 21
+**Requirements**: BRD-02, BRD-03
+**Success Criteria** (what must be TRUE):
+  1. The custom app icon (user-provided Figma export) appears in the Dock, Finder, and the About panel — no generic placeholder icon remains
+  2. The DMG window displays the CC-Beeper volume name and background (if asset provided), consistent with the app's visual identity
+  3. `make dmg` produces the branded DMG without manual steps
+**Plans**: 2 plans
+
+Plans:
+- [ ] 22-01: Integrate user-provided app icon into Assets.xcassets at all required resolutions
+- [ ] 22-02: Update DMG script with CC-Beeper volume name and optional background image
+
+**Note:** Phase 22 is blocked until the user provides the Figma-exported app icon. BRD-02 is a user-dependency gate; BRD-03 (DMG branding) follows immediately after.
 
 ## Progress
 
-**Execution Order:** 12 → 13 → 14 → 15 (parallel with 13-14) → 16 → 17 → 18
+**Execution Order:** 19 → 20 (can parallel with 21) → 21 → 22
 
-Note: Phase 15 (Voice Fixes) depends only on Phase 12 and can be executed in parallel with Phases 13-14. Phase 16 waits for both 14 and 15 to be complete.
+Note: Phase 20 (Fix Auto-Speak TTS) and Phase 21 (GitHub & Branding) both depend only on Phase 19 and can execute in parallel. Phase 22 waits for Phase 21 (and for user to provide Figma assets).
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 9. UI + Controls | v2.0 Voice Loop | 3/3 | Complete | 2026-03-22 |
 | 10. Voice Input + Injection | v2.0 Voice Loop | 1/1 | Complete | 2026-03-22 |
 | 11. Auto-Speak + Summary Hook | v2.0 Voice Loop | 2/2 | Complete | 2026-03-22 |
-| 12. Code Quality | 2/2 | Complete    | 2026-03-24 | - |
-| 13. Onboarding | 4/4 | Complete    | 2026-03-24 | - |
-| 14. Menu Bar Popover | 2/2 | Complete    | 2026-03-24 | - |
-| 15. Voice Fixes | 2/2 | Complete    | 2026-03-25 | - |
-| 16. Visual Polish | 3/3 | Complete    | 2026-03-25 | - |
-| 17. Distribution | 2/2 | Complete    | 2026-03-25 | - |
-| 18. GitHub README | 1/1 | Complete    | 2026-03-25 | - |
+| 12. Code Quality | v3.0 Public Launch | 2/2 | Complete | 2026-03-24 |
+| 13. Onboarding | v3.0 Public Launch | 4/4 | Complete | 2026-03-24 |
+| 14. Menu Bar Popover | v3.0 Public Launch | 2/2 | Complete | 2026-03-24 |
+| 15. Voice Fixes | v3.0 Public Launch | 2/2 | Complete | 2026-03-25 |
+| 16. Visual Polish | v3.0 Public Launch | 3/3 | Complete | 2026-03-25 |
+| 17. Distribution | v3.0 Public Launch | 2/2 | Complete | 2026-03-25 |
+| 18. GitHub README | v3.0 Public Launch | 1/1 | Complete | 2026-03-25 |
+| 19. Cleanup | v3.1 Polish & Fixes | 0/2 | Not started | - |
+| 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 0/2 | Not started | - |
+| 21. GitHub & Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
+| 22. Final Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
