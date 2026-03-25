@@ -158,7 +158,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 **Milestone Goal:** Erase all Claumagotchi traces (laptop-wide + in-repo), fix the broken auto-speak TTS flow, refresh GitHub presence with new cover art and rewritten copy, add a beeper-shaped menu bar icon, and complete a final branding pass (app icon + DMG) once the user provides Figma-exported assets.
 
 - [x] **Phase 19: Cleanup** - Purge all Claumagotchi references from the laptop and the codebase (completed 2026-03-25)
-- [ ] **Phase 20: Fix Auto-Speak TTS** - Wire summary-hook into hook registration so TTS fires end-to-end
+- [x] **Phase 20: Fix Auto-Speak TTS** - Wire summary-hook into hook registration so TTS fires end-to-end (completed 2026-03-25)
 - [ ] **Phase 21: GitHub & Branding** - Rewrite README with new cover image, update repo metadata, ship beeper menu bar icon
 - [ ] **Phase 22: Final Branding** - Integrate custom app icon and DMG branding once user provides Figma exports
 
@@ -192,7 +192,7 @@ Plans:
 
 Plans:
 - [x] 20-01-PLAN.md — Merge summary extraction into cc-beeper-hook.py Stop handler, delete standalone summary-hook.py
-- [ ] 20-02-PLAN.md — Add Groq TTS provider, provider-based routing, Settings dropdown, fallback hardening
+- [x] 20-02-PLAN.md — Add Groq TTS provider, provider-based routing, Settings dropdown, fallback hardening
 
 ### Phase 21: GitHub & Branding
 **Goal**: The GitHub repo and menu bar icon reflect the CC-Beeper identity — the README features the new multi-shell cover image, the copy is exciting and concise, the repo metadata is updated, and the menu bar shows a beeper-shaped silhouette
@@ -244,6 +244,6 @@ Note: Phase 20 (Fix Auto-Speak TTS) and Phase 21 (GitHub & Branding) both depend
 | 17. Distribution | v3.0 Public Launch | 2/2 | Complete | 2026-03-25 |
 | 18. GitHub README | v3.0 Public Launch | 1/1 | Complete | 2026-03-25 |
 | 19. Cleanup | v3.1 Polish & Fixes | 2/2 | Complete    | 2026-03-25 |
-| 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 1/2 | In Progress|  |
+| 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 2/2 | Complete   | 2026-03-25 |
 | 21. GitHub & Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
 | 22. Final Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
