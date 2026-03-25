@@ -9,6 +9,13 @@ struct SettingsAudioSection: View {
         }
         .toggleStyle(.switch)
 
+        Picker("TTS Provider", selection: $monitor.ttsProvider) {
+            Text("Apple").tag("apple")
+            Text("Groq").tag("groq")
+            Text("OpenAI").tag("openai")
+        }
+        .pickerStyle(.menu)
+
         Toggle(isOn: $monitor.vibrationEnabled) {
             Label("Vibration", systemImage: "waveform")
         }
