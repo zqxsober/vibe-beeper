@@ -105,6 +105,11 @@ final class ClaudeMonitor: ObservableObject {
         didSet { UserDefaults.standard.set(autoSpeak, forKey: "autoSpeak") }
     }
 
+    /// TTS provider selection: "groq", "openai", or "apple" (default).
+    @Published var ttsProvider: String = "apple" {
+        didSet { UserDefaults.standard.set(ttsProvider, forKey: "ttsProvider") }
+    }
+
     private static let summaryFile = ipcDir + "/last_summary.txt"
     private var summarySource: DispatchSourceFileSystemObject?
     private var lastSummaryHash: Int = 0
@@ -147,6 +152,7 @@ final class ClaudeMonitor: ObservableObject {
         setupGlobalHotkeys()
         // Set after watcher is running so didSet fires only on external mutation
         autoSpeak = UserDefaults.standard.bool(forKey: "autoSpeak")
+        ttsProvider = UserDefaults.standard.string(forKey: "ttsProvider") ?? "apple"
         isActive = UserDefaults.standard.object(forKey: "isActive") as? Bool ?? true
         // Wire ttsService into voiceService so recording cuts TTS
         voiceService.ttsService = ttsService
@@ -315,7 +321,7 @@ final class ClaudeMonitor: ObservableObject {
         guard autoSpeak, !isRecording else { return }
 
         Task {
-            let summary = await ttsService.speakSummary(text)
+            let summary = await ttsService.speakSummary(text, provider: self.ttsProvider)
             await MainActor.run {
                 // Re-check after async summarization — user might have started recording
                 guard !self.isRecording else { return }

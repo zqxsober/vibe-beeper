@@ -30,9 +30,9 @@ final class TTSService: ObservableObject, @unchecked Sendable {
     // MARK: - Public API
 
     /// Speak the given text directly. For long text, uses last paragraph. Returns what was spoken.
-    func speakSummary(_ text: String) async -> String {
+    func speakSummary(_ text: String, provider: String = "apple") async -> String {
         let toSpeak = text
-        await MainActor.run { speak(toSpeak) }
+        await MainActor.run { speak(toSpeak, provider: provider) }
         return toSpeak
     }
 
@@ -84,11 +84,24 @@ final class TTSService: ObservableObject, @unchecked Sendable {
 
     // MARK: - TTS Dispatcher
 
-    private func speak(_ text: String) {
+    private func speak(_ text: String, provider: String = "apple") {
         guard !text.isEmpty else { return }
-        if let openAIKey = KeychainService.load(account: KeychainService.openAIAccount) {
-            speakWithOpenAI(text, apiKey: openAIKey)
-        } else {
+        switch provider {
+        case "groq":
+            if let key = KeychainService.load(account: KeychainService.groqAccount) {
+                speakWithGroq(text, apiKey: key)
+            } else {
+                log("Groq TTS: no API key — falling back to Apple voice")
+                speakWithAva(text)
+            }
+        case "openai":
+            if let key = KeychainService.load(account: KeychainService.openAIAccount) {
+                speakWithOpenAI(text, apiKey: key)
+            } else {
+                log("OpenAI TTS: no API key — falling back to Apple voice")
+                speakWithAva(text)
+            }
+        default: // "apple" or any unknown value
             speakWithAva(text)
         }
     }
@@ -103,7 +116,7 @@ final class TTSService: ObservableObject, @unchecked Sendable {
             do {
                 var request = URLRequest(url: URL(string: "https://api.openai.com/v1/audio/speech")!)
                 request.httpMethod = "POST"
-                // OpenAI requires capital-B "Bearer" (unlike Groq which requires lowercase)
+                // Both OpenAI and Groq use standard "Bearer" authorization
                 request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -145,6 +158,61 @@ final class TTSService: ObservableObject, @unchecked Sendable {
                 }
             } catch {
                 log("OpenAI TTS: network error: \(error)")
+                await MainActor.run { self.speakWithAva(text) }
+            }
+        }
+    }
+
+    // MARK: - Groq TTS Path
+
+    private func speakWithGroq(_ text: String, apiKey: String) {
+        log("Groq TTS: speaking: \(text.prefix(200))")
+        isSpeaking = true
+
+        Task {
+            do {
+                var request = URLRequest(url: URL(string: "https://api.groq.com/openai/v1/audio/speech")!)
+                request.httpMethod = "POST"
+                request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+                let body: [String: Any] = [
+                    "model": "playai-tts",
+                    "input": text,
+                    "voice": "Arista-PlayAI",
+                    "response_format": "mp3"
+                ]
+                request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+                let (data, response) = try await URLSession.shared.data(for: request)
+
+                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                    let bodyStr = String(data: data, encoding: .utf8) ?? "(no body)"
+                    log("Groq TTS error \(httpResponse.statusCode): \(bodyStr)")
+                    await MainActor.run { self.speakWithAva(text) }
+                    return
+                }
+
+                await MainActor.run {
+                    do {
+                        let player = try AVAudioPlayer(data: data, fileTypeHint: AVFileType.mp3.rawValue)
+                        self.playerDelegate = OpenAITTSDelegate { [weak self] in
+                            Task { @MainActor in
+                                self?.isSpeaking = false
+                                self?.audioPlayer = nil
+                            }
+                        }
+                        player.delegate = self.playerDelegate
+                        self.audioPlayer = player
+                        player.play()
+                        self.log("Groq TTS: playback started")
+                    } catch {
+                        self.log("Groq TTS: AVAudioPlayer failed: \(error)")
+                        self.speakWithAva(text)
+                    }
+                }
+            } catch {
+                log("Groq TTS: network error: \(error)")
                 await MainActor.run { self.speakWithAva(text) }
             }
         }
