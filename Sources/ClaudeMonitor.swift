@@ -36,7 +36,7 @@ struct PendingPermission: Equatable {
 
 @MainActor
 final class ClaudeMonitor: ObservableObject {
-    static let ipcDir = NSHomeDirectory() + "/.claude/claumagotchi"
+    static let ipcDir = NSHomeDirectory() + "/.claude/cc-beeper"
     static let eventsFile = ipcDir + "/events.jsonl"
     static let pendingFile = ipcDir + "/pending.json"
     static let responseFile = ipcDir + "/response.json"
@@ -383,8 +383,12 @@ final class ClaudeMonitor: ObservableObject {
             return
         }
 
-        // Awaiting user action -> nothing else changes display
-        guard !awaitingUserAction else { return }
+        // If we're awaiting user action but Claude is working again,
+        // the permission was resolved externally (user answered in terminal).
+        if awaitingUserAction && (type == "pre_tool" || type == "post_tool" || type == "stop" || type == "session_end") {
+            awaitingUserAction = false
+            pendingPermission = nil
+        }
 
         idleWork?.cancel()
 

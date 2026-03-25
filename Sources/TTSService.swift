@@ -17,7 +17,7 @@ final class TTSService: ObservableObject, @unchecked Sendable {
 
     private func log(_ msg: String) {
         let line = "[\(Date())] \(msg)\n"
-        let path = "/tmp/claumagotchi-tts.log"
+        let path = "/tmp/cc-beeper-tts.log"
         if let fh = FileHandle(forWritingAtPath: path) {
             fh.seekToEndOfFile()
             fh.write(line.data(using: .utf8)!)

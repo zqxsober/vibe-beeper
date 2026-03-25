@@ -7,7 +7,7 @@ struct SettingsAboutSection: View {
         Text("CC-Beeper v\(version)")
             .font(.callout)
 
-        Link(destination: URL(string: "https://github.com/vecartier/Claumagotchi")!) {
+        Link(destination: URL(string: "https://github.com/vecartier/cc-beeper")!) {
             Label("GitHub Repository", systemImage: "link")
         }
         .font(.callout)

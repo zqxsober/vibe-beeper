@@ -79,7 +79,7 @@ struct ContentView: View {
         .padding(40)
         .background(Color.clear)
         .contextMenu {
-            Button("Quit Claumagotchi") { NSApplication.shared.terminate(nil) }
+            Button("Quit CC-Beeper") { NSApplication.shared.terminate(nil) }
         }
         .onReceive(monitor.$state) { newState in
             handleStateChange(newState)

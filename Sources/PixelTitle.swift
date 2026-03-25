@@ -8,7 +8,7 @@ struct PixelTitle: View {
     private let px: CGFloat = 1.4
     private let gap: CGFloat = 1.0
 
-    // Rounded, playful letterforms — inspired by Tamagotchi logo
+    // Rounded, playful letterforms — used for LCD title display
     private static let font: [Character: [String]] = [
         "C": [".###.", "#...#", "#....", "#....", "#...#", ".###."],
         "L": ["#....", "#....", "#....", "#....", "#....", "#####"],
@@ -20,6 +20,11 @@ struct PixelTitle: View {
         "T": ["#####", "..#..", "..#..", "..#..", "..#..", "..#.."],
         "H": ["#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
         "I": [".#.", ".#.", ".#.", ".#.", ".#.", ".#."],
+        "B": ["####.", "#...#", "#...#", "####.", "#...#", "####."],
+        "E": ["#####", "#....", "#....", "####.", "#....", "#####"],
+        "P": ["####.", "#...#", "#...#", "####.", "#....", "#...."],
+        "R": ["####.", "#...#", "#...#", "####.", "#.#..", "#..##"],
+        "-": [".....", ".....", "#####", "#####", ".....", "....."],
     ]
 
     var body: some View {
@@ -28,7 +33,7 @@ struct PixelTitle: View {
             let highlight = themeManager.lcdOn.opacity(0.4)
             let shadow = themeManager.lcdOn.opacity(0.2)
 
-            let text: [Character] = Array("CLAUMAGOTCHI")
+            let text: [Character] = Array("CC-BEEPER")
 
             var totalW: CGFloat = 0
             for ch in text {

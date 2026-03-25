@@ -34,7 +34,7 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
 
     private func log(_ msg: String) {
         let line = "[\(Date())] \(msg)\n"
-        let path = "/tmp/claumagotchi-voice.log"
+        let path = "/tmp/cc-beeper-voice.log"
         if let fh = FileHandle(forWritingAtPath: path) {
             fh.seekToEndOfFile()
             fh.write(line.data(using: .utf8)!)

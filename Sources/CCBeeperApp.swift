@@ -3,7 +3,7 @@ import AppKit
 import ApplicationServices
 
 @main
-struct ClaumagotchiApp: App {
+struct CCBeeperApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var monitor = ClaudeMonitor()
     @StateObject private var themeManager = ThemeManager()
@@ -11,7 +11,7 @@ struct ClaumagotchiApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     var body: some Scene {
-        Window("Claumagotchi", id: "main") {
+        Window("CC-Beeper", id: "main") {
             ContentView()
                 .environmentObject(monitor)
                 .environmentObject(themeManager)
@@ -140,10 +140,13 @@ struct ClaumagotchiApp: App {
 // MARK: - App Delegate
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private static let pidFile = NSHomeDirectory() + "/.claude/claumagotchi/claumagotchi.pid"
+    private static let pidFile = NSHomeDirectory() + "/.claude/cc-beeper/cc-beeper.pid"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+
+        // Migration: move old IPC directory to new cc-beeper path
+        migrateIPCDirectoryIfNeeded()
 
         if let existing = Self.readPID(), Self.isProcessAlive(existing) {
             NSApp.terminate(nil)
@@ -166,10 +169,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         if !flag {
-            ClaumagotchiApp.showMainWindow()
+            CCBeeperApp.showMainWindow()
         }
         return false
     }
+
+    // MARK: - IPC Migration
+
+    /// Migrate old ~/.claude/claumagotchi/ IPC directory to ~/.claude/cc-beeper/
+    private func migrateIPCDirectoryIfNeeded() {
+        let fm = FileManager.default
+        let oldPath = NSHomeDirectory() + "/.claude/claumagotchi"
+        let newPath = NSHomeDirectory() + "/.claude/cc-beeper"
+
+        var isOldDir: ObjCBool = false
+        guard fm.fileExists(atPath: oldPath, isDirectory: &isOldDir), isOldDir.boolValue else {
+            return // old path doesn't exist — nothing to migrate
+        }
+
+        // Ensure new directory exists
+        try? fm.createDirectory(atPath: newPath, withIntermediateDirectories: true)
+
+        // Copy each item from old to new (skip if already exists at destination)
+        if let items = try? fm.contentsOfDirectory(atPath: oldPath) {
+            for item in items {
+                let src = oldPath + "/" + item
+                let dst = newPath + "/" + item
+                if !fm.fileExists(atPath: dst) {
+                    try? fm.copyItem(atPath: src, toPath: dst)
+                }
+            }
+        }
+
+        // Remove old directory
+        try? fm.removeItem(atPath: oldPath)
+    }
+
+    // MARK: - PID Management
 
     private static func readPID() -> pid_t? {
         guard let data = FileManager.default.contents(atPath: pidFile),

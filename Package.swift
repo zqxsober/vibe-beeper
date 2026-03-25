@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "Claumagotchi",
+    name: "CC-Beeper",
     platforms: [.macOS(.v26)],
     targets: [
         .executableTarget(
-            name: "Claumagotchi",
+            name: "CC-Beeper",
             path: "Sources",
             exclude: [
                 "shells",
@@ -14,7 +14,7 @@ let package = Package(
                 "shell.svg",
             ],
             resources: [
-                .copy("claumagotchi-hook.py"),
+                .copy("cc-beeper-hook.py"),
             ],
             swiftSettings: [
                 .swiftLanguageMode(.v5),
@@ -24,9 +24,9 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "ClaumagotchiTests",
+            name: "CC-BeeperTests",
             dependencies: [],
-            path: "Tests/ClaumagotchiTests"
+            path: "Tests/CC-BeeperTests"
         )
     ]
 )

@@ -17,14 +17,14 @@ struct MenuBarPopoverView: View {
                     monitor.soundEnabled.toggle()
                 }
                 QuickActionButton(icon: "eye.slash", label: "Hide", isActive: false) {
-                    ClaumagotchiApp.toggleMainWindow()
+                    CCBeeperApp.toggleMainWindow()
                 }
                 QuickActionButton(icon: "power", label: monitor.isActive ? "On" : "Off", isActive: monitor.isActive) {
                     monitor.isActive.toggle()
                     if !monitor.isActive {
-                        ClaumagotchiApp.hideMainWindow()
+                        CCBeeperApp.hideMainWindow()
                     } else {
-                        ClaumagotchiApp.showMainWindow()
+                        CCBeeperApp.showMainWindow()
                     }
                 }
             }

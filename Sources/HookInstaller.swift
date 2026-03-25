@@ -2,13 +2,13 @@ import Foundation
 
 struct HookInstaller {
     static let hooksDir    = NSHomeDirectory() + "/.claude/hooks"
-    static let ipcDir      = NSHomeDirectory() + "/.claude/claumagotchi"
+    static let ipcDir      = NSHomeDirectory() + "/.claude/cc-beeper"
     static let settingsPath = NSHomeDirectory() + "/.claude/settings.json"
-    static let hookScript  = hooksDir + "/claumagotchi-hook.py"
-    static let appPathFile = hooksDir + "/claumagotchi-app-path"
+    static let hookScript  = hooksDir + "/cc-beeper-hook.py"
+    static let appPathFile = hooksDir + "/cc-beeper-app-path"
 
     /// Returns true when the hook script exists on disk AND settings.json contains
-    /// at least one hook entry whose command references claumagotchi-hook.py.
+    /// at least one hook entry whose command references cc-beeper-hook.py.
     static var isInstalled: Bool {
         let fm = FileManager.default
         guard fm.fileExists(atPath: hookScript),
@@ -21,7 +21,7 @@ struct HookInstaller {
             for rule in rules {
                 guard let hs = rule["hooks"] as? [[String: Any]] else { continue }
                 for h in hs {
-                    if (h["command"] as? String)?.contains("claumagotchi-hook.py") == true {
+                    if (h["command"] as? String)?.contains("cc-beeper-hook.py") == true {
                         return true
                     }
                 }
@@ -38,7 +38,7 @@ struct HookInstaller {
     /// 3. Copy hook script from the app bundle to hookScript path; set permissions to 0o755.
     /// 4. Write the current app bundle path to appPathFile.
     /// 5. Load existing settings.json (or start with an empty dict).
-    /// 6. For each of the 8 hook events: remove any existing claumagotchi entries,
+    /// 6. For each of the 8 hook events: remove any existing cc-beeper entries,
     ///    then append a fresh entry with the correct timeout.
     /// 7. Write settings back as pretty-printed, sorted-keys JSON.
     static func install() throws {
@@ -52,7 +52,7 @@ struct HookInstaller {
         try fm.setAttributes([.posixPermissions: 0o700], ofItemAtPath: ipcDir)
 
         // 3. Copy hook script from app bundle resources
-        guard let bundleScript = Bundle.main.path(forResource: "claumagotchi-hook", ofType: "py") else {
+        guard let bundleScript = Bundle.main.path(forResource: "cc-beeper-hook", ofType: "py") else {
             throw InstallError.hookScriptNotInBundle
         }
         if fm.fileExists(atPath: hookScript) {
@@ -87,10 +87,10 @@ struct HookInstaller {
         ]
         for (event, timeout) in eventConfigs {
             var existing = hooks[event] as? [[String: Any]] ?? []
-            // Remove any previous claumagotchi entries
+            // Remove any previous cc-beeper entries
             existing = existing.filter { rule in
                 guard let hs = rule["hooks"] as? [[String: Any]] else { return true }
-                return !hs.contains { ($0["command"] as? String)?.contains("claumagotchi-hook.py") == true }
+                return !hs.contains { ($0["command"] as? String)?.contains("cc-beeper-hook.py") == true }
             }
             // Append fresh entry
             let hookEntry: [String: Any] = [
@@ -118,7 +118,7 @@ struct HookInstaller {
         var errorDescription: String? {
             switch self {
             case .hookScriptNotInBundle:
-                return "The hook script (claumagotchi-hook.py) was not found in the app bundle."
+                return "The hook script (cc-beeper-hook.py) was not found in the app bundle."
             }
         }
     }

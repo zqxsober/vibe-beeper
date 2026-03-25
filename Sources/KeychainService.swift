@@ -5,7 +5,9 @@ import Security
 /// Keys are stored as generic passwords under the app's service identifier.
 /// iCloud sync is explicitly disabled to prevent third-party keys from leaving the device.
 enum KeychainService {
-    private static let service = "com.claumagotchi.apikeys"
+    private static let service = "com.vecartier.cc-beeper.apikeys"
+    // Migration: old service identifier used before the CC-Beeper rename
+    private static let legacyService = "com.claumagotchi.apikeys"
 
     // MARK: - Account Constants
 
@@ -39,6 +41,8 @@ enum KeychainService {
     }
 
     /// Load a value from the Keychain for the given account.
+    /// Falls back to legacy service identifier (com.claumagotchi.apikeys) for migration.
+    /// If found in legacy service, migrates the value to the new service and deletes the old entry.
     /// Returns nil if the entry does not exist or is empty.
     static func load(account: String) -> String? {
         let query: [String: Any] = [
@@ -50,11 +54,37 @@ enum KeychainService {
             kSecAttrSynchronizable as String: false
         ]
         var result: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
-              let data = result as? Data,
-              let value = String(data: data, encoding: .utf8),
-              !value.isEmpty else { return nil }
-        return value
+        if SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+           let data = result as? Data,
+           let value = String(data: data, encoding: .utf8),
+           !value.isEmpty {
+            return value
+        }
+
+        // Migration: check old service identifier from pre-rename Claumagotchi app
+        let legacyQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: legacyService,
+            kSecAttrAccount as String: account,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+            kSecAttrSynchronizable as String: false
+        ]
+        var legacyResult: CFTypeRef?
+        guard SecItemCopyMatching(legacyQuery as CFDictionary, &legacyResult) == errSecSuccess,
+              let legacyData = legacyResult as? Data,
+              let legacyValue = String(data: legacyData, encoding: .utf8),
+              !legacyValue.isEmpty else { return nil }
+
+        // Migrate to new service and remove legacy entry
+        save(legacyValue, account: account)
+        let deleteQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: legacyService,
+            kSecAttrAccount as String: account
+        ]
+        SecItemDelete(deleteQuery as CFDictionary)
+        return legacyValue
     }
 
     /// Delete the Keychain entry for the given account.
