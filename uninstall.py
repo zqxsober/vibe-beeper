@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Removes Claumagotchi hooks from Claude Code settings."""
+"""Removes CC-Beeper hooks from Claude Code settings."""
 
 import json
 import os
@@ -8,9 +8,10 @@ import subprocess
 
 SETTINGS_PATH = os.path.expanduser("~/.claude/settings.json")
 HOOKS_DIR = os.path.expanduser("~/.claude/hooks")
-IPC_DIR = os.path.expanduser("~/.claude/claumagotchi")
-HOOK_SCRIPT = os.path.join(HOOKS_DIR, "claumagotchi-hook.py")
-APP_PATH_FILE = os.path.join(HOOKS_DIR, "claumagotchi-app-path")
+IPC_DIR = os.path.expanduser("~/.claude/cc-beeper")
+LEGACY_IPC_DIR = os.path.expanduser("~/.claude/claumagotchi")
+HOOK_SCRIPT = os.path.join(HOOKS_DIR, "cc-beeper-hook.py")
+LEGACY_HOOK_SCRIPT = os.path.join(HOOKS_DIR, "claumagotchi-hook.py")
 
 HOOK_EVENTS = [
     "PreToolUse", "PostToolUse", "PermissionRequest",
@@ -21,14 +22,14 @@ HOOK_EVENTS = [
 def main():
     # Kill running app
     try:
-        subprocess.run(["pkill", "-x", "Claumagotchi"],
+        subprocess.run(["pkill", "-x", "CC-Beeper"],
                        capture_output=True, check=False)
-        print("  Stopped Claumagotchi app")
+        print("  Stopped CC-Beeper app")
     except Exception:
         pass
 
-    # Remove hook script
-    for f in [HOOK_SCRIPT, APP_PATH_FILE]:
+    # Remove hook scripts (current + legacy)
+    for f in [HOOK_SCRIPT, LEGACY_HOOK_SCRIPT]:
         if os.path.exists(f):
             os.remove(f)
             print(f"  Removed {f}")
@@ -49,7 +50,11 @@ def main():
             existing = hooks.get(event, [])
             filtered = [
                 rule for rule in existing
-                if not any("claumagotchi-hook.py" in h.get("command", "") for h in rule.get("hooks", []))
+                if not any(
+                    "cc-beeper-hook.py" in h.get("command", "") or
+                    "claumagotchi-hook.py" in h.get("command", "")
+                    for h in rule.get("hooks", [])
+                )
             ]
             if len(filtered) != len(existing):
                 changed = True
@@ -64,23 +69,14 @@ def main():
                 json.dump(settings, f, indent=2)
             print(f"  Cleaned hooks from {SETTINGS_PATH}")
 
-    # Clean IPC directory
-    if os.path.exists(IPC_DIR):
-        shutil.rmtree(IPC_DIR)
-        print(f"  Removed {IPC_DIR}")
-
-    # Clean legacy /tmp/ files from older versions
-    for f in [
-        "/tmp/claumagotchi-events.jsonl",
-        "/tmp/claumagotchi-pending.json",
-        "/tmp/claumagotchi-response.json",
-        "/tmp/claumagotchi-sessions.json",
-    ]:
-        if os.path.exists(f):
-            os.remove(f)
+    # Clean IPC directories (current + legacy)
+    for d in [IPC_DIR, LEGACY_IPC_DIR]:
+        if os.path.exists(d):
+            shutil.rmtree(d)
+            print(f"  Removed {d}")
 
     print()
-    print("  Claumagotchi uninstalled!")
+    print("  CC-Beeper uninstalled!")
     print("  You can safely delete this folder now.")
 
 

@@ -5,3 +5,5 @@ AppIcon.icns
 .DS_Store
 .swiftpm/
 .planning/
+*.app
+*.dmg

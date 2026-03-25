@@ -156,3 +156,13 @@ None - no external service configuration required.
 ---
 *Phase: 16-visual-polish*
 *Completed: 2026-03-25*
+
+## Self-Check: PASSED
+
+- Sources/CCBeeperApp.swift: FOUND
+- Sources/cc-beeper-hook.py: FOUND
+- hooks/cc-beeper-hook.py: FOUND
+- Tests/CC-BeeperTests/: FOUND
+- 16-01-SUMMARY.md: FOUND
+- Commit 01d06a4: FOUND
+- Commit 2fdcbf8: FOUND

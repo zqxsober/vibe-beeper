@@ -112,10 +112,10 @@ def get_app_path():
     for candidate in [
         "/Applications/CC-Beeper.app",
         os.path.expanduser("~/Applications/CC-Beeper.app"),
-        os.path.expanduser("~/Desktop/Claumagotchi/CC-Beeper.app"),
-        os.path.expanduser("~/Claumagotchi/CC-Beeper.app"),
-        os.path.expanduser("~/Projects/Claumagotchi/CC-Beeper.app"),
-        os.path.expanduser("~/Developer/Claumagotchi/CC-Beeper.app"),
+        os.path.expanduser("~/Desktop/cc-beeper/CC-Beeper.app"),
+        os.path.expanduser("~/cc-beeper/CC-Beeper.app"),
+        os.path.expanduser("~/Projects/cc-beeper/CC-Beeper.app"),
+        os.path.expanduser("~/Developer/cc-beeper/CC-Beeper.app"),
     ]:
         if os.path.exists(candidate):
             return candidate

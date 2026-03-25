@@ -26,15 +26,15 @@ update:
 	@./update.sh
 
 autoupdate:
-	# NOTE: plist file retains legacy name com.claumagotchi.autoupdate.plist — rename not required for functionality
+	# NOTE: plist file retains legacy name com.cc-beeper.autoupdate.plist — rename not required for functionality
 	@REPO="$$(cd "$(CURDIR)" && pwd)" && \
-	sed "s|__REPO_PATH__|$$REPO|g" com.claumagotchi.autoupdate.plist \
-		> ~/Library/LaunchAgents/com.claumagotchi.autoupdate.plist && \
-	launchctl bootout gui/$$(id -u) ~/Library/LaunchAgents/com.claumagotchi.autoupdate.plist 2>/dev/null || true && \
-	launchctl bootstrap gui/$$(id -u) ~/Library/LaunchAgents/com.claumagotchi.autoupdate.plist && \
+	sed "s|__REPO_PATH__|$$REPO|g" com.cc-beeper.autoupdate.plist \
+		> ~/Library/LaunchAgents/com.cc-beeper.autoupdate.plist && \
+	launchctl bootout gui/$$(id -u) ~/Library/LaunchAgents/com.cc-beeper.autoupdate.plist 2>/dev/null || true && \
+	launchctl bootstrap gui/$$(id -u) ~/Library/LaunchAgents/com.cc-beeper.autoupdate.plist && \
 	echo "Auto-update enabled — checks every 6 hours."
 
 no-autoupdate:
-	@launchctl bootout gui/$$(id -u) ~/Library/LaunchAgents/com.claumagotchi.autoupdate.plist 2>/dev/null || true
-	@rm -f ~/Library/LaunchAgents/com.claumagotchi.autoupdate.plist
+	@launchctl bootout gui/$$(id -u) ~/Library/LaunchAgents/com.cc-beeper.autoupdate.plist 2>/dev/null || true
+	@rm -f ~/Library/LaunchAgents/com.cc-beeper.autoupdate.plist
 	@echo "Auto-update disabled."

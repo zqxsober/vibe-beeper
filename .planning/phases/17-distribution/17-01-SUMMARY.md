@@ -97,6 +97,16 @@ For Developer ID distribution (notarization):
 - `make dmg` produces a distributable CC-Beeper.dmg ready for GitHub Releases attachment
 - Phase 17-02 can proceed: GitHub Release workflow, release notes, and version tagging
 
+## Self-Check: PASSED
+
+- create-dmg.sh: FOUND
+- build.sh: FOUND
+- Makefile: FOUND
+- CC-Beeper.dmg: FOUND
+- 17-01-SUMMARY.md: FOUND
+- Commit f30f7a0 (Task 1): FOUND
+- Commit 744fb36 (Task 2): FOUND
+
 ---
 *Phase: 17-distribution*
 *Completed: 2026-03-25*

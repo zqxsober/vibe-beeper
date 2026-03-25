@@ -10,7 +10,7 @@ LOCAL=$(git rev-parse HEAD)
 REMOTE=$(git rev-parse origin/main)
 
 if [ "$LOCAL" = "$REMOTE" ]; then
-    echo "Claumagotchi is up to date."
+    echo "CC-Beeper is up to date."
     exit 0
 fi
 
@@ -20,14 +20,14 @@ git pull --quiet origin main
 ./build.sh
 
 # Stop running instance if any
-pkill -x Claumagotchi 2>/dev/null || true
+pkill -x CC-Beeper 2>/dev/null || true
 sleep 0.5
 
 # Install to /Applications
-rm -rf /Applications/Claumagotchi.app
-cp -R Claumagotchi.app /Applications/
+rm -rf /Applications/CC-Beeper.app
+cp -R CC-Beeper.app /Applications/
 
 # Relaunch
-open /Applications/Claumagotchi.app
+open /Applications/CC-Beeper.app
 
-echo "Claumagotchi updated and relaunched."
+echo "CC-Beeper updated and relaunched."

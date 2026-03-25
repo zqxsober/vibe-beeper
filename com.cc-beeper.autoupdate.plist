@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.claumagotchi.autoupdate</string>
+    <string>com.cc-beeper.autoupdate</string>
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
@@ -12,9 +12,9 @@
     <key>StartInterval</key>
     <integer>21600</integer>
     <key>StandardOutPath</key>
-    <string>/tmp/claumagotchi-update.log</string>
+    <string>/tmp/cc-beeper-update.log</string>
     <key>StandardErrorPath</key>
-    <string>/tmp/claumagotchi-update.log</string>
+    <string>/tmp/cc-beeper-update.log</string>
     <key>RunAtLoad</key>
     <false/>
 </dict>
