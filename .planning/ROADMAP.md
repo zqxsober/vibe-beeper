@@ -191,8 +191,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 20-01: Register summary-hook.py in HookInstaller and verify end-to-end TTS trigger
-- [ ] 20-02: Harden TTS fallback chain (OpenAI → Ava Premium → system voice) with tests
+- [ ] 20-01-PLAN.md — Merge summary extraction into cc-beeper-hook.py Stop handler, delete standalone summary-hook.py
+- [ ] 20-02-PLAN.md — Add Groq TTS provider, provider-based routing, Settings dropdown, fallback hardening
 
 ### Phase 21: GitHub & Branding
 **Goal**: The GitHub repo and menu bar icon reflect the CC-Beeper identity — the README features the new multi-shell cover image, the copy is exciting and concise, the repo metadata is updated, and the menu bar shows a beeper-shaped silhouette
@@ -243,7 +243,7 @@ Note: Phase 20 (Fix Auto-Speak TTS) and Phase 21 (GitHub & Branding) both depend
 | 16. Visual Polish | v3.0 Public Launch | 3/3 | Complete | 2026-03-25 |
 | 17. Distribution | v3.0 Public Launch | 2/2 | Complete | 2026-03-25 |
 | 18. GitHub README | v3.0 Public Launch | 1/1 | Complete | 2026-03-25 |
-| 19. Cleanup | v3.1 Polish & Fixes | 2/2 | Complete   | 2026-03-25 |
+| 19. Cleanup | v3.1 Polish & Fixes | 2/2 | Complete    | 2026-03-25 |
 | 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 0/2 | Not started | - |
 | 21. GitHub & Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
 | 22. Final Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
