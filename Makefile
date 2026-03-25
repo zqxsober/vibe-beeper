@@ -8,15 +8,15 @@ install: build
 	@echo "Setting up Claude Code hooks..."
 	@python3 setup.py
 	@echo ""
-	@echo "Launching Claumagotchi..."
-	@open Claumagotchi.app
+	@echo "Launching CC-Beeper..."
+	@open CC-Beeper.app
 
 uninstall: no-autoupdate
-	@echo "Uninstalling Claumagotchi..."
+	@echo "Uninstalling CC-Beeper..."
 	@python3 uninstall.py
 
 clean:
-	@rm -rf .build Claumagotchi.app Claumagotchi.dmg
+	@rm -rf .build CC-Beeper.app CC-Beeper.dmg
 	@echo "Cleaned build artifacts"
 
 dmg: build
@@ -26,6 +26,7 @@ update:
 	@./update.sh
 
 autoupdate:
+	# NOTE: plist file retains legacy name com.claumagotchi.autoupdate.plist — rename not required for functionality
 	@REPO="$$(cd "$(CURDIR)" && pwd)" && \
 	sed "s|__REPO_PATH__|$$REPO|g" com.claumagotchi.autoupdate.plist \
 		> ~/Library/LaunchAgents/com.claumagotchi.autoupdate.plist && \
