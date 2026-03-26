@@ -159,7 +159,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 
 - [x] **Phase 19: Cleanup** - Purge all Claumagotchi references from the laptop and the codebase (completed 2026-03-25)
 - [x] **Phase 20: Fix Auto-Speak TTS** - Wire summary-hook into hook registration so TTS fires end-to-end (completed 2026-03-25)
-- [ ] **Phase 21: GitHub & Branding** - Rewrite README with new cover image, update repo metadata, ship beeper menu bar icon
+- [x] **Phase 21: GitHub & Branding** - Rewrite README with new cover image, update repo metadata, ship beeper menu bar icon (completed 2026-03-26)
 - [ ] **Phase 22: Final Branding** - Integrate custom app icon and DMG branding once user provides Figma exports
 
 ## Phase Details
@@ -207,7 +207,7 @@ Plans:
 
 Plans:
 - [x] 21-01: Create beeper-shaped menu bar icon (silhouette asset + wire into app)
-- [ ] 21-02: Rewrite README with new cover image, refreshed copy, updated metadata; push repo description update
+- [x] 21-02: Rewrite README with new cover image, refreshed copy, updated metadata; push repo description update
 
 ### Phase 22: Final Branding
 **Goal**: CC-Beeper has a custom app icon and a branded DMG — completing the visual identity once the user delivers the Figma-exported assets
@@ -245,5 +245,5 @@ Note: Phase 20 (Fix Auto-Speak TTS) and Phase 21 (GitHub & Branding) both depend
 | 18. GitHub README | v3.0 Public Launch | 1/1 | Complete | 2026-03-25 |
 | 19. Cleanup | v3.1 Polish & Fixes | 2/2 | Complete    | 2026-03-25 |
 | 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 2/2 | Complete    | 2026-03-25 |
-| 21. GitHub & Branding | v3.1 Polish & Fixes | 1/2 | In Progress|  |
+| 21. GitHub & Branding | v3.1 Polish & Fixes | 2/2 | Complete   | 2026-03-26 |
 | 22. Final Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |

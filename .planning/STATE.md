@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
-status: Ready to execute
-stopped_at: Completed 21-01-PLAN.md (BeeperIcon menu bar icon)
-last_updated: "2026-03-26T09:48:26.222Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 21-02-PLAN.md
+last_updated: "2026-03-26T09:49:28.166Z"
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -51,6 +51,7 @@ Plan: 2 of 2
 | Phase 20-fix-auto-speak-tts P01 | 1 | 1 tasks | 2 files |
 | Phase 20 P02 | 4 | 2 tasks | 3 files |
 | Phase 21-github-branding P01 | 110 | 2 tasks | 4 files |
+| Phase 21-github-branding P02 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Plan: 2 of 2
 - [Phase 20]: Groq voice hardcoded to Arista-PlayAI — voice selection deferred to POST-05 per D-05
 - [Phase 21-github-branding]: Punched screen and buttons via NSGraphicsContext .copy + NSColor.clear — consistent with EggIcon technique
 - [Phase 21-github-branding]: BeeperIcon uses isTemplate=true on .normal state for automatic light/dark menu bar adaptation
+- [Phase 21-github-branding]: README rewritten with product-landing-page tone (Raycast/Arc style): punchy tagline, feature table, zero Claumagotchi mentions
+- [Phase 21-github-branding]: GitHub repo metadata updated via gh CLI: description + 8 topics (claude-code, macos, desktop-widget, swift, swiftui, voice, tts, developer-tools)
 
 ### Pending Todos
 
@@ -80,6 +83,6 @@ Plan: 2 of 2
 
 ## Session Continuity
 
-Last session: 2026-03-26T09:48:26.219Z
-Stopped at: Completed 21-01-PLAN.md (BeeperIcon menu bar icon)
+Last session: 2026-03-26T09:49:28.161Z
+Stopped at: Completed 21-02-PLAN.md
 Resume file: None
