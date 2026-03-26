@@ -390,10 +390,18 @@ final class ClaudeMonitor: ObservableObject {
         }
 
         // If we're awaiting user action but Claude is working again,
-        // the permission was resolved externally (user answered in terminal).
+        // check if the permission was actually resolved (not just a different session's event).
         if awaitingUserAction && (type == "pre_tool" || type == "post_tool" || type == "stop" || type == "session_end") {
-            awaitingUserAction = false
-            pendingPermission = nil
+            // Only clear if pending.json is gone (hook consumed the response)
+            // or response.json exists (we wrote it and hook hasn't picked it up yet).
+            // Otherwise, the permission is still pending — don't clear it.
+            let fm = FileManager.default
+            let pendingGone = !fm.fileExists(atPath: Self.pendingFile)
+            let responseExists = fm.fileExists(atPath: Self.responseFile)
+            if pendingGone || responseExists {
+                awaitingUserAction = false
+                pendingPermission = nil
+            }
         }
 
         idleWork?.cancel()
@@ -445,6 +453,13 @@ final class ClaudeMonitor: ObservableObject {
                 }
             }
             lastPruneTime = Date()
+        }
+
+        // If we're still awaiting user action on a permission, keep needsYou
+        // regardless of what individual session states say — the permission is real.
+        if awaitingUserAction && pendingPermission != nil {
+            state = .needsYou
+            return
         }
 
         let values = sessionStates.values
