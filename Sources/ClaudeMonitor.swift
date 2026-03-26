@@ -124,7 +124,7 @@ final class ClaudeMonitor: ObservableObject {
     /// This is the source of truth — never cleared by timeouts or external events.
     private var awaitingUserAction = false
 
-    var menuBarIconState: EggIconState {
+    var menuBarIconState: BeeperIconState {
         if !isActive { return .hidden }
         if autoAccept { return .yolo }
         if state.needsAttention { return .attention }

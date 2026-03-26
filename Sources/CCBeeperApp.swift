@@ -108,7 +108,7 @@ struct CCBeeperApp: App {
             Button("Quit CC-Beeper") { NSApp.terminate(nil) }
                 .keyboardShortcut("q")
         } label: {
-            Image(nsImage: EggIcon.image(state: monitor.menuBarIconState))
+            Image(nsImage: BeeperIcon.image(state: monitor.menuBarIconState))
         }
         .menuBarExtraStyle(.menu)
     }
