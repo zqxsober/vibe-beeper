@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
-status: Phase complete — ready for verification
-stopped_at: Completed 20-02-PLAN.md
-last_updated: "2026-03-25T22:41:37.878Z"
+status: Ready to execute
+stopped_at: Completed 21-01-PLAN.md (BeeperIcon menu bar icon)
+last_updated: "2026-03-26T09:48:26.222Z"
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
-**Current focus:** Phase 20 — Fix Auto-Speak TTS
+**Current focus:** Phase 21 — GitHub & Branding
 
 ## Current Position
 
-Phase: 20 (Fix Auto-Speak TTS) — EXECUTING
+Phase: 21 (GitHub & Branding) — EXECUTING
 Plan: 2 of 2
 
 ## Performance Metrics
@@ -50,6 +50,7 @@ Plan: 2 of 2
 | Phase 19-cleanup P02 | 5 | 2 tasks | 4 files |
 | Phase 20-fix-auto-speak-tts P01 | 1 | 1 tasks | 2 files |
 | Phase 20 P02 | 4 | 2 tasks | 3 files |
+| Phase 21-github-branding P01 | 110 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -65,10 +66,12 @@ Plan: 2 of 2
 - [Phase 20-fix-auto-speak-tts]: D-01: Merged summary extraction into cc-beeper-hook.py Stop handler — hooks/summary-hook.py deleted, HookInstaller unchanged
 - [Phase 20]: Provider passed as parameter through speakSummary() to speak() rather than injecting on TTSService — cleaner, no extra mutable state on service
 - [Phase 20]: Groq voice hardcoded to Arista-PlayAI — voice selection deferred to POST-05 per D-05
+- [Phase 21-github-branding]: Punched screen and buttons via NSGraphicsContext .copy + NSColor.clear — consistent with EggIcon technique
+- [Phase 21-github-branding]: BeeperIcon uses isTemplate=true on .normal state for automatic light/dark menu bar adaptation
 
 ### Pending Todos
 
-None yet.
+- **Accept/deny buttons intermittently non-responsive** — user reports clicking sometimes does nothing. Likely race condition with pending.json freshness check (5s window) or awaitingUserAction flag. Pre-existing bug, fix after v3.1 phases complete.
 
 ### Blockers/Concerns
 
@@ -77,6 +80,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T22:41:37.874Z
-Stopped at: Completed 20-02-PLAN.md
+Last session: 2026-03-26T09:48:26.219Z
+Stopped at: Completed 21-01-PLAN.md (BeeperIcon menu bar icon)
 Resume file: None

@@ -83,7 +83,7 @@ Requirements for Polish & Fixes milestone.
 
 ### Branding
 
-- [ ] **BRD-01**: Menu bar icon is a beeper-shaped silhouette (replaces current icon)
+- [x] **BRD-01**: Menu bar icon is a beeper-shaped silhouette (replaces current icon)
 - [ ] **BRD-02**: Custom app icon integrated (user provides Figma export)
 - [ ] **BRD-03**: DMG window uses CC-Beeper branding (volume name, background if provided)
 
@@ -150,7 +150,7 @@ Requirements for Polish & Fixes milestone.
 | GH2-03 | Phase 21 | Pending |
 | FIX-01 | Phase 20 | Complete |
 | FIX-02 | Phase 20 | Complete |
-| BRD-01 | Phase 21 | Pending |
+| BRD-01 | Phase 21 | Complete |
 | BRD-02 | Phase 22 | Pending |
 | BRD-03 | Phase 22 | Pending |
 

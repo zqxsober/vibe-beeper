@@ -206,7 +206,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 21-01: Create beeper-shaped menu bar icon (silhouette asset + wire into app)
+- [x] 21-01: Create beeper-shaped menu bar icon (silhouette asset + wire into app)
 - [ ] 21-02: Rewrite README with new cover image, refreshed copy, updated metadata; push repo description update
 
 ### Phase 22: Final Branding
@@ -244,6 +244,6 @@ Note: Phase 20 (Fix Auto-Speak TTS) and Phase 21 (GitHub & Branding) both depend
 | 17. Distribution | v3.0 Public Launch | 2/2 | Complete | 2026-03-25 |
 | 18. GitHub README | v3.0 Public Launch | 1/1 | Complete | 2026-03-25 |
 | 19. Cleanup | v3.1 Polish & Fixes | 2/2 | Complete    | 2026-03-25 |
-| 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 2/2 | Complete   | 2026-03-25 |
-| 21. GitHub & Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
+| 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 2/2 | Complete    | 2026-03-25 |
+| 21. GitHub & Branding | v3.1 Polish & Fixes | 1/2 | In Progress|  |
 | 22. Final Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
