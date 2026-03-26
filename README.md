@@ -14,19 +14,9 @@
   <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License">
 </p>
 
-<p align="center">
-  <a href="https://github.com/vecartier/cc-beeper/releases/latest"><strong>Download CC-Beeper</strong></a>
-</p>
-
 ---
 
 ## Install
-
-### Download (recommended)
-
-[Download CC-Beeper.dmg](https://github.com/vecartier/cc-beeper/releases/latest) — open, drag CC-Beeper.app to Applications, and follow the one-time setup wizard. No Terminal required.
-
-### Build from source
 
 ```bash
 git clone https://github.com/vecartier/cc-beeper.git
