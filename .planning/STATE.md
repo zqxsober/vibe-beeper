@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
-status: Ready to execute
-stopped_at: Completed 25-offline-tts-01-PLAN.md
-last_updated: "2026-03-27T12:28:42.777Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 25-offline-tts-02-PLAN.md
+last_updated: "2026-03-27T12:33:32.654Z"
 progress:
   total_phases: 24
-  completed_phases: 22
+  completed_phases: 23
   total_plans: 49
-  completed_plans: 47
+  completed_plans: 48
 ---
 
 # Project State
@@ -55,6 +55,7 @@ Plan: 2 of 2
 | Phase 24-offline-stt P01 | 204 | 2 tasks | 2 files |
 | Phase 24-offline-stt P02 | 7 | 2 tasks | 5 files |
 | Phase 25-offline-tts P01 | 4 | 2 tasks | 3 files |
+| Phase 25-offline-tts P02 | 12 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,8 @@ Plan: 2 of 2
 - [Phase 24-offline-stt]: downloadParakeetModel() uses ParakeetService.shared singleton so VoiceService shares the initialized manager without re-initialization
 - [Phase 24-offline-stt]: STT engine indicator in Settings is read-only — Parakeet always preferred when downloaded, no user selector per D-05
 - [Phase 25-offline-tts]: KokoroService actor wraps KokoroTtsManager singleton — lazy init on first speakWithKokoro() call; default provider migrated from 'apple' to 'kokoro', legacy groq/openai migrated automatically
+- [Phase 25-offline-tts]: downloadModels() continues to Kokoro even if Parakeet fails — partial success better than full abort
+- [Phase 25-offline-tts]: Voice picker conditionally rendered only when ttsProvider == 'kokoro' to avoid UI clutter for Apple TTS users
 
 ### Pending Todos
 
@@ -95,6 +98,6 @@ Plan: 2 of 2
 
 ## Session Continuity
 
-Last session: 2026-03-27T12:28:42.772Z
-Stopped at: Completed 25-offline-tts-01-PLAN.md
+Last session: 2026-03-27T12:33:32.648Z
+Stopped at: Completed 25-offline-tts-02-PLAN.md
 Resume file: None

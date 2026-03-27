@@ -169,7 +169,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 
 - [x] **Phase 23: Foundation** - Switch to GPL-3.0 and add FluidAudio SPM dependency (unblocks offline voice) (completed 2026-03-27)
 - [x] **Phase 24: Offline STT** - Replace VoiceService transcription with Parakeet TDT; SFSpeech as fallback (completed 2026-03-27)
-- [ ] **Phase 25: Offline TTS** - Replace TTSService with Kokoro-82M; Apple Ava as fallback
+- [x] **Phase 25: Offline TTS** - Replace TTSService with Kokoro-82M; Apple Ava as fallback (completed 2026-03-27)
 - [ ] **Phase 26: Cleanup** - Remove all Groq/OpenAI API paths, Keychain storage, and Settings key fields
 
 ## Phase Details
@@ -276,7 +276,7 @@ Plans:
 
 Plans:
 - [x] 25-01-PLAN.md — KokoroService actor + TTSService Kokoro integration + ClaudeMonitor migration
-- [ ] 25-02-PLAN.md — Onboarding dual model download + Settings voice picker
+- [x] 25-02-PLAN.md — Onboarding dual model download + Settings voice picker
 
 ### Phase 26: Cleanup
 **Goal**: Every Groq/OpenAI voice code path is gone — no API key fields in Settings or onboarding, no Keychain storage, no dead service classes
@@ -290,7 +290,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 25-01-PLAN.md — KokoroService actor + TTSService Kokoro integration + ClaudeMonitor migration
+- [x] 25-01-PLAN.md — KokoroService actor + TTSService Kokoro integration + ClaudeMonitor migration
 - [ ] 25-02-PLAN.md — Onboarding dual model download + Settings voice picker
 
 ## Progress
@@ -319,5 +319,5 @@ Note (v4.0): Phase 24 (Offline STT) and Phase 25 (Offline TTS) both depend only 
 | 22. Final Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
 | 23. Foundation | v4.0 Offline Voice | 0/1 | Complete    | 2026-03-27 |
 | 24. Offline STT | v4.0 Offline Voice | 2/2 | Complete    | 2026-03-27 |
-| 25. Offline TTS | v4.0 Offline Voice | 1/2 | In Progress|  |
+| 25. Offline TTS | v4.0 Offline Voice | 2/2 | Complete   | 2026-03-27 |
 | 26. Cleanup | v4.0 Offline Voice | 0/? | Not started | - |
