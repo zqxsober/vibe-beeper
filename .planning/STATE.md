@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v3.1
-milestone_name: Polish & Fixes
-status: Milestone complete
-stopped_at: Completed 26-cleanup-01-PLAN.md
-last_updated: "2026-03-27T12:47:43.162Z"
+milestone: v4.1
+milestone_name: STT Reliability
+status: In progress
+stopped_at: Completed 27-02-PLAN.md
+last_updated: "2026-03-27T15:49:31Z"
 progress:
-  total_phases: 25
-  completed_phases: 24
-  total_plans: 50
-  completed_plans: 49
+  total_phases: 27
+  completed_phases: 25
+  total_plans: 52
+  completed_plans: 51
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 
 ## Current Position
 
-Phase: 25
-Plan: Not started
+Phase: 27
+Plan: 02 (complete)
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Plan: Not started
 | Phase 25-offline-tts P01 | 4 | 2 tasks | 3 files |
 | Phase 25-offline-tts P02 | 12 | 2 tasks | 3 files |
 | Phase 26-cleanup P01 | 3 | 2 tasks | 8 files |
+| Phase 27-stt-reliability P02 | 1 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,7 @@ Plan: Not started
 - [Phase 26-cleanup]: CLN2-03: TTSPlaybackDelegate is the permanent name for AVAudioPlayerDelegate wrapper; migration block removed since default: branch handles legacy values safely
 - [Phase 26-cleanup]: CLN2-01: Settings Voice tab fully removed — all voice controls live in SettingsAudioSection
 - [Phase 26-cleanup]: CLN2-02: KeychainService deleted — offline-first app has zero API keys
+- [Phase 27-stt-reliability]: FIX2-05: permission_mode fast-path inserted at top of handle_permission() — non-default modes (acceptEdits, bypassPermissions, auto, dontAsk, plan) return allow immediately without writing pending.json
 
 ### Pending Todos
 
@@ -102,6 +104,6 @@ Plan: Not started
 
 ## Session Continuity
 
-Last session: 2026-03-27T12:47:43.156Z
-Stopped at: Completed 26-cleanup-01-PLAN.md
+Last session: 2026-03-27T15:49:31Z
+Stopped at: Completed 27-02-PLAN.md
 Resume file: None
