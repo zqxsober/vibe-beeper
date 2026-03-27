@@ -107,16 +107,19 @@ final class TTSService: ObservableObject, @unchecked Sendable {
 
     private func speakWithKokoro(_ text: String) {
         log("Kokoro TTS: speaking: \(text.prefix(200))")
-        isSpeaking = true
 
         Task {
-            do {
-                // Lazy init on first use — initialize manager from already-downloaded models
-                if await !KokoroService.shared.isReady {
-                    let voice = UserDefaults.standard.string(forKey: "kokoroVoice") ?? "af_heart"
-                    try await KokoroService.shared.initialize(defaultVoice: voice)
-                }
+            // Early Ava fallback during pre-warm window — if model not yet loaded, use Apple voice
+            // immediately rather than waiting for CoreML init (1-3s delay). Subsequent calls use Kokoro.
+            if await !KokoroService.shared.isReady {
+                log("Kokoro TTS: model not ready — using Apple Ava for this utterance")
+                await MainActor.run { self.speakWithAva(text) }
+                return
+            }
 
+            await MainActor.run { self.isSpeaking = true }
+
+            do {
                 let data = try await KokoroService.shared.synthesize(text: text)
 
                 await MainActor.run {
