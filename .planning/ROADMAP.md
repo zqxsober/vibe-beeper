@@ -180,8 +180,8 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 
 **Milestone Goal:** Fix voice reliability regressions introduced by the offline models (STT injection and TTS delays), rename "Auto-speak" to "VoiceOver" throughout the app, and ship a branded DMG + Homebrew tap so users can install with one command.
 
-- [ ] **Phase 27: STT Reliability** - Diagnose and fix unreliable voice recording → Parakeet transcription → terminal injection
-- [ ] **Phase 28: TTS Reliability + Rename** - Fix Kokoro TTS delays and silence; rename "Auto-speak" to "VoiceOver" across all UI and code
+- [x] **Phase 27: STT Reliability** - Diagnose and fix unreliable voice recording → Parakeet transcription → terminal injection (completed 2026-03-27)
+- [x] **Phase 28: TTS Reliability + Rename** - Fix Kokoro TTS delays and silence; rename "Auto-speak" to "VoiceOver" across all UI and code (completed 2026-03-27)
 - [ ] **Phase 29: Distribution** - Branded DMG background + Homebrew tap at vecartier/tap/cc-beeper
 
 ## Phase Details
@@ -329,8 +329,12 @@ Plans:
   2. Pressing the manual Summarize button triggers Kokoro TTS and the user hears audio within 2 seconds — no intermittent silence
   3. Every user-visible label that previously read "Auto-speak" now reads "VoiceOver" — checked in the menu bar popover, Settings, and all onboarding text
   4. IPC field names and hook event terminology updated to "VoiceOver" — a grep for "auto.speak" (case-insensitive, with or without hyphen) in Swift and Python source returns zero matches
-**Plans**: TBD
+**Plans**: 2 plans
 **UI hint**: yes
+
+Plans:
+- [x] 28-01-PLAN.md — Pre-warm PocketTTS, reduce pre-buffer, wire manual summarize toggle
+- [x] 28-02-PLAN.md — Rename autoSpeak to voiceOver across all code, UI, UserDefaults, README
 
 ### Phase 29: Distribution
 **Goal**: CC-Beeper ships with a polished branded DMG and is installable via a single Homebrew command — no manual drag, no terminal gymnastics
@@ -341,7 +345,11 @@ Plans:
   2. Running `make dmg` on a clean checkout produces the branded DMG without any manual intervention — no extra scripts or assets to locate
   3. Running `brew install vecartier/tap/cc-beeper` on a Mac without the app downloads and installs the latest release
   4. The Homebrew tap formula references the correct GitHub release asset and passes `brew audit` with no errors
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 29-01-PLAN.md — Branded DMG background image + create-dmg.sh window styling
+- [x] 29-02-PLAN.md — Homebrew cask audit + tap update script
 
 
 ## Progress
@@ -376,6 +384,6 @@ Note (v5.0): Phase 27 (STT Reliability) and Phase 28 (TTS Reliability + Rename) 
 | 24. Offline STT | v4.0 Offline Voice | 2/2 | Complete | 2026-03-27 |
 | 25. Offline TTS | v4.0 Offline Voice | 2/2 | Complete | 2026-03-27 |
 | 26. Cleanup | v4.0 Offline Voice | 1/1 | Complete | 2026-03-27 |
-| 27. STT Reliability | v5.0 Polish & Distribution | 2/2 | In Progress | - |
-| 28. TTS Reliability + Rename | v5.0 Polish & Distribution | 0/TBD | Not started | - |
-| 29. Distribution | v5.0 Polish & Distribution | 0/TBD | Not started | - |
+| 27. STT Reliability | v5.0 Polish & Distribution | 2/2 | Complete    | 2026-03-27 |
+| 28. TTS Reliability + Rename | v5.0 Polish & Distribution | 2/2 | Complete    | 2026-03-27 |
+| 29. Distribution | v5.0 Polish & Distribution | 1/2 | In Progress | - |

@@ -34,7 +34,7 @@ final class OnboardingViewModel: ObservableObject {
     private var pollTimer: Timer?
 
     init() {
-        isModelReady = ParakeetService.modelsDownloaded && KokoroService.modelsDownloaded
+        isModelReady = ParakeetService.modelsDownloaded && PocketTTSService.modelsDownloaded
     }
 
     // MARK: - Navigation
@@ -72,9 +72,9 @@ final class OnboardingViewModel: ObservableObject {
                 }
             }
 
-            // Phase 2: Kokoro (50–100%)
+            // Phase 2: PocketTTS (50–100%)
             do {
-                try await KokoroService.shared.downloadModels { [weak self] fraction, label in
+                try await PocketTTSService.shared.downloadModels { [weak self] fraction, label in
                     Task { @MainActor in
                         self?.modelDownloadProgress = 0.5 + fraction * 0.5
                         self?.modelDownloadPhase = "Voice synthesis: \(label)"

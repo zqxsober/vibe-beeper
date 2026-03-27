@@ -24,7 +24,7 @@ final class AppMoverTests: XCTestCase {
 
     /// App running from SPM build output — skip in dev environment.
     func testSkipsWhenPathContainsBuildDirectory() throws {
-        let path = "/Users/dev/Claumagotchi/.build/debug/CC-Beeper.app"
+        let path = "/Users/dev/cc-beeper/.build/debug/CC-Beeper.app"
         XCTAssertTrue(path.contains(".build/"),
                       "Path containing .build/ should trigger dev-build early return")
     }

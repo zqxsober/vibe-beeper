@@ -121,20 +121,20 @@ Requirements for Polish & Distribution milestone.
 
 - [x] **FIX2-01**: Voice recording reliably captures audio and injects transcription into the terminal every time the voice button is pressed
 - [x] **FIX2-02**: Parakeet TDT transcription completes without long delays or silent failures
-- [ ] **FIX2-03**: Kokoro TTS speaks summaries without long delays or intermittent silence
-- [ ] **FIX2-04**: TTS fires reliably both on auto-VoiceOver (Claude finishes) and manual summarize
-- [ ] **FIX2-05**: "Needs you" state only shows when a real permission prompt is waiting — auto-approved tools do not trigger false positives
+- [x] **FIX2-03**: Kokoro TTS speaks summaries without long delays or intermittent silence
+- [x] **FIX2-04**: TTS fires reliably both on auto-VoiceOver (Claude finishes) and manual summarize
+- [x] **FIX2-05**: "Needs you" state only shows when a real permission prompt is waiting — auto-approved tools do not trigger false positives
 
 ### Rename
 
-- [ ] **REN-01**: All "Auto-speak" references renamed to "VoiceOver" in UI labels, Settings, menu bar popover, and code
-- [ ] **REN-02**: Hook event naming and IPC fields updated to reflect "VoiceOver" terminology
+- [x] **REN-01**: All "Auto-speak" references renamed to "VoiceOver" in UI labels, Settings, menu bar popover, and code
+- [x] **REN-02**: Hook event naming and IPC fields updated to reflect "VoiceOver" terminology
 
 ### Distribution
 
 - [ ] **DIST2-01**: DMG window displays CC-Beeper volume name and branded background
 - [ ] **DIST2-02**: `make dmg` produces the branded DMG without manual steps
-- [ ] **DIST2-03**: Homebrew tap published at `vecartier/tap/cc-beeper` with working `brew install` flow
+- [x] **DIST2-03**: Homebrew tap published at `vecartier/tap/cc-beeper` with working `brew install` flow
 
 ## Future Requirements
 
@@ -212,14 +212,14 @@ Requirements for Polish & Distribution milestone.
 | CLN2-03 | Phase 26 | Complete |
 | FIX2-01 | Phase 27 | Complete |
 | FIX2-02 | Phase 27 | Complete |
-| FIX2-05 | Phase 27 | Pending |
-| FIX2-03 | Phase 28 | Pending |
-| FIX2-04 | Phase 28 | Pending |
-| REN-01 | Phase 28 | Pending |
-| REN-02 | Phase 28 | Pending |
+| FIX2-05 | Phase 27 | Complete |
+| FIX2-03 | Phase 28 | Complete |
+| FIX2-04 | Phase 28 | Complete |
+| REN-01 | Phase 28 | Complete |
+| REN-02 | Phase 28 | Complete |
 | DIST2-01 | Phase 29 | Pending |
 | DIST2-02 | Phase 29 | Pending |
-| DIST2-03 | Phase 29 | Pending |
+| DIST2-03 | Phase 29 | Complete |
 
 **Coverage:**
 - v3.0 requirements: 33 total

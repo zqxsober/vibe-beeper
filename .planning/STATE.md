@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
 status: executing
-stopped_at: Completed 27-stt-reliability-01-PLAN.md
-last_updated: "2026-03-27T15:54:12.355Z"
-last_activity: 2026-03-27
+stopped_at: Completed 29-distribution/29-02-PLAN.md
+last_updated: "2026-03-27T17:20:00.000Z"
+last_activity: 2026-03-27 -- Phase 29 Plan 02 complete
 progress:
-  total_phases: 26
-  completed_phases: 24
-  total_plans: 52
-  completed_plans: 50
+  total_phases: 28
+  completed_phases: 27
+  total_plans: 56
+  completed_plans: 55
 ---
 
 # Project State
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
-**Current focus:** Phase 27 — STT Reliability
+**Current focus:** Phase 29 — Distribution
 
 ## Current Position
 
-Phase: 27 (STT Reliability) — EXECUTING
-Plan: 2 of 2
-Status: Ready to execute
-Last activity: 2026-03-27
+Phase: 29 (Distribution) — COMPLETE
+Plan: 2 of 2 (all complete)
+Status: Phase 29 complete
+Last activity: 2026-03-27 -- Phase 29 Plan 02 complete
 
 ## Performance Metrics
 
@@ -61,6 +61,9 @@ Last activity: 2026-03-27
 | Phase 25-offline-tts P02 | 12 | 2 tasks | 3 files |
 | Phase 26-cleanup P01 | 3 | 2 tasks | 8 files |
 | Phase 27-stt-reliability P01 | 4 | 2 tasks | 1 files |
+| Phase 28-tts-reliability P01 | 6 | 2 tasks | 3 files |
+| Phase 28-tts-reliability-rename P02 | 420 | 2 tasks | 5 files |
+| Phase 29-distribution P02 | 5 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -101,6 +104,12 @@ Last activity: 2026-03-27
 - [Phase 27-stt-reliability]: NSRunningApplication.activate() replaces open -a Process in focusTerminal() — synchronous, no sleep needed
 - [Phase 27-stt-reliability]: clearTerminalInput() uses Ctrl+U (kVK_ANSI_U + maskControl) — readline kill-line, works in bash/zsh/fish
 - [Phase 27-stt-reliability]: finish() awaited before audioEngine = AVAudioEngine() in manual Parakeet stop — engine replaced only after finalization
+- [Phase 28-tts-reliability P01]: Early Ava fallback inside Task block — KokoroService.isReady is actor-isolated, requires await; cannot check synchronously before Task launch
+- [Phase 28-tts-reliability P01]: Pre-warm uses kokoroVoice key (actual codebase) — plan alias PocketTTSService/pocketttsVoice not used in production code
+- [Phase 28-tts-reliability P01]: No preBufferFrames constant in TTSService — current implementation uses KokoroService.synthesize() (non-streaming WAV), not AVAudioEngine streaming
+- [Phase 28-tts-reliability-rename]: voiceOver is the permanent feature name — full rename from autoSpeak across property, UserDefaults key (with migration), UI label, SoundMuteButton parameter, and README
+- [Phase 29-distribution]: brew audit --cask vecartier/tap/cc-beeper passes with zero errors — no livecheck stanza required for third-party taps
+- [Phase 29-distribution]: scripts/update-homebrew-tap.sh uses gh CLI + curl + shasum to automate tap updates after new releases
 
 ### Pending Todos
 
@@ -113,6 +122,6 @@ Last activity: 2026-03-27
 
 ## Session Continuity
 
-Last session: 2026-03-27T15:54:12.352Z
-Stopped at: Completed 27-stt-reliability-01-PLAN.md
+Last session: 2026-03-27T17:20:00.000Z
+Stopped at: Completed 29-distribution/29-02-PLAN.md
 Resume file: None

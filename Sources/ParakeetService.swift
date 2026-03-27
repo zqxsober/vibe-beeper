@@ -26,10 +26,10 @@ actor ParakeetService {
     /// This is a cheap `checkResourceIsReachable()` call — does NOT load the model.
     /// Use this from VoiceService to decide which recording path to take.
     static var modelsDownloaded: Bool {
-        let dir = FileManager.default
+        let path = FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("FluidAudio/Models/parakeet-eou-streaming")
-        return (try? dir.checkResourceIsReachable()) ?? false
+            .appendingPathComponent("FluidAudio/Models/parakeet-eou-streaming/160ms/streaming_encoder.mlmodelc")
+        return FileManager.default.fileExists(atPath: path.path)
     }
 
     // MARK: - Model Download with Progress (called from onboarding or first voice press)
@@ -59,17 +59,14 @@ actor ParakeetService {
         self.manager = m
     }
 
-    // MARK: - Initialize from Disk (load already-downloaded models, no network)
+    // MARK: - Initialize (downloads + compiles if needed, loads from cache if available)
 
-    /// Load the Parakeet EOU streaming model from disk into memory.
-    /// Call once at app launch (or when recording starts if not yet loaded).
+    /// Load the Parakeet EOU streaming model. Downloads from HuggingFace and compiles CoreML
+    /// models on first run. Subsequent launches load from cache instantly.
     /// Do NOT call on every recording session — keep the manager alive and call `reset()` instead.
     func initialize() async throws {
-        let dir = FileManager.default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("FluidAudio/Models/parakeet-eou-streaming")
         let m = StreamingEouAsrManager(chunkSize: .ms160, eouDebounceMs: 1280)
-        try await m.loadModels(modelDir: dir)
+        try await m.loadModelsFromHuggingFace(to: nil, configuration: nil, progressHandler: nil)
         self.manager = m
     }
 

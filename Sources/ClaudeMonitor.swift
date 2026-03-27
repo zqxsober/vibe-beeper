@@ -100,21 +100,21 @@ final class ClaudeMonitor: ObservableObject {
     let voiceService = VoiceService()
     let ttsService = TTSService()
 
-    /// Whether VoiceOver (spoken summaries) is enabled.
-    @Published var voiceOver: Bool = false {
-        didSet { UserDefaults.standard.set(voiceOver, forKey: "voiceOver") }
+    /// Whether auto-speak is enabled (Phase 11 uses this; Phase 9 shows toggle).
+    @Published var autoSpeak: Bool = false {
+        didSet { UserDefaults.standard.set(autoSpeak, forKey: "autoSpeak") }
     }
 
-    /// TTS provider selection: "kokoro" (local, default) or "apple" (fallback).
-    @Published var ttsProvider: String = "kokoro" {
+    /// TTS provider selection: "pockettts" (local, default) or "apple" (fallback).
+    @Published var ttsProvider: String = "pockettts" {
         didSet { UserDefaults.standard.set(ttsProvider, forKey: "ttsProvider") }
     }
 
-    /// Selected Kokoro voice identifier (from TtsConstants.availableVoices).
-    @Published var kokoroVoice: String = "af_heart" {
+    /// Selected PocketTTS voice identifier.
+    @Published var pocketttsVoice: String = "alba" {
         didSet {
-            UserDefaults.standard.set(kokoroVoice, forKey: "kokoroVoice")
-            Task { try? await KokoroService.shared.setDefaultVoice(kokoroVoice) }
+            UserDefaults.standard.set(pocketttsVoice, forKey: "pocketttsVoice")
+            Task { await PocketTTSService.shared.setDefaultVoice(pocketttsVoice) }
         }
     }
 
@@ -159,15 +159,9 @@ final class ClaudeMonitor: ObservableObject {
         setupSummaryWatcher()
         setupGlobalHotkeys()
         // Set after watcher is running so didSet fires only on external mutation
-        let legacyAutoSpeak = UserDefaults.standard.object(forKey: "autoSpeak") as? Bool
-        let currentVoiceOver = UserDefaults.standard.object(forKey: "voiceOver") as? Bool
-        voiceOver = currentVoiceOver ?? legacyAutoSpeak ?? false
-        if legacyAutoSpeak != nil && currentVoiceOver == nil {
-            UserDefaults.standard.set(voiceOver, forKey: "voiceOver")
-            UserDefaults.standard.removeObject(forKey: "autoSpeak")
-        }
-        ttsProvider = UserDefaults.standard.string(forKey: "ttsProvider") ?? "kokoro"
-        kokoroVoice = UserDefaults.standard.string(forKey: "kokoroVoice") ?? "af_heart"
+        autoSpeak = UserDefaults.standard.bool(forKey: "autoSpeak")
+        ttsProvider = UserDefaults.standard.string(forKey: "ttsProvider") ?? "pockettts"
+        pocketttsVoice = UserDefaults.standard.string(forKey: "pocketttsVoice") ?? "alba"
         isActive = UserDefaults.standard.object(forKey: "isActive") as? Bool ?? true
         // Wire ttsService into voiceService so recording cuts TTS
         voiceService.ttsService = ttsService
@@ -179,10 +173,12 @@ final class ClaudeMonitor: ObservableObject {
         ttsService.$isSpeaking
             .receive(on: DispatchQueue.main)
             .assign(to: &$isSpeaking)
-        // Pre-warm KokoroService so first speak has no model-load delay
+        // Pre-warm Parakeet model at launch (downloads + compiles on first run, cached after)
+        Task { try? await ParakeetService.shared.initialize() }
+        // Pre-warm PocketTTS so first speak has no model-load delay
         Task {
-            let voice = UserDefaults.standard.string(forKey: "kokoroVoice") ?? "af_heart"
-            try? await KokoroService.shared.initialize(defaultVoice: voice)
+            let voice = UserDefaults.standard.string(forKey: "pocketttsVoice") ?? "alba"
+            try? await PocketTTSService.shared.initialize(defaultVoice: voice)
         }
     }
 
@@ -345,7 +341,7 @@ final class ClaudeMonitor: ObservableObject {
         lastSummaryHash = hash
 
         // NEVER interrupt recording — recording has absolute priority
-        guard voiceOver, !isRecording else { return }
+        guard autoSpeak, !isRecording else { return }
 
         Task {
             let summary = await ttsService.speakSummary(text, provider: self.ttsProvider)

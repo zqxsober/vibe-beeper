@@ -108,6 +108,16 @@ None - no external service configuration required.
 - Phase 25 is complete (both plans done): KokoroService actor (Plan 01) + onboarding/settings UI (Plan 02)
 - Phase 26 (Cleanup) can now proceed: remove GroqTranscriptionService, GroqTTSService, and OpenAI TTS code since Kokoro is wired end-to-end
 
+## Self-Check: PASSED
+
+- FOUND: Sources/OnboardingViewModel.swift
+- FOUND: Sources/OnboardingModelDownloadStep.swift
+- FOUND: Sources/SettingsAudioSection.swift
+- FOUND: .planning/phases/25-offline-tts/25-02-SUMMARY.md
+- FOUND: commit f3852be (Task 1)
+- FOUND: commit c0b5451 (Task 2)
+- FOUND: commit e3a89f9 (metadata)
+
 ---
 *Phase: 25-offline-tts*
 *Completed: 2026-03-27*
