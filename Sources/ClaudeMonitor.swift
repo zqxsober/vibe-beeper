@@ -173,6 +173,11 @@ final class ClaudeMonitor: ObservableObject {
         ttsService.$isSpeaking
             .receive(on: DispatchQueue.main)
             .assign(to: &$isSpeaking)
+        // Pre-warm KokoroService so first speak has no model-load delay
+        Task {
+            let voice = UserDefaults.standard.string(forKey: "kokoroVoice") ?? "af_heart"
+            try? await KokoroService.shared.initialize(defaultVoice: voice)
+        }
     }
 
     /// Pre-populate sessionStates from sessions.json so the app picks up
@@ -235,6 +240,13 @@ final class ClaudeMonitor: ObservableObject {
 
     func goToConversation() {
         activateTerminal()
+    }
+
+    func triggerSummary() {
+        guard let text = lastSummary, !text.isEmpty, !ttsService.isSpeaking else { return }
+        Task {
+            await ttsService.speakSummary(text, provider: ttsProvider)
+        }
     }
 
     private func activateTerminal() {
