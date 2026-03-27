@@ -44,7 +44,7 @@ struct OnboardingPermissionsStep: View {
                 PermissionRow(
                     isGranted: viewModel.isSpeechGranted,
                     name: "Speech Recognition",
-                    description: "Enables on-device speech-to-text (upgrading to Groq Whisper soon)",
+                    description: "Enables on-device speech-to-text",
                     onGrant: {
                         viewModel.requestSpeechRecognition()
                         viewModel.openSpeechSettings()

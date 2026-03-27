@@ -161,10 +161,6 @@ final class ClaudeMonitor: ObservableObject {
         // Set after watcher is running so didSet fires only on external mutation
         autoSpeak = UserDefaults.standard.bool(forKey: "autoSpeak")
         ttsProvider = UserDefaults.standard.string(forKey: "ttsProvider") ?? "kokoro"
-        // Migrate legacy cloud providers to Kokoro — Groq/OpenAI TTS paths no longer exist
-        if ttsProvider == "groq" || ttsProvider == "openai" {
-            ttsProvider = "kokoro"
-        }
         kokoroVoice = UserDefaults.standard.string(forKey: "kokoroVoice") ?? "af_heart"
         isActive = UserDefaults.standard.object(forKey: "isActive") as? Bool ?? true
         // Wire ttsService into voiceService so recording cuts TTS

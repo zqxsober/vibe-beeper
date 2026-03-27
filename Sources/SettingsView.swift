@@ -3,7 +3,6 @@ import SwiftUI
 enum SettingsTab: String, CaseIterable, Identifiable {
     case audio = "Audio"
     case permissions = "Permissions"
-    case voice = "Voice"
     case about = "About"
 
     var id: String { rawValue }
@@ -12,7 +11,6 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         switch self {
         case .audio: return "speaker.wave.2.fill"
         case .permissions: return "lock.shield.fill"
-        case .voice: return "mic.fill"
         case .about: return "info.circle.fill"
         }
     }
@@ -39,8 +37,6 @@ struct SettingsView: View {
                     SettingsAudioSection()
                 case .permissions:
                     SettingsPermissionsSection(viewModel: viewModel)
-                case .voice:
-                    SettingsVoiceSection(viewModel: viewModel)
                 case .about:
                     SettingsAboutSection()
                 }

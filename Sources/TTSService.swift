@@ -9,9 +9,9 @@ final class TTSService: ObservableObject, @unchecked Sendable {
     private let synthesizer = AVSpeechSynthesizer()
     private var speechDelegate: TTSSpeechDelegate?
 
-    // OpenAI TTS playback (must be instance property — prevents ARC deallocation during playback)
+    // TTS playback (must be instance property — prevents ARC deallocation during playback)
     private var audioPlayer: AVAudioPlayer?
-    private var playerDelegate: OpenAITTSDelegate?
+    private var playerDelegate: TTSPlaybackDelegate?
 
     // MARK: - Logging
 
@@ -98,7 +98,7 @@ final class TTSService: ObservableObject, @unchecked Sendable {
                 log("Kokoro TTS: model not downloaded — falling back to Apple voice")
                 speakWithAva(text)
             }
-        default: // "apple" or any unknown/legacy value (groq, openai, etc.)
+        default: // "apple" or any unknown value
             speakWithAva(text)
         }
     }
@@ -122,7 +122,7 @@ final class TTSService: ObservableObject, @unchecked Sendable {
                 await MainActor.run {
                     do {
                         let player = try AVAudioPlayer(data: data, fileTypeHint: AVFileType.wav.rawValue)
-                        self.playerDelegate = OpenAITTSDelegate { [weak self] in
+                        self.playerDelegate = TTSPlaybackDelegate { [weak self] in
                             Task { @MainActor in
                                 self?.isSpeaking = false
                                 self?.audioPlayer = nil
@@ -179,7 +179,7 @@ final class TTSSpeechDelegate: NSObject, AVSpeechSynthesizerDelegate, @unchecked
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) { onFinish() }
 }
 
-final class OpenAITTSDelegate: NSObject, AVAudioPlayerDelegate, @unchecked Sendable {
+final class TTSPlaybackDelegate: NSObject, AVAudioPlayerDelegate, @unchecked Sendable {
     let onFinish: () -> Void
     init(onFinish: @escaping () -> Void) { self.onFinish = onFinish }
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) { onFinish() }
