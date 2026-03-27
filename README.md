@@ -73,11 +73,20 @@ CC-Beeper is a floating macOS widget that lives on your desktop like a retro pag
 </tr>
 </table>
 
-- **YOLO mode** — auto-approve all tool requests (YOLO badge on LCD when active)
-- **Sound effects** — audio feedback for state changes and alerts
-- **Vibration alerts** — haptic-style window shake when Claude needs your attention
-- **Global hotkeys** — control CC-Beeper from any app without switching focus
-- **10 shell themes** — black, blue, green, mint, orange, pink, purple, red, white, yellow — with dark mode support
+<table>
+<tr>
+<td align="center"><strong>YOLO Mode</strong></td>
+<td align="center"><strong>Themes</strong></td>
+<td align="center"><strong>Global Hotkeys</strong></td>
+<td align="center"><strong>Feedback</strong></td>
+</tr>
+<tr>
+<td>Auto-approve all tool requests — YOLO badge on LCD when active</td>
+<td>10 color shells with dark mode support: black, blue, green, mint, orange, pink, purple, red, white, yellow</td>
+<td>Control CC-Beeper from any app without switching focus — accept, deny, record, mute</td>
+<td>Sound effects for state changes and haptic-style vibration alerts when Claude needs your attention</td>
+</tr>
+</table>
 
 ---
 
