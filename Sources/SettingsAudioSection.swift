@@ -3,28 +3,30 @@ import SwiftUI
 struct SettingsAudioSection: View {
     @EnvironmentObject var monitor: ClaudeMonitor
 
-    private let pocketttsVoices: [(id: String, label: String)] = [
-        ("alba", "Alba"),
-        ("anna", "Anna"),
-        ("azelma", "Azelma"),
-        ("bill_boerst", "Bill Boerst"),
-        ("caro_davy", "Caro Davy"),
-        ("charles", "Charles"),
-        ("cosette", "Cosette"),
-        ("eponine", "Eponine"),
-        ("eve", "Eve"),
-        ("fantine", "Fantine"),
-        ("george", "George"),
-        ("jane", "Jane"),
-        ("javert", "Javert"),
-        ("jean", "Jean"),
-        ("marius", "Marius"),
-        ("mary", "Mary"),
-        ("michael", "Michael"),
-        ("paul", "Paul"),
-        ("peter_yearsley", "Peter Yearsley"),
-        ("stuart_bell", "Stuart Bell"),
-        ("vera", "Vera"),
+    private let kokoroVoices: [(id: String, label: String, group: String)] = [
+        // British Male
+        ("bm_daniel", "Daniel", "🇬🇧 British Male"),
+        ("bm_george", "George", "🇬🇧 British Male"),
+        ("bm_lewis", "Lewis", "🇬🇧 British Male"),
+        ("bm_fable", "Fable", "🇬🇧 British Male"),
+        // British Female
+        ("bf_alice", "Alice", "🇬🇧 British Female"),
+        ("bf_emma", "Emma", "🇬🇧 British Female"),
+        ("bf_isabella", "Isabella", "🇬🇧 British Female"),
+        ("bf_lily", "Lily", "🇬🇧 British Female"),
+        // American Male
+        ("am_adam", "Adam", "🇺🇸 American Male"),
+        ("am_echo", "Echo", "🇺🇸 American Male"),
+        ("am_eric", "Eric", "🇺🇸 American Male"),
+        ("am_michael", "Michael", "🇺🇸 American Male"),
+        ("am_liam", "Liam", "🇺🇸 American Male"),
+        // American Female
+        ("af_heart", "Heart", "🇺🇸 American Female"),
+        ("af_bella", "Bella", "🇺🇸 American Female"),
+        ("af_nicole", "Nicole", "🇺🇸 American Female"),
+        ("af_nova", "Nova", "🇺🇸 American Female"),
+        ("af_sarah", "Sarah", "🇺🇸 American Female"),
+        ("af_sky", "Sky", "🇺🇸 American Female"),
     ]
 
     var body: some View {
@@ -42,35 +44,38 @@ struct SettingsAudioSection: View {
         }
 
         Picker("TTS Provider", selection: $monitor.ttsProvider) {
-            Text("PocketTTS (local)").tag("pockettts")
+            Text("Kokoro (local)").tag("kokoro")
             Text("Apple").tag("apple")
         }
         .pickerStyle(.menu)
 
-        HStack {
-            Label("TTS Engine", systemImage: "speaker.wave.2")
-            Spacer()
-            Text(PocketTTSService.modelsDownloaded ? "PocketTTS (local)" : "Apple Ava (fallback)")
-                .foregroundStyle(.secondary)
-                .font(.caption)
-        }
-
-        if monitor.ttsProvider == "pockettts" {
-            Picker("Voice", selection: $monitor.pocketttsVoice) {
-                ForEach(pocketttsVoices, id: \.id) { voice in
-                    Text(voice.label).tag(voice.id)
+        if monitor.ttsProvider == "kokoro" {
+            HStack {
+                Picker("Voice", selection: $monitor.kokoroVoice) {
+                    ForEach(kokoroVoices, id: \.id) { voice in
+                        Text("\(voice.group) — \(voice.label)").tag(voice.id)
+                    }
                 }
+                .pickerStyle(.menu)
+
+                Button {
+                    monitor.ttsService.stopSpeaking()
+                    Task {
+                        await monitor.ttsService.speakSummary(
+                            "Hello, I'm \(monitor.kokoroVoice). This is how I sound.",
+                            provider: "kokoro"
+                        )
+                    }
+                } label: {
+                    Image(systemName: "play.circle")
+                }
+                .buttonStyle(.plain)
+                .help("Preview voice")
             }
-            .pickerStyle(.menu)
         }
 
         Toggle(isOn: $monitor.vibrationEnabled) {
             Label("Vibration", systemImage: "waveform")
-        }
-        .toggleStyle(.switch)
-
-        Toggle(isOn: $monitor.soundEnabled) {
-            Label("Sound Effects", systemImage: "speaker.fill")
         }
         .toggleStyle(.switch)
     }

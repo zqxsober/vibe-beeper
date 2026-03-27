@@ -2,6 +2,8 @@ import Foundation
 import Combine
 import AppKit
 import ApplicationServices
+import HotKey
+import Carbon.HIToolbox
 
 // MARK: - State
 
@@ -73,7 +75,7 @@ final class ClaudeMonitor: ObservableObject {
                 summarySource?.cancel(); summarySource = nil
                 idleWork?.cancel()
                 // Remove hotkey monitors so keypresses don't fire when powered off
-                if let m = globalKeyMonitor { NSEvent.removeMonitor(m); globalKeyMonitor = nil }
+                carbonHotKeys.removeAll()
                 if let m = localKeyMonitor { NSEvent.removeMonitor(m); localKeyMonitor = nil }
                 state = .idle
                 pendingPermission = nil
@@ -100,21 +102,47 @@ final class ClaudeMonitor: ObservableObject {
     let voiceService = VoiceService()
     let ttsService = TTSService()
 
-    /// Whether auto-speak is enabled (Phase 11 uses this; Phase 9 shows toggle).
-    @Published var autoSpeak: Bool = false {
-        didSet { UserDefaults.standard.set(autoSpeak, forKey: "autoSpeak") }
+    /// Whether VoiceOver is enabled (reads summaries aloud when Claude finishes).
+    @Published var voiceOver: Bool = false {
+        didSet { UserDefaults.standard.set(voiceOver, forKey: "voiceOver") }
     }
 
-    /// TTS provider selection: "pockettts" (local, default) or "apple" (fallback).
-    @Published var ttsProvider: String = "pockettts" {
+    /// TTS provider selection: "kokoro" (local, default), "apple" (fallback).
+    @Published var ttsProvider: String = "kokoro" {
         didSet { UserDefaults.standard.set(ttsProvider, forKey: "ttsProvider") }
     }
 
-    /// Selected PocketTTS voice identifier.
+    /// Selected PocketTTS voice identifier (legacy, kept for migration).
     @Published var pocketttsVoice: String = "alba" {
         didSet {
             UserDefaults.standard.set(pocketttsVoice, forKey: "pocketttsVoice")
             Task { await PocketTTSService.shared.setDefaultVoice(pocketttsVoice) }
+        }
+    }
+
+    // MARK: - Hotkey Bindings
+
+    @Published var hotkeyAccept: UInt16 = 0 {   // kVK_ANSI_A
+        didSet { UserDefaults.standard.set(Int(hotkeyAccept), forKey: "hotkeyAccept") }
+    }
+    @Published var hotkeyDeny: UInt16 = 2 {      // kVK_ANSI_D
+        didSet { UserDefaults.standard.set(Int(hotkeyDeny), forKey: "hotkeyDeny") }
+    }
+    @Published var hotkeyVoice: UInt16 = 15 {     // kVK_ANSI_R
+        didSet { UserDefaults.standard.set(Int(hotkeyVoice), forKey: "hotkeyVoice") }
+    }
+    @Published var hotkeyTerminal: UInt16 = 17 {  // kVK_ANSI_T
+        didSet { UserDefaults.standard.set(Int(hotkeyTerminal), forKey: "hotkeyTerminal") }
+    }
+    @Published var hotkeyMute: UInt16 = 46 {     // kVK_ANSI_M
+        didSet { UserDefaults.standard.set(Int(hotkeyMute), forKey: "hotkeyMute") }
+    }
+
+    /// Selected Kokoro voice identifier.
+    @Published var kokoroVoice: String = "bm_daniel" {
+        didSet {
+            UserDefaults.standard.set(kokoroVoice, forKey: "kokoroVoice")
+            ttsService.setKokoroVoice(kokoroVoice)
         }
     }
 
@@ -148,6 +176,8 @@ final class ClaudeMonitor: ObservableObject {
     private var lastPruneTime: Date = .distantPast
     private var globalKeyMonitor: Any?
     private var localKeyMonitor: Any?
+    // Carbon hotkeys (consume the event — no leaking to focused app)
+    private var carbonHotKeys: [Any] = []
 
     init() {
         soundEnabled = UserDefaults.standard.object(forKey: "soundEnabled") as? Bool ?? true
@@ -159,9 +189,22 @@ final class ClaudeMonitor: ObservableObject {
         setupSummaryWatcher()
         setupGlobalHotkeys()
         // Set after watcher is running so didSet fires only on external mutation
-        autoSpeak = UserDefaults.standard.bool(forKey: "autoSpeak")
-        ttsProvider = UserDefaults.standard.string(forKey: "ttsProvider") ?? "pockettts"
+        // Migrate legacy "autoSpeak" key to "voiceOver"
+        if UserDefaults.standard.object(forKey: "voiceOver") == nil,
+           let legacy = UserDefaults.standard.object(forKey: "autoSpeak") as? Bool {
+            UserDefaults.standard.set(legacy, forKey: "voiceOver")
+            UserDefaults.standard.removeObject(forKey: "autoSpeak")
+        }
+        voiceOver = UserDefaults.standard.bool(forKey: "voiceOver")
+        ttsProvider = UserDefaults.standard.string(forKey: "ttsProvider") ?? "kokoro"
         pocketttsVoice = UserDefaults.standard.string(forKey: "pocketttsVoice") ?? "alba"
+        kokoroVoice = UserDefaults.standard.string(forKey: "kokoroVoice") ?? "bm_daniel"
+        // Load saved hotkey bindings (defaults are the property initializers)
+        if let v = UserDefaults.standard.object(forKey: "hotkeyAccept") as? Int { hotkeyAccept = UInt16(v) }
+        if let v = UserDefaults.standard.object(forKey: "hotkeyDeny") as? Int { hotkeyDeny = UInt16(v) }
+        if let v = UserDefaults.standard.object(forKey: "hotkeyVoice") as? Int { hotkeyVoice = UInt16(v) }
+        if let v = UserDefaults.standard.object(forKey: "hotkeyTerminal") as? Int { hotkeyTerminal = UInt16(v) }
+        if let v = UserDefaults.standard.object(forKey: "hotkeyMute") as? Int { hotkeyMute = UInt16(v) }
         isActive = UserDefaults.standard.object(forKey: "isActive") as? Bool ?? true
         // Wire ttsService into voiceService so recording cuts TTS
         voiceService.ttsService = ttsService
@@ -174,12 +217,22 @@ final class ClaudeMonitor: ObservableObject {
             .receive(on: DispatchQueue.main)
             .assign(to: &$isSpeaking)
         // Pre-warm Parakeet model at launch (downloads + compiles on first run, cached after)
-        Task { try? await ParakeetService.shared.initialize() }
-        // Pre-warm PocketTTS so first speak has no model-load delay
         Task {
-            let voice = UserDefaults.standard.string(forKey: "pocketttsVoice") ?? "alba"
-            try? await PocketTTSService.shared.initialize(defaultVoice: voice)
+            do {
+                try await ParakeetService.shared.initialize()
+            } catch {
+                // Log to voice.log so we can see why it failed
+                let line = "[\(Date())] Parakeet pre-warm failed: \(error)\n"
+                let logPath = Self.ipcDir + "/voice.log"
+                if let fh = FileHandle(forWritingAtPath: logPath) {
+                    fh.seekToEndOfFile()
+                    fh.write(line.data(using: .utf8)!)
+                    fh.closeFile()
+                }
+            }
         }
+        // Launch Kokoro TTS subprocess
+        ttsService.launchKokoro()
     }
 
     /// Pre-populate sessionStates from sessions.json so the app picks up
@@ -219,6 +272,7 @@ final class ClaudeMonitor: ObservableObject {
         try? fileHandle?.close()
         summarySource?.cancel()
         ttsService.stopSpeaking()
+        ttsService.shutdownKokoro()
         // idleWork and keyMonitors cleaned up via isActive.didSet
     }
 
@@ -341,7 +395,7 @@ final class ClaudeMonitor: ObservableObject {
         lastSummaryHash = hash
 
         // NEVER interrupt recording — recording has absolute priority
-        guard autoSpeak, !isRecording else { return }
+        guard voiceOver, !isRecording else { return }
 
         Task {
             let summary = await ttsService.speakSummary(text, provider: self.ttsProvider)
@@ -414,17 +468,19 @@ final class ClaudeMonitor: ObservableObject {
         }
 
         // If we're awaiting user action but Claude is working again,
-        // check if the permission was actually resolved (not just a different session's event).
+        // the permission was resolved elsewhere (user accepted in terminal, or hook timed out).
         if awaitingUserAction && (type == "pre_tool" || type == "post_tool" || type == "stop" || type == "session_end") {
-            // Only clear if pending.json is gone (hook consumed the response)
-            // or response.json exists (we wrote it and hook hasn't picked it up yet).
-            // Otherwise, the permission is still pending — don't clear it.
             let fm = FileManager.default
             let pendingGone = !fm.fileExists(atPath: Self.pendingFile)
             let responseExists = fm.fileExists(atPath: Self.responseFile)
-            if pendingGone || responseExists {
+            // Clear if: pending.json gone, response.json exists, OR Claude moved on
+            // (pre_tool/post_tool means Claude got approval from somewhere — terminal or timeout)
+            if pendingGone || responseExists || type == "pre_tool" || type == "post_tool" {
                 awaitingUserAction = false
                 pendingPermission = nil
+                // Clean up stale files
+                try? fm.removeItem(atPath: Self.pendingFile)
+                try? fm.removeItem(atPath: Self.responseFile)
             }
         }
 
@@ -449,7 +505,7 @@ final class ClaudeMonitor: ObservableObject {
             currentTool = nil
             updateAggregateState()
             if state == .finished {
-                playDoneChime()
+                if !autoAccept { playDoneChime() }
                 startIdleTimer(interval: 60)
             }
         case "session_start":
@@ -529,32 +585,41 @@ final class ClaudeMonitor: ObservableObject {
     }
 
     private func setupGlobalHotkeys() {
-        guard globalKeyMonitor == nil, AXIsProcessTrusted() else { return }
-        globalKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            self?.handleHotKey(event)
-        }
-        localKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            self?.handleHotKey(event)
-            return event
-        }
-    }
+        // Remove old Carbon hotkeys before re-registering
+        carbonHotKeys.removeAll()
 
-    private func handleHotKey(_ event: NSEvent) {
-        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-        guard flags == .option else { return }
-        switch event.keyCode {
-        case 0:  // kVK_ANSI_A — Accept
-            guard pendingPermission != nil else { return }
+        // Register Carbon hotkeys — these CONSUME the event, no leaking to focused app
+        func registerHotKey(keyCode: UInt16, handler: @escaping () -> Void) {
+            let key = Key(carbonKeyCode: UInt32(keyCode))!
+            let hk = HotKey(key: key, modifiers: [.option])
+            hk.keyDownHandler = handler
+            carbonHotKeys.append(hk)
+        }
+
+        registerHotKey(keyCode: hotkeyAccept) { [weak self] in
+            guard let self, self.pendingPermission != nil else { return }
             Task { @MainActor in self.respondToPermission(allow: true) }
-        case 2:  // kVK_ANSI_D — Deny
-            guard pendingPermission != nil else { return }
+        }
+        registerHotKey(keyCode: hotkeyDeny) { [weak self] in
+            guard let self, self.pendingPermission != nil else { return }
             Task { @MainActor in self.respondToPermission(allow: false) }
-        case 1:  // kVK_ANSI_S — Speak
-            Task { @MainActor in self.voiceService.toggle() }
-        case 5:  // kVK_ANSI_G — Go to terminal
-            Task { @MainActor in self.goToConversation() }
-        default:
-            break
+        }
+        registerHotKey(keyCode: hotkeyVoice) { [weak self] in
+            Task { @MainActor in self?.voiceService.toggle() }
+        }
+        registerHotKey(keyCode: hotkeyTerminal) { [weak self] in
+            Task { @MainActor in self?.goToConversation() }
+        }
+        registerHotKey(keyCode: hotkeyMute) { [weak self] in
+            Task { @MainActor in
+                guard let self else { return }
+                print("[CC-Beeper] mute hotkey pressed — isSpeaking=\(self.ttsService.isSpeaking)")
+                if self.ttsService.isSpeaking {
+                    self.ttsService.stopSpeaking()
+                } else {
+                    self.triggerSummary()
+                }
+            }
         }
     }
 

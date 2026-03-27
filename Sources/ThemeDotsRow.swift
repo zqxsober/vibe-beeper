@@ -4,14 +4,16 @@ struct ThemeDotsRow: View {
     @EnvironmentObject var themeManager: ThemeManager
 
     private let colorMap: [String: Color] = [
-        "black": .black,
-        "orange": .orange,
-        "blue": .blue,
-        "green": .green,
-        "purple": .purple,
-        "red": .red,
-        "white": Color(white: 0.9),
-        "yellow": .yellow,
+        "black": Color(hex: "212121"),
+        "blue": Color(hex: "004FFA"),
+        "green": Color(hex: "209B43"),
+        "mint": Color(hex: "58D0C0"),
+        "orange": Color(hex: "E86A1B"),
+        "pink": Color(hex: "FD6295"),
+        "purple": Color(hex: "6C22FF"),
+        "red": Color(hex: "FF2222"),
+        "white": Color(hex: "FFFFFF"),
+        "yellow": Color(hex: "EDA623"),
     ]
 
     var body: some View {

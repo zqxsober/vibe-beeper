@@ -27,6 +27,9 @@ cp Sources/shells/beeper-*.png "$RESOURCES_DIR/" 2>/dev/null
 # Copy button image assets
 cp Sources/buttons/*.png "$RESOURCES_DIR/" 2>/dev/null
 
+# Copy cover image for onboarding
+cp docs/cover.png "$RESOURCES_DIR/cover.png" 2>/dev/null
+
 # Generate app icon from icon.png (transparent, no background)
 if [ -f "icon.png" ] && command -v iconutil &>/dev/null; then
     ICONSET="/tmp/cc-beeper-iconset.iconset"
@@ -80,6 +83,9 @@ cat > CC-Beeper.app/Contents/Info.plist << 'PLIST'
 </dict>
 </plist>
 PLIST
+
+# Bundle Kokoro TTS server script
+cp Sources/kokoro-tts-server.py "$RESOURCES_DIR/kokoro-tts-server.py" 2>/dev/null || true
 
 echo "Built CC-Beeper.app"
 

@@ -9,20 +9,18 @@ struct OnboardingModelDownloadStep: View {
                 Spacer()
 
                 Image(systemName: "waveform.circle.fill")
-                    .font(.system(size: 56))
-                    .foregroundStyle(.orange)
+                    .font(.system(size: 48))
+                    .foregroundStyle(.primary)
 
-                VStack(spacing: 14) {
+                VStack(spacing: 8) {
                     Text("Voice Setup")
-                        .font(.title)
+                        .font(.title2)
                         .fontWeight(.bold)
 
-                    Text("Choose how CC-Beeper handles voice input and spoken summaries.")
+                    Text("Choose how CC-Beeper handles voice.")
                         .font(.body)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, 24)
                 }
 
                 if viewModel.isModelReady {
@@ -32,11 +30,11 @@ struct OnboardingModelDownloadStep: View {
                         .padding(.top, 8)
 
                 } else if viewModel.isModelDownloading {
-                    VStack(spacing: 10) {
+                    VStack(spacing: 12) {
                         ProgressView(value: viewModel.modelDownloadProgress)
                             .progressViewStyle(.linear)
                             .tint(.orange)
-                            .padding(.horizontal, 32)
+                            .padding(.horizontal, 48)
 
                         Text(viewModel.modelDownloadPhase)
                             .font(.callout)
@@ -45,41 +43,38 @@ struct OnboardingModelDownloadStep: View {
                     .padding(.top, 8)
 
                 } else {
-                    VStack(spacing: 14) {
+                    VStack(spacing: 16) {
                         Button {
                             viewModel.downloadModels()
                         } label: {
                             Label("Download AI Voices", systemImage: "arrow.down.circle.fill")
                                 .font(.title3.weight(.semibold))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
+                                .frame(maxWidth: 280)
+                                .padding(.vertical, 8)
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.orange)
                         .controlSize(.large)
 
-                        Text("~930 MB · On-device AI for speech recognition & voice synthesis")
+                        Text("~930 MB · On-device speech recognition & voice synthesis")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
 
                         Button {
                             viewModel.goNext()
                         } label: {
                             Label("Use Apple Voices Instead", systemImage: "apple.logo")
                                 .font(.callout)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 6)
+                                .frame(maxWidth: 280)
+                                .padding(.vertical, 4)
                         }
                         .buttonStyle(.bordered)
                         .controlSize(.large)
-                        .padding(.top, 4)
 
-                        Text("No download needed · Uses built-in macOS speech")
+                        Text("No download · Uses built-in macOS speech")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }
-                    .padding(.horizontal, 16)
 
                     if !viewModel.modelDownloadPhase.isEmpty {
                         Text(viewModel.modelDownloadPhase)
@@ -93,32 +88,12 @@ struct OnboardingModelDownloadStep: View {
             }
 
             if viewModel.isModelReady || viewModel.isModelDownloading {
-                HStack(spacing: 16) {
-                    if viewModel.isModelDownloading {
-                        Button("Skip") {
-                            viewModel.goNext()
-                        }
-                        .buttonStyle(.bordered)
-                        .controlSize(.large)
-                    }
-
-                    if viewModel.isModelReady {
-                        Button {
-                            viewModel.goNext()
-                        } label: {
-                            Text("Continue")
-                                .font(.title3.weight(.semibold))
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 4)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.orange)
-                        .controlSize(.large)
-                    }
-                }
-                .padding(.bottom, 28)
+                OnboardingFooter(
+                    primaryLabel: viewModel.isModelReady ? "Continue" : "Skip",
+                    primaryAction: { viewModel.goNext() }
+                )
             }
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, 48)
     }
 }

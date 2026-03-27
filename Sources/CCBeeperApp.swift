@@ -35,7 +35,7 @@ struct CCBeeperApp: App {
         .windowStyle(.titleBar)
         .windowResizability(.contentSize)
         .defaultPosition(.center)
-        .defaultSize(width: 480, height: 400)
+        .defaultSize(width: 600, height: 520)
 
         Window("Settings", id: "settings") {
             SettingsView()
@@ -50,38 +50,20 @@ struct CCBeeperApp: App {
         MenuBarExtra {
             // Status
             Text("Sessions: \(monitor.sessionCount)")
-            Text(monitor.autoAccept ? "YOLO MODE" : monitor.state.label)
+            Text(monitor.state.label)
                 .foregroundColor(.secondary)
 
             Divider()
 
-            // Quick toggles
             Toggle("YOLO Mode", isOn: $monitor.autoAccept)
-                .keyboardShortcut("y")
-            Toggle("Sound Effects", isOn: $monitor.soundEnabled)
-                .keyboardShortcut("s")
 
             Divider()
 
-            // Theme
-            Menu("Theme") {
-                Picker("Color", selection: $themeManager.currentThemeId) {
-                    ForEach(ThemeManager.themes) { theme in
-                        Text(theme.name).tag(theme.id)
-                    }
-                }
-                Divider()
-                Toggle("Dark Mode", isOn: $themeManager.darkMode)
-            }
-
-            Divider()
-
-            Button("Show / Hide Widget") {
+            Button(Self.isMainWindowVisible() ? "Hide Widget" : "Show Widget") {
                 Self.toggleMainWindow()
             }
-            .keyboardShortcut("h", modifiers: [.command, .shift])
 
-            Button(monitor.isActive ? "Power Off" : "Power On") {
+            Button(monitor.isActive ? "Sleep" : "Awake") {
                 monitor.isActive.toggle()
                 if !monitor.isActive {
                     Self.hideMainWindow()
@@ -89,18 +71,20 @@ struct CCBeeperApp: App {
                     Self.showMainWindow()
                 }
             }
-            .keyboardShortcut("p")
 
             Divider()
+
+            Menu("Keyboard Shortcuts") {
+                Button("⌥ \(keyCodeToString(monitor.hotkeyAccept))  Accept Permission") {}
+                Button("⌥ \(keyCodeToString(monitor.hotkeyDeny))  Deny Permission") {}
+                Button("⌥ \(keyCodeToString(monitor.hotkeyVoice))  Voice Record") {}
+                Button("⌥ \(keyCodeToString(monitor.hotkeyTerminal))  Go to Terminal") {}
+                Button("⌥ \(keyCodeToString(monitor.hotkeyMute))  VoiceOver / Stop") {}
+            }
 
             Button("Settings...") {
                 NSApp.activate(ignoringOtherApps: true)
                 openWindow(id: "settings")
-            }
-
-            Button("Setup Wizard...") {
-                NSApp.activate(ignoringOtherApps: true)
-                openWindow(id: "onboarding")
             }
 
             Divider()
@@ -111,6 +95,13 @@ struct CCBeeperApp: App {
             Image(nsImage: BeeperIcon.image(state: monitor.menuBarIconState))
         }
         .menuBarExtraStyle(.menu)
+    }
+
+    static func isMainWindowVisible() -> Bool {
+        for window in NSApp.windows where window.identifier?.rawValue == "main" {
+            return window.isVisible
+        }
+        return false
     }
 
     static func toggleMainWindow() {
