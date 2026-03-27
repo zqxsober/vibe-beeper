@@ -35,7 +35,7 @@ final class OnboardingViewModel: ObservableObject {
     private var pollTimer: Timer?
 
     init() {
-        isModelReady = ParakeetService.modelsDownloaded
+        isModelReady = ParakeetService.modelsDownloaded && KokoroService.modelsDownloaded
     }
 
     // MARK: - Navigation
@@ -52,30 +52,45 @@ final class OnboardingViewModel: ObservableObject {
 
     // MARK: - Model Download
 
-    func downloadParakeetModel() {
+    func downloadModels() {
         guard !isModelDownloading else { return }
         isModelDownloading = true
         modelDownloadProgress = 0
         modelDownloadPhase = "Preparing..."
 
         Task {
+            // Phase 1: Parakeet (0–50%)
             do {
                 try await ParakeetService.shared.downloadModels { [weak self] fraction, label in
                     Task { @MainActor in
-                        self?.modelDownloadProgress = fraction
-                        self?.modelDownloadPhase = label
+                        self?.modelDownloadProgress = fraction * 0.5
+                        self?.modelDownloadPhase = "Speech recognition: \(label)"
                     }
-                }
-                await MainActor.run {
-                    self.isModelReady = true
-                    self.isModelDownloading = false
-                    self.modelDownloadPhase = "Ready"
                 }
             } catch {
                 await MainActor.run {
-                    self.isModelDownloading = false
-                    self.modelDownloadPhase = "Download failed — you can retry or skip"
+                    self.modelDownloadPhase = "Speech recognition failed — continuing with voice synthesis"
                 }
+            }
+
+            // Phase 2: Kokoro (50–100%)
+            do {
+                try await KokoroService.shared.downloadModels { [weak self] fraction, label in
+                    Task { @MainActor in
+                        self?.modelDownloadProgress = 0.5 + fraction * 0.5
+                        self?.modelDownloadPhase = "Voice synthesis: \(label)"
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    self.modelDownloadPhase = "Voice download failed — will use Apple voice"
+                }
+            }
+
+            await MainActor.run {
+                self.isModelReady = true
+                self.isModelDownloading = false
+                self.modelDownloadPhase = "Ready"
             }
         }
     }

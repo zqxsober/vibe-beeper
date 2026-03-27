@@ -13,11 +13,11 @@ struct OnboardingModelDownloadStep: View {
                     .foregroundStyle(Color.accentColor)
 
                 VStack(spacing: 12) {
-                    Text("Download Voice Model")
+                    Text("Download Voice Models")
                         .font(.title2)
                         .fontWeight(.bold)
 
-                    Text("CC-Beeper uses an on-device AI model for speech recognition. No internet needed after download.")
+                    Text("CC-Beeper uses on-device AI models for speech recognition and voice synthesis. No internet needed after download.")
                         .font(.body)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -40,8 +40,8 @@ struct OnboardingModelDownloadStep: View {
                             .foregroundStyle(.secondary)
                     }
                 } else {
-                    Button("Download (~600 MB)") {
-                        viewModel.downloadParakeetModel()
+                    Button("Download (~930 MB)") {
+                        viewModel.downloadModels()
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
@@ -77,7 +77,7 @@ struct OnboardingModelDownloadStep: View {
         .onAppear {
             // Auto-start download if not already downloaded
             if !viewModel.isModelReady && !viewModel.isModelDownloading {
-                viewModel.downloadParakeetModel()
+                viewModel.downloadModels()
             }
         }
     }
