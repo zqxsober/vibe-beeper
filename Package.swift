@@ -4,9 +4,15 @@ import PackageDescription
 let package = Package(
     name: "CC-Beeper",
     platforms: [.macOS(.v26)],
+    dependencies: [
+        .package(url: "https://github.com/FluidInference/FluidAudio.git", from: "0.13.2"),
+    ],
     targets: [
         .executableTarget(
             name: "CC-Beeper",
+            dependencies: [
+                .product(name: "FluidAudio", package: "FluidAudio"),
+            ],
             path: "Sources",
             exclude: [
                 "shells",
@@ -25,7 +31,9 @@ let package = Package(
         ),
         .testTarget(
             name: "CC-BeeperTests",
-            dependencies: [],
+            dependencies: [
+                .product(name: "FluidAudio", package: "FluidAudio"),
+            ],
             path: "Tests/CC-BeeperTests"
         )
     ]
