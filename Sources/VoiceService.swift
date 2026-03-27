@@ -20,14 +20,18 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
     private var recordingStartTime: Date?
     private var previousAppPID: pid_t? = nil
 
-    // Groq WAV recording
-    private var wavFileURL: URL?
-    private var wavAudioFile: AVAudioFile?
+    // MARK: - Parakeet State
 
-    // MARK: - Groq Mode
+    private let parakeetService = ParakeetService.shared
+    private var hasSubmitted: Bool = false        // Guard against double-submit (EOU + Stop)
+    private var lastInjectedText: String = ""     // Tracks what's already in the terminal for delta injection
+    private var isParakeetSession: Bool = false   // Which path is currently active
 
-    private var useGroq: Bool {
-        KeychainService.load(account: KeychainService.groqAccount) != nil
+    // MARK: - STT Engine Label
+
+    /// Exposed to Settings > Voice to show which STT engine is active.
+    var sttEngineLabel: String {
+        ParakeetService.modelsDownloaded ? "Parakeet TDT (local)" : "SFSpeech (fallback)"
     }
 
     // MARK: - Logging
@@ -66,7 +70,7 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         if isRecording { stopRecording() }
     }
 
-    // MARK: - Recording
+    // MARK: - Recording Router
 
     private func startRecording() {
         log("=== START ===")
@@ -78,7 +82,7 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         // Recording has absolute priority — kill TTS first
         if let tts = ttsService, tts.isSpeaking {
             tts.stopSpeaking()
-            usleep(200_000) // additional wait for full audio session release (stopSpeaking already has 100ms)
+            usleep(200_000) // additional wait for full audio session release
             log("killed TTS before recording")
         }
 
@@ -98,49 +102,92 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
             return
         }
 
-        if useGroq {
-            startRecordingGroq(inputNode: inputNode, nativeFormat: nativeFormat)
+        log("STT engine: \(sttEngineLabel)")
+
+        if ParakeetService.modelsDownloaded {
+            startRecordingParakeet(inputNode: inputNode)
         } else {
             startRecordingSFSpeech(inputNode: inputNode)
         }
     }
 
-    // MARK: - Groq Recording Path
+    // MARK: - Parakeet Recording Path
 
-    private func startRecordingGroq(inputNode: AVAudioInputNode, nativeFormat: AVAudioFormat) {
-        log("Groq mode: recording WAV")
+    private func startRecordingParakeet(inputNode: AVAudioInputNode) {
+        log("Parakeet mode: streaming with live terminal injection (D-02)")
+        isParakeetSession = true
+        hasSubmitted = false
+        lastInjectedText = ""
 
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent("voice-\(UUID().uuidString).wav")
-
-        do {
-            wavAudioFile = try AVAudioFile(forWriting: tempURL, settings: nativeFormat.settings)
-        } catch {
-            log("Groq mode: failed to create WAV file: \(error)")
-            return
+        Task {
+            do {
+                if await !parakeetService.isReady {
+                    try await parakeetService.initialize()
+                }
+                await parakeetService.reset()
+                await parakeetService.configureCallbacks(
+                    onPartial: { [weak self] partial in
+                        Task { @MainActor in
+                            guard let self, !self.hasSubmitted else { return }
+                            // PRIMARY: Live inject delta into terminal (per D-02)
+                            self.injectPartialDelta(partial)
+                            // SECONDARY: LCD preview as visual feedback
+                            self.lastTranscriptPreview = partial
+                        }
+                    },
+                    onEou: { [weak self] transcript in
+                        // EOU auto-submit after 1280ms silence
+                        Task { @MainActor in
+                            guard let self, !self.hasSubmitted, !transcript.isEmpty else { return }
+                            self.hasSubmitted = true
+                            self.lastTranscriptPreview = transcript
+                            self.log("EOU auto-submit: '\(transcript)'")
+                            self.stopRecordingEngine()
+                            // Text is already in terminal from partial injection.
+                            // Inject any remaining characters not yet injected and press Enter.
+                            let remaining = String(transcript.dropFirst(self.lastInjectedText.count))
+                            if !remaining.isEmpty {
+                                self.injectTextOnly(remaining)
+                            }
+                            self.lastInjectedText = ""
+                            self.submitTerminal()
+                        }
+                    }
+                )
+            } catch {
+                log("Parakeet init failed, falling back to SFSpeech: \(error)")
+                isParakeetSession = false
+                await MainActor.run {
+                    self.startRecordingSFSpeech(inputNode: inputNode)
+                }
+                return
+            }
         }
-        wavFileURL = tempURL
 
-        // Install tap that writes buffers to WAV file
         inputNode.installTap(onBus: 0, bufferSize: 4096, format: nil) { [weak self] buffer, _ in
-            try? self?.wavAudioFile?.write(from: buffer)
+            guard let self else { return }
+            Task {
+                try? await self.parakeetService.process(buffer)
+            }
         }
-        log("Groq mode: tap installed")
 
         audioEngine.prepare()
         do {
             try audioEngine.start()
             isRecording = true
             recordingStartTime = Date()
-            log("Groq mode: recording...")
+            log("Parakeet mode: recording with live injection...")
         } catch {
-            log("Groq mode: engine failed: \(error)")
+            log("Parakeet mode: engine failed: \(error)")
+            inputNode.removeTap(onBus: 0)
+            isRecording = false
         }
     }
 
     // MARK: - SFSpeech Recording Path
 
     private func startRecordingSFSpeech(inputNode: AVAudioInputNode) {
+        isParakeetSession = false
         guard let recognizer else { log("no recognizer"); return }
 
         let authStatus = SFSpeechRecognizer.authorizationStatus()
@@ -210,39 +257,47 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         }
     }
 
+    // MARK: - Stop Recording
+
     private func stopRecording() {
         log("=== STOP ===")
         guard isRecording else { return }
-        audioEngine.inputNode.removeTap(onBus: 0)
-        audioEngine.inputNode.removeTap(onBus: 0)
-        audioEngine.stop()
-        isRecording = false
 
-        if wavAudioFile != nil {
-            // Groq mode — close WAV file and dispatch transcription
-            wavAudioFile = nil
-            let capturedURL = wavFileURL
-            wavFileURL = nil
-            // Recreate engine per session — prevents corruption on subsequent recordings
-            audioEngine = AVAudioEngine()
-            log("Groq mode: stopped — dispatching transcription")
+        if isParakeetSession {
+            // Parakeet path — stop engine, finalize transcript
+            stopRecordingEngine()
 
-            if let url = capturedURL, let key = KeychainService.load(account: KeychainService.groqAccount) {
+            if hasSubmitted {
+                // EOU already fired and submitted — nothing more to do
+                log("Parakeet mode: EOU already submitted, stop is no-op")
+            } else {
+                // Manual stop — call finish() and inject remaining delta + Enter
                 Task {
                     do {
-                        let text = try await GroqTranscriptionService.transcribe(wavURL: url, apiKey: key)
+                        let final = try await parakeetService.finish()
                         await MainActor.run {
-                            self.lastTranscriptPreview = text
-                            if !text.isEmpty { self.injectAndSubmit(text) }
+                            if !final.isEmpty && !self.hasSubmitted {
+                                self.hasSubmitted = true
+                                self.lastTranscriptPreview = final
+                                // Inject any remaining characters not yet in terminal
+                                let remaining = String(final.dropFirst(self.lastInjectedText.count))
+                                if !remaining.isEmpty {
+                                    self.injectTextOnly(remaining)
+                                }
+                                self.lastInjectedText = ""
+                                self.submitTerminal()
+                            }
                         }
                     } catch {
-                        self.log("Groq transcription failed: \(error)")
-                        await MainActor.run { self.lastTranscriptPreview = "Groq error" }
+                        self.log("Parakeet finish() failed: \(error)")
                     }
                 }
             }
         } else {
-            // SFSpeech mode — endAudio and wait for final result
+            // SFSpeech path — endAudio and wait for final result
+            audioEngine.inputNode.removeTap(onBus: 0)
+            audioEngine.stop()
+            isRecording = false
             recognitionRequest?.endAudio()
             recognitionRequest = nil
             // Don't cancel the recognition task — let it deliver the final result
@@ -271,7 +326,119 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         }
     }
 
-    // MARK: - Inject text + Enter
+    // MARK: - Stop Recording Engine (shared helper)
+
+    /// Stops the AVAudioEngine and resets for next session.
+    /// Called by both the EOU callback and the manual stop handler.
+    private func stopRecordingEngine() {
+        audioEngine.inputNode.removeTap(onBus: 0)
+        audioEngine.stop()
+        isRecording = false
+        // Recreate engine per session — prevents corruption on subsequent recordings
+        audioEngine = AVAudioEngine()
+    }
+
+    // MARK: - Live Terminal Injection (D-02)
+
+    /// Injects only the delta (new characters) since the last injected partial.
+    /// PartialCallback fires with the FULL accumulated transcript — we track what's already in the terminal.
+    /// If the partial doesn't extend previous text (model revised earlier words), clears and re-injects.
+    private func injectPartialDelta(_ fullPartial: String) {
+        let alreadyInjected = lastInjectedText
+
+        guard fullPartial.hasPrefix(alreadyInjected) else {
+            // Partial does NOT extend previous — text was revised/corrected by model.
+            // Clear terminal input and re-inject the full partial.
+            clearTerminalInput()
+            injectTextOnly(fullPartial)
+            lastInjectedText = fullPartial
+            return
+        }
+
+        let delta = String(fullPartial.dropFirst(alreadyInjected.count))
+        guard !delta.isEmpty else { return }
+
+        injectTextOnly(delta)
+        lastInjectedText = fullPartial
+    }
+
+    /// Injects text into the terminal WITHOUT pressing Enter.
+    /// Used for live streaming partial results and final delta injection before submitTerminal().
+    private func injectTextOnly(_ text: String) {
+        guard !text.isEmpty else { return }
+
+        focusTerminal()
+        usleep(500_000) // wait for terminal to come forward
+
+        let utf16 = Array(text.utf16)
+        if utf16.count <= 200 {
+            guard let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: true),
+                  let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: false) else { return }
+            keyDown.keyboardSetUnicodeString(stringLength: utf16.count, unicodeString: utf16)
+            keyUp.keyboardSetUnicodeString(stringLength: utf16.count, unicodeString: utf16)
+            keyDown.post(tap: .cghidEventTap)
+            keyUp.post(tap: .cghidEventTap)
+        } else {
+            // Clipboard paste fallback for long text
+            let pb = NSPasteboard.general
+            let old = pb.string(forType: .string)
+            pb.clearContents()
+            pb.setString(text, forType: .string)
+            guard let down = CGEvent(keyboardEventSource: nil, virtualKey: 9, keyDown: true),
+                  let up = CGEvent(keyboardEventSource: nil, virtualKey: 9, keyDown: false) else { return }
+            down.flags = .maskCommand
+            up.flags = .maskCommand
+            down.post(tap: .cghidEventTap)
+            up.post(tap: .cghidEventTap)
+            usleep(100_000)
+            if let old { pb.clearContents(); pb.setString(old, forType: .string) }
+        }
+
+        log("injected (no submit): '\(text)'")
+        refocusPreviousApp()
+    }
+
+    /// Clears the current terminal input line by selecting all and pressing Delete.
+    /// Used when Parakeet revises earlier words (partial doesn't extend previous injected text).
+    private func clearTerminalInput() {
+        focusTerminal()
+        usleep(300_000) // wait for terminal to come forward
+
+        // Cmd+A to select all text in the current input
+        guard let selectDown = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: true),
+              let selectUp = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: false) else { return }
+        selectDown.flags = .maskCommand
+        selectUp.flags = .maskCommand
+        // keycode 0 = 'a', but we need Cmd+A = Select All
+        // Use virtualKey 0x00 ('a')
+        selectDown.post(tap: .cghidEventTap)
+        selectUp.post(tap: .cghidEventTap)
+
+        usleep(50_000)
+
+        // Delete/Backspace to clear selected text
+        guard let delDown = CGEvent(keyboardEventSource: nil, virtualKey: 0x33, keyDown: true),
+              let delUp = CGEvent(keyboardEventSource: nil, virtualKey: 0x33, keyDown: false) else { return }
+        delDown.post(tap: .cghidEventTap)
+        delUp.post(tap: .cghidEventTap)
+
+        log("cleared terminal input (model revision)")
+    }
+
+    /// Presses Enter only — text is already in the terminal from partial injection.
+    /// Use after all delta text has been injected via `injectTextOnly`.
+    private func submitTerminal() {
+        focusTerminal()
+        usleep(100_000)
+        guard let enterDown = CGEvent(keyboardEventSource: nil, virtualKey: 0x24, keyDown: true),
+              let enterUp = CGEvent(keyboardEventSource: nil, virtualKey: 0x24, keyDown: false) else { return }
+        enterDown.post(tap: .cghidEventTap)
+        enterUp.post(tap: .cghidEventTap)
+        log("submitted (Enter only)")
+        refocusPreviousApp()
+    }
+
+    // MARK: - Inject text + Enter (SFSpeech path, unchanged)
 
     private func injectAndSubmit(_ text: String) {
         guard !text.isEmpty else { return }

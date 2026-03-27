@@ -83,9 +83,9 @@ actor ParakeetService {
     func configureCallbacks(
         onPartial: @escaping @Sendable (String) -> Void,
         onEou: @escaping @Sendable (String) -> Void
-    ) {
-        manager?.setPartialCallback(onPartial)
-        manager?.setEouCallback(onEou)
+    ) async {
+        await manager?.setPartialCallback(onPartial)
+        await manager?.setEouCallback(onEou)
     }
 
     // MARK: - Process Audio Buffer
