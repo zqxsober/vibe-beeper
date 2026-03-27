@@ -303,14 +303,19 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         guard isRecording else { return }
 
         if isParakeetSession {
-            // Parakeet path — stop engine, finalize transcript
-            stopRecordingEngine()
+            // Parakeet path — stop audio tap first, then finalize transcript, then replace engine
+            // Stop the audio tap and engine but do NOT replace the engine yet (Bug 5 fix)
+            audioEngine.inputNode.removeTap(onBus: 0)
+            audioEngine.stop()
 
             if hasSubmitted {
-                // EOU already fired and submitted — nothing more to do
+                // EOU already fired and submitted — just clean up
                 log("Parakeet mode: EOU already submitted, stop is no-op")
+                isRecording = false
+                audioEngine = AVAudioEngine()
             } else {
-                // Manual stop — call finish() and inject remaining delta + Enter
+                // Manual stop — finalize transcript BEFORE replacing engine (Bug 5 fix)
+                // isRecording stays true during finish() to prevent a new recording from starting
                 Task {
                     do {
                         let final = try await parakeetService.finish()
@@ -326,9 +331,16 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
                                 self.lastInjectedText = ""
                                 self.submitTerminal()
                             }
+                            // Engine replaced AFTER finish() completes (Bug 5 fix)
+                            self.isRecording = false
+                            self.audioEngine = AVAudioEngine()
                         }
                     } catch {
                         self.log("Parakeet finish() failed: \(error)")
+                        await MainActor.run {
+                            self.isRecording = false
+                            self.audioEngine = AVAudioEngine()
+                        }
                     }
                 }
             }
@@ -363,18 +375,6 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
                 }
             }
         }
-    }
-
-    // MARK: - Stop Recording Engine (shared helper)
-
-    /// Stops the AVAudioEngine and resets for next session.
-    /// Called by both the EOU callback and the manual stop handler.
-    private func stopRecordingEngine() {
-        audioEngine.inputNode.removeTap(onBus: 0)
-        audioEngine.stop()
-        isRecording = false
-        // Recreate engine per session — prevents corruption on subsequent recordings
-        audioEngine = AVAudioEngine()
     }
 
     // MARK: - Live Terminal Injection (D-02)
