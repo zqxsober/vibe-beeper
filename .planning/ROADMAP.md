@@ -272,7 +272,11 @@ Plans:
   2. The manual "Summarize" button triggers Kokoro TTS and the user hears the summary within a second of pressing it
   3. If the Kokoro model fails to load, TTSService falls back to Apple Ava Premium (or the system default voice) and continues speaking without silence or error
   4. The Settings > Voice panel shows which TTS engine is in use (Kokoro or Apple fallback)
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [x] 25-01-PLAN.md — KokoroService actor + TTSService Kokoro integration + ClaudeMonitor migration
+- [ ] 25-02-PLAN.md — Onboarding dual model download + Settings voice picker
 
 ### Phase 26: Cleanup
 **Goal**: Every Groq/OpenAI voice code path is gone — no API key fields in Settings or onboarding, no Keychain storage, no dead service classes
@@ -283,7 +287,11 @@ Plans:
   2. Onboarding contains no step or prompt asking for Groq or OpenAI API keys
   3. KeychainService is removed from the codebase and the project builds with zero references to it
   4. GroqTranscriptionService and all Groq/OpenAI TTS routing code are deleted — a grep for "Groq" and "OpenAI" in Swift source returns zero matches
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 25-01-PLAN.md — KokoroService actor + TTSService Kokoro integration + ClaudeMonitor migration
+- [ ] 25-02-PLAN.md — Onboarding dual model download + Settings voice picker
 
 ## Progress
 
@@ -310,6 +318,6 @@ Note (v4.0): Phase 24 (Offline STT) and Phase 25 (Offline TTS) both depend only 
 | 21. GitHub & Branding | v3.1 Polish & Fixes | 2/2 | Complete | 2026-03-26 |
 | 22. Final Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
 | 23. Foundation | v4.0 Offline Voice | 0/1 | Complete    | 2026-03-27 |
-| 24. Offline STT | v4.0 Offline Voice | 2/2 | Complete   | 2026-03-27 |
-| 25. Offline TTS | v4.0 Offline Voice | 0/? | Not started | - |
+| 24. Offline STT | v4.0 Offline Voice | 2/2 | Complete    | 2026-03-27 |
+| 25. Offline TTS | v4.0 Offline Voice | 1/2 | In Progress|  |
 | 26. Cleanup | v4.0 Offline Voice | 0/? | Not started | - |

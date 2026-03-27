@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
-status: Phase complete — ready for verification
-stopped_at: Completed 24-02-PLAN.md
-last_updated: "2026-03-27T11:25:14.573Z"
+status: Ready to execute
+stopped_at: Completed 25-offline-tts-01-PLAN.md
+last_updated: "2026-03-27T12:28:42.777Z"
 progress:
-  total_phases: 23
+  total_phases: 24
   completed_phases: 22
-  total_plans: 47
-  completed_plans: 46
+  total_plans: 49
+  completed_plans: 47
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
-**Current focus:** Phase 24 — Offline STT
+**Current focus:** Phase 25 — Offline TTS
 
 ## Current Position
 
-Phase: 24 (Offline STT) — EXECUTING
+Phase: 25 (Offline TTS) — EXECUTING
 Plan: 2 of 2
 
 ## Performance Metrics
@@ -54,6 +54,7 @@ Plan: 2 of 2
 | Phase 21-github-branding P02 | 2 | 2 tasks | 2 files |
 | Phase 24-offline-stt P01 | 204 | 2 tasks | 2 files |
 | Phase 24-offline-stt P02 | 7 | 2 tasks | 5 files |
+| Phase 25-offline-tts P01 | 4 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -81,6 +82,7 @@ Plan: 2 of 2
 - [Phase 24-offline-stt]: Groq path fully removed from VoiceService — GroqTranscriptionService.swift stays until Phase 26 per prior decision
 - [Phase 24-offline-stt]: downloadParakeetModel() uses ParakeetService.shared singleton so VoiceService shares the initialized manager without re-initialization
 - [Phase 24-offline-stt]: STT engine indicator in Settings is read-only — Parakeet always preferred when downloaded, no user selector per D-05
+- [Phase 25-offline-tts]: KokoroService actor wraps KokoroTtsManager singleton — lazy init on first speakWithKokoro() call; default provider migrated from 'apple' to 'kokoro', legacy groq/openai migrated automatically
 
 ### Pending Todos
 
@@ -93,6 +95,6 @@ Plan: 2 of 2
 
 ## Session Continuity
 
-Last session: 2026-03-27T11:25:14.566Z
-Stopped at: Completed 24-02-PLAN.md
+Last session: 2026-03-27T12:28:42.772Z
+Stopped at: Completed 25-offline-tts-01-PLAN.md
 Resume file: None
