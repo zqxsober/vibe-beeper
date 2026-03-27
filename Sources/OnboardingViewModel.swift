@@ -11,7 +11,7 @@ final class OnboardingViewModel: ObservableObject {
         case cliAndHooks = 1
         case permissions = 2
         case voices = 3
-        case apiKeys = 4   // optional BYOK step
+        case modelDownload = 4
         case done = 5
     }
 
@@ -23,10 +23,20 @@ final class OnboardingViewModel: ObservableObject {
     @Published var isMicGranted: Bool = false
     @Published var isSpeechGranted: Bool = false
 
+    // MARK: - Model Download State
+    @Published var modelDownloadProgress: Double = 0
+    @Published var modelDownloadPhase: String = ""
+    @Published var isModelDownloading: Bool = false
+    @Published var isModelReady: Bool = false
+
     var totalSteps: Int { Step.allCases.count }
     var progress: Double { Double(currentStep.rawValue) / Double(totalSteps - 1) }
 
     private var pollTimer: Timer?
+
+    init() {
+        isModelReady = ParakeetService.modelsDownloaded
+    }
 
     // MARK: - Navigation
 
@@ -38,6 +48,36 @@ final class OnboardingViewModel: ObservableObject {
     func goBack() {
         guard let prev = Step(rawValue: currentStep.rawValue - 1) else { return }
         currentStep = prev
+    }
+
+    // MARK: - Model Download
+
+    func downloadParakeetModel() {
+        guard !isModelDownloading else { return }
+        isModelDownloading = true
+        modelDownloadProgress = 0
+        modelDownloadPhase = "Preparing..."
+
+        Task {
+            do {
+                try await ParakeetService.shared.downloadModels { [weak self] fraction, label in
+                    Task { @MainActor in
+                        self?.modelDownloadProgress = fraction
+                        self?.modelDownloadPhase = label
+                    }
+                }
+                await MainActor.run {
+                    self.isModelReady = true
+                    self.isModelDownloading = false
+                    self.modelDownloadPhase = "Ready"
+                }
+            } catch {
+                await MainActor.run {
+                    self.isModelDownloading = false
+                    self.modelDownloadPhase = "Download failed — you can retry or skip"
+                }
+            }
+        }
     }
 
     // MARK: - CLI Detection (called on step 1 appear)

@@ -23,8 +23,8 @@ struct OnboardingView: View {
                     OnboardingPermissionsStep(viewModel: viewModel)
                 case .voices:
                     OnboardingVoicesStep(viewModel: viewModel)
-                case .apiKeys:
-                    OnboardingAPIKeysStep(viewModel: viewModel)
+                case .modelDownload:
+                    OnboardingModelDownloadStep(viewModel: viewModel)
                 case .done:
                     OnboardingDoneStep(viewModel: viewModel)
                 }
