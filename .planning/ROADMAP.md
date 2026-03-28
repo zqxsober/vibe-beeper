@@ -373,7 +373,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 30-01-PLAN.md — Add WhisperKit SPM dependency, create WhisperService actor, replace Parakeet recording path in VoiceService
+- [x] 30-01-PLAN.md — Add WhisperKit SPM dependency, create WhisperService actor, replace Parakeet recording path in VoiceService
 - [ ] 30-02-PLAN.md — Whisper model picker in Settings, onboarding Whisper download, ClaudeMonitor pre-warm
 
 ### Phase 31: Kokoro Multilingual
@@ -450,7 +450,7 @@ Note (v6.0): Phase 30 (Whisper STT) and Phase 31 (Kokoro Multilingual) both depe
 | 27. STT Reliability | v5.0 Polish & Distribution | 2/2 | Complete | 2026-03-27 |
 | 28. TTS Reliability + Rename | v5.0 Polish & Distribution | 2/2 | Complete | 2026-03-27 |
 | 29. Distribution | v5.0 Polish & Distribution | 1/2 | In Progress | - |
-| 30. Whisper STT | v6.0 Multilingual Voice | 0/2 | Not started | - |
+| 30. Whisper STT | v6.0 Multilingual Voice | 1/2 | In Progress|  |
 | 31. Kokoro Multilingual | v6.0 Multilingual Voice | 0/TBD | Not started | - |
 | 32. Language Preference System | v6.0 Multilingual Voice | 0/TBD | Not started | - |
 | 33. Settings & Onboarding | v6.0 Multilingual Voice | 0/TBD | Not started | - |
