@@ -189,7 +189,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 
 **Milestone Goal:** Support multiple languages for both voice recording (STT) and voice reading (TTS). Whisper replaces Parakeet for 99-language speech recognition with auto-detection. Kokoro is extended to all 9 language codes. A unified language preference drives both subsystems. Language selection is surfaced in Settings and onboarding.
 
-- [ ] **Phase 30: Whisper STT** - Replace Parakeet with Whisper; model size picker in Settings; auto-detect spoken language
+- [x] **Phase 30: Whisper STT** - Replace Parakeet with Whisper; model size picker in Settings; auto-detect spoken language (completed 2026-03-28)
 - [ ] **Phase 31: Kokoro Multilingual** - Kokoro server supports all 9 language codes; voice picker filters by language; TTS output matches chosen language
 - [ ] **Phase 32: Language Preference System** - Single language preference drives both STT and TTS; defaults to macOS system language; per-language deps downloaded on demand; fallback picker for unsupported languages
 - [ ] **Phase 33: Settings & Onboarding** - Unified Voice tab in Settings; onboarding detects and confirms language; deps downloaded during onboarding; voice preview available
@@ -374,7 +374,7 @@ Plans:
 
 Plans:
 - [x] 30-01-PLAN.md — Add WhisperKit SPM dependency, create WhisperService actor, replace Parakeet recording path in VoiceService
-- [ ] 30-02-PLAN.md — Whisper model picker in Settings, onboarding Whisper download, ClaudeMonitor pre-warm
+- [x] 30-02-PLAN.md — Whisper model picker in Settings, onboarding Whisper download, ClaudeMonitor pre-warm
 
 ### Phase 31: Kokoro Multilingual
 **Goal**: Kokoro TTS speaks in all 9 supported language codes, and the voice picker in Settings shows only voices valid for the selected language
@@ -450,7 +450,7 @@ Note (v6.0): Phase 30 (Whisper STT) and Phase 31 (Kokoro Multilingual) both depe
 | 27. STT Reliability | v5.0 Polish & Distribution | 2/2 | Complete | 2026-03-27 |
 | 28. TTS Reliability + Rename | v5.0 Polish & Distribution | 2/2 | Complete | 2026-03-27 |
 | 29. Distribution | v5.0 Polish & Distribution | 1/2 | In Progress | - |
-| 30. Whisper STT | v6.0 Multilingual Voice | 1/2 | In Progress|  |
+| 30. Whisper STT | v6.0 Multilingual Voice | 2/2 | Complete   | 2026-03-28 |
 | 31. Kokoro Multilingual | v6.0 Multilingual Voice | 0/TBD | Not started | - |
 | 32. Language Preference System | v6.0 Multilingual Voice | 0/TBD | Not started | - |
 | 33. Settings & Onboarding | v6.0 Multilingual Voice | 0/TBD | Not started | - |

@@ -7,7 +7,7 @@
 
 ### STT — Speech-to-Text (Recording)
 - [x] **STT-01**: User can record voice input transcribed by Whisper (replacing Parakeet)
-- [ ] **STT-02**: User can choose Whisper model size in Settings (small default, medium optional)
+- [x] **STT-02**: User can choose Whisper model size in Settings (small default, medium optional)
 - [x] **STT-03**: Whisper auto-detects spoken language for transcription
 
 ### TTS — Text-to-Speech (Reading)
