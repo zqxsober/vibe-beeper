@@ -12,7 +12,7 @@
 
 ### TTS — Text-to-Speech (Reading)
 - [x] **TTS-01**: Kokoro server supports all 9 language codes (EN-US, EN-UK, FR, ES, IT, PT, HI, JA, ZH)
-- [ ] **TTS-02**: Voice picker in Settings filters voices by selected language
+- [x] **TTS-02**: Voice picker in Settings filters voices by selected language
 - [x] **TTS-03**: TTS reads Claude's responses in the user's chosen language
 
 ### LANG — Language Management

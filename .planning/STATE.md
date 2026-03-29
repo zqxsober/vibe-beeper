@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
 status: executing
-stopped_at: Completed 31-01-PLAN.md
-last_updated: "2026-03-29T11:00:44.595Z"
+stopped_at: "Checkpoint 31-02 Task 2: human-verify multilingual TTS"
+last_updated: "2026-03-29T11:03:55.613Z"
 last_activity: 2026-03-29
 progress:
   total_phases: 30
-  completed_phases: 27
+  completed_phases: 28
   total_plans: 60
-  completed_plans: 57
+  completed_plans: 58
   percent: 0
 ---
 
@@ -50,6 +50,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 30-whisper-stt P01 | 9 | 2 tasks | 7 files |
 | Phase 30-whisper-stt P02 | 15min | 2 tasks | 2 files |
 | Phase 31-kokoro-multilingual P01 | 127s | 2 tasks | 5 files |
+| Phase 31 P02 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 31-01]: KModel shared across language switches for sub-1s latency (0.77s measured vs 1.75s full reload)
 - [Phase 31-01]: LANG: command follows same stdin protocol as existing VOICE: command
 - [Phase 31-01]: kokoroLangCode defaults to 'a' (American English) until Phase 32 sets it from system language
+- [Phase 31-02]: Auto-voice-select on language change delegated to ClaudeMonitor.kokoroLangCode.didSet (no UI logic needed)
+- [Phase 31-02]: depsReady @State defaults to true to avoid flicker on app launch; checkDeps() called on language change
 
 ### Pending Todos
 
@@ -76,6 +79,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-29T11:00:44.592Z
-Stopped at: Completed 31-01-PLAN.md
+Last session: 2026-03-29T11:03:46.445Z
+Stopped at: Checkpoint 31-02 Task 2: human-verify multilingual TTS
 Resume file: None
