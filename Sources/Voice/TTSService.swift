@@ -29,7 +29,7 @@ final class TTSService: ObservableObject, @unchecked Sendable {
 
     private static let logPath = NSHomeDirectory() + "/.claude/cc-beeper/tts.log"
 
-    private func log(_ msg: String) {
+    func log(_ msg: String) {
         let line = "[\(Date())] \(msg)\n"
         if let fh = FileHandle(forWritingAtPath: Self.logPath) {
             fh.seekToEndOfFile()
@@ -184,6 +184,7 @@ final class TTSService: ObservableObject, @unchecked Sendable {
             }
             player.delegate = playerDelegate
             audioPlayer = player
+            isSpeaking = true
             player.play()
             log("Kokoro: playback started")
         } catch {

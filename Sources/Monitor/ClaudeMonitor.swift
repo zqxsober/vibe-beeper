@@ -134,7 +134,7 @@ final class ClaudeMonitor: ObservableObject {
     @Published var hotkeyTerminal: UInt16 = 17 {  // kVK_ANSI_T
         didSet { UserDefaults.standard.set(Int(hotkeyTerminal), forKey: "hotkeyTerminal") }
     }
-    @Published var hotkeyMute: UInt16 = 46 {     // kVK_ANSI_M
+    @Published var hotkeyMute: UInt16 = 3 {      // kVK_ANSI_F
         didSet { UserDefaults.standard.set(Int(hotkeyMute), forKey: "hotkeyMute") }
     }
 
@@ -638,32 +638,44 @@ final class ClaudeMonitor: ObservableObject {
         // Remove old Carbon hotkeys before re-registering
         carbonHotKeys.removeAll()
 
+        // Debug: write hotkey registration to a file we can check
+        let debugPath = Self.ipcDir + "/hotkeys-debug.txt"
+        var debugLog = "setupGlobalHotkeys called at \(Date())\n"
+        debugLog += "hotkeyAccept=\(hotkeyAccept) hotkeyDeny=\(hotkeyDeny) hotkeyVoice=\(hotkeyVoice) hotkeyTerminal=\(hotkeyTerminal) hotkeyMute=\(hotkeyMute)\n"
+
         // Register Carbon hotkeys — these CONSUME the event, no leaking to focused app
-        func registerHotKey(keyCode: UInt16, handler: @escaping () -> Void) {
-            let key = Key(carbonKeyCode: UInt32(keyCode))!
+        func registerHotKey(keyCode: UInt16, label: String, handler: @escaping () -> Void) {
+            guard let key = Key(carbonKeyCode: UInt32(keyCode)) else {
+                debugLog += "FAILED: \(label) — Key(carbonKeyCode: \(keyCode)) returned nil\n"
+                try? debugLog.write(toFile: debugPath, atomically: true, encoding: .utf8)
+                ttsService.log("Hotkey FAILED: \(label) — Key(carbonKeyCode: \(keyCode)) returned nil")
+                return
+            }
             let hk = HotKey(key: key, modifiers: [.option])
             hk.keyDownHandler = handler
             carbonHotKeys.append(hk)
+            debugLog += "OK: \(label) — keyCode=\(keyCode), key=\(key)\n"
+            try? debugLog.write(toFile: debugPath, atomically: true, encoding: .utf8)
         }
 
-        registerHotKey(keyCode: hotkeyAccept) { [weak self] in
+        registerHotKey(keyCode: hotkeyAccept, label: "Accept") { [weak self] in
             guard let self, self.pendingPermission != nil else { return }
             Task { @MainActor in self.respondToPermission(allow: true) }
         }
-        registerHotKey(keyCode: hotkeyDeny) { [weak self] in
+        registerHotKey(keyCode: hotkeyDeny, label: "Deny") { [weak self] in
             guard let self, self.pendingPermission != nil else { return }
             Task { @MainActor in self.respondToPermission(allow: false) }
         }
-        registerHotKey(keyCode: hotkeyVoice) { [weak self] in
+        registerHotKey(keyCode: hotkeyVoice, label: "Voice") { [weak self] in
             Task { @MainActor in self?.voiceService.toggle() }
         }
-        registerHotKey(keyCode: hotkeyTerminal) { [weak self] in
+        registerHotKey(keyCode: hotkeyTerminal, label: "Terminal") { [weak self] in
             Task { @MainActor in self?.goToConversation() }
         }
-        registerHotKey(keyCode: hotkeyMute) { [weak self] in
+        registerHotKey(keyCode: hotkeyMute, label: "Mute") { [weak self] in
             Task { @MainActor in
                 guard let self else { return }
-                print("[CC-Beeper] mute hotkey pressed — isSpeaking=\(self.ttsService.isSpeaking)")
+                self.ttsService.log("Mute hotkey pressed — isSpeaking=\(self.ttsService.isSpeaking)")
                 if self.ttsService.isSpeaking {
                     self.ttsService.stopSpeaking()
                 } else {
