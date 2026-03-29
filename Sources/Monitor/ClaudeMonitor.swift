@@ -151,6 +151,18 @@ final class ClaudeMonitor: ObservableObject {
         }
     }
 
+    /// Selected Kokoro language code. Default 'a' (American English) per D-03.
+    @Published var kokoroLangCode: String = "a" {
+        didSet {
+            UserDefaults.standard.set(kokoroLangCode, forKey: "kokoroLangCode")
+            ttsService.setKokoroLangCode(kokoroLangCode)
+            // Auto-select first valid voice for new language (per D-06)
+            if !KokoroVoiceCatalog.isVoiceValid(kokoroVoice, for: kokoroLangCode) {
+                kokoroVoice = KokoroVoiceCatalog.defaultVoice(for: kokoroLangCode)
+            }
+        }
+    }
+
     private static let summaryFile = ipcDir + "/last_summary.txt"
     private var summarySource: DispatchSourceFileSystemObject?
     private var lastSummaryHash: Int = 0
@@ -204,6 +216,7 @@ final class ClaudeMonitor: ObservableObject {
         ttsProvider = UserDefaults.standard.string(forKey: "ttsProvider") ?? "kokoro"
         pocketttsVoice = UserDefaults.standard.string(forKey: "pocketttsVoice") ?? "alba"
         kokoroVoice = UserDefaults.standard.string(forKey: "kokoroVoice") ?? "bm_daniel"
+        kokoroLangCode = UserDefaults.standard.string(forKey: "kokoroLangCode") ?? "a"
         whisperModelSize = UserDefaults.standard.string(forKey: "whisperModelSize") ?? "small"
         // Load saved hotkey bindings (defaults are the property initializers)
         if let v = UserDefaults.standard.object(forKey: "hotkeyAccept") as? Int { hotkeyAccept = UInt16(v) }

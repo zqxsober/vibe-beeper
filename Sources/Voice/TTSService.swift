@@ -199,6 +199,15 @@ final class TTSService: ObservableObject, @unchecked Sendable {
         }
     }
 
+    func setKokoroLangCode(_ code: String) {
+        guard let stdin = kokoroStdin else { return }
+        let cmd = "LANG:\(code)\n"
+        if let data = cmd.data(using: .utf8) {
+            stdin.write(data)
+            log("Kokoro: lang set to \(code)")
+        }
+    }
+
     func shutdownKokoro() {
         outputWatcher?.cancel()
         outputWatcher = nil
