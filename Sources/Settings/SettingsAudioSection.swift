@@ -31,7 +31,7 @@ struct SettingsAudioSection: View {
 
     var body: some View {
         Toggle(isOn: $monitor.voiceOver) {
-            Label("VoiceOver", systemImage: "speaker.wave.2.fill")
+            Label("Read Over", systemImage: "speaker.wave.2.fill")
         }
         .toggleStyle(.switch)
 

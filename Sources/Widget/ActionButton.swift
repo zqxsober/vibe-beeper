@@ -137,7 +137,7 @@ struct SoundMuteButton: View {
                 .resizable()
                 .interpolation(.high)
                 .frame(width: btnW, height: btnH)
-                .accessibilityLabel("VoiceOver")
+                .accessibilityLabel("Read Over")
         }
     }
 }

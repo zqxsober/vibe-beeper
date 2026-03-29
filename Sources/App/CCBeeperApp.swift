@@ -79,7 +79,7 @@ struct CCBeeperApp: App {
                 Button("⌥ \(keyCodeToString(monitor.hotkeyDeny))  Deny Permission") {}
                 Button("⌥ \(keyCodeToString(monitor.hotkeyVoice))  Voice Record") {}
                 Button("⌥ \(keyCodeToString(monitor.hotkeyTerminal))  Go to Terminal") {}
-                Button("⌥ \(keyCodeToString(monitor.hotkeyMute))  VoiceOver / Stop") {}
+                Button("⌥ \(keyCodeToString(monitor.hotkeyMute))  Read Over / Stop") {}
             }
 
             Button("Settings...") {

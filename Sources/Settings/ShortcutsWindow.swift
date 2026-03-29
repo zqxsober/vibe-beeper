@@ -16,7 +16,7 @@ struct ShortcutsWindow: View {
                     ShortcutRow(action: "Deny Permission", keys: "⌥ \(keyCodeToString(monitor.hotkeyDeny))")
                     ShortcutRow(action: "Voice Record", keys: "⌥ \(keyCodeToString(monitor.hotkeyVoice))")
                     ShortcutRow(action: "Go to Terminal", keys: "⌥ \(keyCodeToString(monitor.hotkeyTerminal))")
-                    ShortcutRow(action: "VoiceOver / Stop", keys: "⌥ \(keyCodeToString(monitor.hotkeyMute))")
+                    ShortcutRow(action: "Read Over / Stop", keys: "⌥ \(keyCodeToString(monitor.hotkeyMute))")
                 }
             }
 

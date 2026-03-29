@@ -193,7 +193,10 @@ final class TTSService: ObservableObject, @unchecked Sendable {
     }
 
     func setKokoroVoice(_ voice: String) {
-        guard let stdin = kokoroStdin else { return }
+        guard let stdin = kokoroStdin else {
+            log("Kokoro: setKokoroVoice(\(voice)) — stdin nil, Kokoro not running")
+            return
+        }
         let cmd = "VOICE:\(voice)\n"
         if let data = cmd.data(using: .utf8) {
             stdin.write(data)
@@ -202,7 +205,10 @@ final class TTSService: ObservableObject, @unchecked Sendable {
     }
 
     func setKokoroLangCode(_ code: String) {
-        guard let stdin = kokoroStdin else { return }
+        guard let stdin = kokoroStdin else {
+            log("Kokoro: setKokoroLangCode(\(code)) — stdin nil, Kokoro not running")
+            return
+        }
         let cmd = "LANG:\(code)\n"
         if let data = cmd.data(using: .utf8) {
             stdin.write(data)

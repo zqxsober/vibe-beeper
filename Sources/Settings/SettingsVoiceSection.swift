@@ -2,6 +2,10 @@ import SwiftUI
 
 struct SettingsVoiceSection: View {
     @EnvironmentObject var monitor: ClaudeMonitor
+    @State private var isDownloading = false
+    @State private var downloadProgress: Double = 0
+    @State private var downloadLabel: String = ""
+    @State private var downloadError: String?
 
     var body: some View {
         Section("Speech Recognition") {
@@ -20,13 +24,46 @@ struct SettingsVoiceSection: View {
             .pickerStyle(.menu)
 
             if !WhisperService.isModelDownloaded(size: WhisperModelSize(rawValue: monitor.whisperModelSize) ?? .small) {
-                Button {
-                    let size = WhisperModelSize(rawValue: monitor.whisperModelSize) ?? .small
-                    Task {
-                        try? await WhisperService.shared.downloadModel(size: size) { _, _ in }
+                if isDownloading {
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                        Text(downloadLabel.isEmpty ? "Downloading..." : downloadLabel)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
-                } label: {
-                    Label("Download Model", systemImage: "arrow.down.circle")
+                } else {
+                    Button {
+                        let size = WhisperModelSize(rawValue: monitor.whisperModelSize) ?? .small
+                        isDownloading = true
+                        downloadError = nil
+                        Task {
+                            do {
+                                try await WhisperService.shared.downloadModel(size: size) { progress, label in
+                                    Task { @MainActor in
+                                        downloadProgress = progress
+                                        downloadLabel = label
+                                    }
+                                }
+                                await MainActor.run {
+                                    isDownloading = false
+                                }
+                            } catch {
+                                await MainActor.run {
+                                    isDownloading = false
+                                    downloadError = "[v2] \(error)"
+                                }
+                            }
+                        }
+                    } label: {
+                        Label("Download Model", systemImage: "arrow.down.circle")
+                    }
+                }
+
+                if let error = downloadError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.red)
                 }
             }
         }

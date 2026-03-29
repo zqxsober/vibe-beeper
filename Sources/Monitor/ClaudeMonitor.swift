@@ -156,8 +156,6 @@ final class ClaudeMonitor: ObservableObject {
         didSet {
             UserDefaults.standard.set(kokoroLangCode, forKey: "kokoroLangCode")
             ttsService.setKokoroLangCode(kokoroLangCode)
-            // Propagate language hint to VoiceService for Whisper STT (per LANG-01)
-            voiceService.languageCode = kokoroLangCode
             // Auto-select first valid voice for new language (per D-06)
             if !KokoroVoiceCatalog.isVoiceValid(kokoroVoice, for: kokoroLangCode) {
                 kokoroVoice = KokoroVoiceCatalog.defaultVoice(for: kokoroLangCode)
@@ -249,8 +247,6 @@ final class ClaudeMonitor: ObservableObject {
         isActive = UserDefaults.standard.object(forKey: "isActive") as? Bool ?? true
         // Wire ttsService into voiceService so recording cuts TTS
         voiceService.ttsService = ttsService
-        // Propagate initial language preference to VoiceService for Whisper hints
-        voiceService.languageCode = kokoroLangCode
         // Mirror VoiceService.isRecording into ClaudeMonitor.isRecording for UI binding
         voiceService.$isRecording
             .receive(on: DispatchQueue.main)

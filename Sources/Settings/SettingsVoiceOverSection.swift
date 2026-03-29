@@ -22,7 +22,7 @@ struct SettingsVoiceOverSection: View {
     var body: some View {
         Section {
             Toggle(isOn: $monitor.voiceOver) {
-                Label("Voice Reader", systemImage: "speaker.wave.2.fill")
+                Label("Read Over", systemImage: "speaker.wave.2.fill")
             }
             .toggleStyle(.switch)
 

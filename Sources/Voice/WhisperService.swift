@@ -41,9 +41,14 @@ actor WhisperService {
 
     /// Returns the Application Support path for the given Whisper model size.
     /// Models are stored in ~/Library/Application Support/CC-Beeper/whisper/{modelName}/
-    static func modelFolder(for size: WhisperModelSize) -> URL {
+    /// Base directory for all Whisper models. WhisperKit creates a subfolder per model name inside.
+    static var modelBaseFolder: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("CC-Beeper/whisper/\(size.modelName)")
+            .appendingPathComponent("CC-Beeper/whisper")
+    }
+
+    static func modelFolder(for size: WhisperModelSize) -> URL {
+        modelBaseFolder.appendingPathComponent(size.modelName)
     }
 
     // MARK: - Model Download with Progress (called from onboarding or Settings)
@@ -58,13 +63,25 @@ actor WhisperService {
         size: WhisperModelSize,
         onProgress: @escaping @Sendable (Double, String) -> Void
     ) async throws {
-        onProgress(0.0, "Preparing...")
+        onProgress(0.0, "Downloading \(size.modelName)...")
+        // Don't pass modelFolder — WhisperKit skips download when a local folder is set.
+        // Let it download to its default location, then copy to our folder.
         let config = WhisperKitConfig(
             model: size.modelName,
-            modelFolder: Self.modelFolder(for: size).path,
             download: true
         )
         let w = try await WhisperKit(config)
+        // Copy downloaded model to our Application Support folder for future loads
+        if let downloadedFolder = w.modelFolder {
+            let destFolder = Self.modelFolder(for: size)
+            try? FileManager.default.createDirectory(
+                at: destFolder.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
+            if !FileManager.default.fileExists(atPath: destFolder.path) {
+                try? FileManager.default.copyItem(at: downloadedFolder, to: destFolder)
+            }
+        }
         self.pipe = w
         onProgress(1.0, "Ready")
     }
@@ -86,21 +103,12 @@ actor WhisperService {
 
     // MARK: - Batch Transcription (called AFTER recording stops)
 
-    /// Transcribe accumulated audio frames with optional language hint for improved accuracy.
-    ///
-    /// - Parameters:
-    ///   - audioFrames: 16kHz mono float32 PCM frames accumulated during recording.
-    ///   - languageHint: Optional ISO 639-1 language code (e.g. "fr", "ja") to skip language detection.
-    ///                   When nil, auto-detection is used. Do not pass detectLanguage: true with a hint.
-    /// - Returns: Tuple of (trimmed transcript text, ISO 639-1 language code e.g. "en", "fr").
-    func transcribe(_ audioFrames: [Float], languageHint: String? = nil) async throws -> (text: String, language: String) {
+    /// Transcribe accumulated audio frames. Whisper always auto-detects the spoken language
+    /// so the user can speak in any language freely. The detected language is returned for
+    /// downstream use (e.g. TTS voice recommendation).
+    func transcribe(_ audioFrames: [Float]) async throws -> (text: String, language: String) {
         guard let pipe else { throw WhisperError.notLoaded }
-        let options: DecodingOptions
-        if let hint = languageHint {
-            options = DecodingOptions(language: hint, detectLanguage: false)
-        } else {
-            options = DecodingOptions(detectLanguage: true)
-        }
+        let options = DecodingOptions(detectLanguage: true)
         let results: [TranscriptionResult] = try await pipe.transcribe(
             audioArray: audioFrames,
             decodeOptions: options
