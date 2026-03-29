@@ -75,11 +75,11 @@ struct CCBeeperApp: App {
             Divider()
 
             Menu("Keyboard Shortcuts") {
-                Button("⌥ \(keyCodeToString(monitor.hotkeyAccept))  Accept Permission") {}
-                Button("⌥ \(keyCodeToString(monitor.hotkeyDeny))  Deny Permission") {}
-                Button("⌥ \(keyCodeToString(monitor.hotkeyVoice))  Voice Record") {}
-                Button("⌥ \(keyCodeToString(monitor.hotkeyTerminal))  Go to Terminal") {}
-                Button("⌥ \(keyCodeToString(monitor.hotkeyMute))  Read Over / Stop") {}
+                Button("⌥ \(monitor.hotkeyAccept)  Accept Permission") {}
+                Button("⌥ \(monitor.hotkeyDeny)  Deny Permission") {}
+                Button("⌥ \(monitor.hotkeyVoice)  Voice Record") {}
+                Button("⌥ \(monitor.hotkeyTerminal)  Go to Terminal") {}
+                Button("⌥ \(monitor.hotkeyMute)  Read Over / Stop") {}
             }
 
             Button("Settings...") {

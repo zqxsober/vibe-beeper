@@ -11,7 +11,8 @@ final class OnboardingViewModel: ObservableObject {
         case cliAndHooks = 1
         case permissions = 2
         case modelDownload = 3
-        case done = 4
+        case language = 4
+        case done = 5
     }
 
     @Published var currentStep: Step = .welcome
@@ -28,6 +29,14 @@ final class OnboardingViewModel: ObservableObject {
     @Published var isModelDownloading: Bool = false
     @Published var isModelReady: Bool = false
 
+    // MARK: - Language Selection State
+    @Published var selectedLangCode: String = "a" {
+        didSet { checkLangDeps() }
+    }
+    @Published var needsLangDeps: Bool = false
+    @Published var langDepsReady: Bool = true
+    let depsInstaller = KokoroDepsInstaller()
+
     var totalSteps: Int { Step.allCases.count }
     var progress: Double { Double(currentStep.rawValue) / Double(totalSteps - 1) }
 
@@ -35,6 +44,10 @@ final class OnboardingViewModel: ObservableObject {
 
     init() {
         isModelReady = WhisperService.modelsDownloaded && PocketTTSService.modelsDownloaded
+        // Detect system language for default selection
+        let systemLocale = Locale.preferredLanguages.first ?? "en"
+        let detected = KokoroVoiceCatalog.kokoroLangCode(fromSystemLocale: systemLocale) ?? "a"
+        selectedLangCode = detected
     }
 
     // MARK: - Navigation
@@ -178,6 +191,29 @@ final class OnboardingViewModel: ObservableObject {
     func openSpokenContent() {
         guard let url = URL(string: "x-apple.systempreferences:com.apple.Accessibility-Settings.extension?SpokenContent") else { return }
         NSWorkspace.shared.open(url)
+    }
+
+    // MARK: - Language Selection
+
+    func checkLangDeps() {
+        needsLangDeps = KokoroVoiceCatalog.langCodesRequiringDeps.contains(selectedLangCode)
+        guard needsLangDeps else { langDepsReady = true; return }
+        Task {
+            langDepsReady = await depsInstaller.areDepsInstalled(for: selectedLangCode)
+        }
+    }
+
+    func installLangDeps() {
+        guard !depsInstaller.isInstalling else { return }
+        Task {
+            let success = await depsInstaller.installDeps(for: selectedLangCode)
+            langDepsReady = success
+        }
+    }
+
+    func applyLanguageChoice() {
+        UserDefaults.standard.set(selectedLangCode, forKey: "kokoroLangCode")
+        UserDefaults.standard.set(KokoroVoiceCatalog.defaultVoice(for: selectedLangCode), forKey: "kokoroVoice")
     }
 
     // MARK: - Completion

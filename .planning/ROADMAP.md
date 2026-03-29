@@ -6,9 +6,9 @@
 - ❌ **v2.0 Voice & Intelligence** - Phases 5-8 (reverted 2026-03-21)
 - ✅ **v2.0 Voice Loop** - Phases 9-11 (shipped 2026-03-22)
 - ✅ **v3.0 Public Launch** - Phases 12-18 (shipped 2026-03-25)
-- 🚧 **v3.1 Polish & Fixes** - Phases 19-22 (in progress)
+- ✅ **v3.1 Polish & Fixes** - Phases 19-21 (shipped 2026-03-26)
 - ✅ **v4.0 Offline Voice** - Phases 23-26 (shipped 2026-03-27)
-- 🚧 **v5.0 Polish & Distribution** - Phases 27-29 (in progress)
+- ✅ **v5.0 Polish & Distribution** - Phases 27-28 (shipped 2026-03-27)
 - 📋 **v6.0 Multilingual Voice** - Phases 30-33 (planned)
 
 ## Overview
@@ -156,14 +156,13 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 
 </details>
 
-### v3.1 Polish & Fixes (In Progress)
+### v3.1 Polish & Fixes (Complete)
 
-**Milestone Goal:** Erase all Claumagotchi traces (laptop-wide + in-repo), fix the broken auto-speak TTS flow, refresh GitHub presence with new cover art and rewritten copy, add a beeper-shaped menu bar icon, and complete a final branding pass (app icon + DMG) once the user provides Figma-exported assets.
+**Milestone Goal:** Erase all Claumagotchi traces (laptop-wide + in-repo), fix the broken auto-speak TTS flow, refresh GitHub presence with new cover art and rewritten copy, add a beeper-shaped menu bar icon.
 
 - [x] **Phase 19: Cleanup** - Purge all Claumagotchi references from the laptop and the codebase (completed 2026-03-25)
 - [x] **Phase 20: Fix Auto-Speak TTS** - Wire summary-hook into hook registration so TTS fires end-to-end (completed 2026-03-25)
 - [x] **Phase 21: GitHub & Branding** - Rewrite README with new cover image, update repo metadata, ship beeper menu bar icon (completed 2026-03-26)
-- [ ] ~~**Phase 22: Final Branding**~~ - DEFERRED (app icon + DMG branding — user assets not ready, moved to future milestone)
 
 <details>
 <summary>✅ v4.0 Offline Voice (Phases 23-26) - SHIPPED 2026-03-27</summary>
@@ -177,13 +176,12 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 
 </details>
 
-### v5.0 Polish & Distribution (In Progress)
+### v5.0 Polish & Distribution (Complete)
 
-**Milestone Goal:** Fix voice reliability regressions introduced by the offline models (STT injection and TTS delays), rename "Auto-speak" to "VoiceOver" throughout the app, and ship a branded DMG + Homebrew tap so users can install with one command.
+**Milestone Goal:** Fix voice reliability regressions introduced by the offline models (STT injection and TTS delays), rename "Auto-speak" to "VoiceOver" throughout the app.
 
 - [x] **Phase 27: STT Reliability** - Diagnose and fix unreliable voice recording → Parakeet transcription → terminal injection (completed 2026-03-27)
 - [x] **Phase 28: TTS Reliability + Rename** - Fix Kokoro TTS delays and silence; rename "Auto-speak" to "VoiceOver" across all UI and code (completed 2026-03-27)
-- [ ] **Phase 29: Distribution** - Branded DMG background + Homebrew tap at vecartier/tap/cc-beeper
 
 ### v6.0 Multilingual Voice (Planned)
 
@@ -191,7 +189,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 
 - [x] **Phase 30: Whisper STT** - Replace Parakeet with Whisper; model size picker in Settings; auto-detect spoken language (completed 2026-03-28)
 - [x] **Phase 31: Kokoro Multilingual** - Kokoro server supports all 9 language codes; voice picker filters by language; TTS output matches chosen language (completed 2026-03-29)
-- [ ] **Phase 32: Language Preference System** - Single language preference drives both STT and TTS; defaults to macOS system language; per-language deps downloaded on demand; fallback picker for unsupported languages
+- [x] **Phase 32: Language Preference System** - Single language preference drives both STT and TTS; defaults to macOS system language; per-language deps downloaded on demand; fallback picker for unsupported languages (completed 2026-03-29)
 - [ ] **Phase 33: Settings & Onboarding** - Unified Voice tab in Settings; onboarding detects and confirms language; deps downloaded during onboarding; voice preview available
 
 ## Phase Details
@@ -240,22 +238,6 @@ Plans:
 Plans:
 - [x] 21-01: Create beeper-shaped menu bar icon (silhouette asset + wire into app)
 - [x] 21-02: Rewrite README with new cover image, refreshed copy, updated metadata; push repo description update
-
-### Phase 22: Final Branding
-**Goal**: CC-Beeper has a custom app icon and a branded DMG — completing the visual identity once the user delivers the Figma-exported assets
-**Depends on**: Phase 21
-**Requirements**: BRD-02, BRD-03
-**Success Criteria** (what must be TRUE):
-  1. The custom app icon (user-provided Figma export) appears in the Dock, Finder, and the About panel — no generic placeholder icon remains
-  2. The DMG window displays the CC-Beeper volume name and background (if asset provided), consistent with the app's visual identity
-  3. `make dmg` produces the branded DMG without manual steps
-**Plans**: 2 plans
-
-Plans:
-- [ ] 22-01: Integrate user-provided app icon into Assets.xcassets at all required resolutions
-- [ ] 22-02: Update DMG script with CC-Beeper volume name and optional background image
-
-**Note:** Phase 22 is blocked until the user provides the Figma-exported app icon. BRD-02 is a user-dependency gate; BRD-03 (DMG branding) follows immediately after.
 
 ### Phase 23: Foundation
 **Goal**: The project is licensed under GPL-3.0 and FluidAudio is integrated as an SPM dependency — the two prerequisites that unlock all offline voice work
@@ -346,21 +328,6 @@ Plans:
 - [x] 28-01-PLAN.md — Pre-warm PocketTTS, reduce pre-buffer, wire manual summarize toggle
 - [x] 28-02-PLAN.md — Rename autoSpeak to voiceOver across all code, UI, UserDefaults, README
 
-### Phase 29: Distribution
-**Goal**: CC-Beeper ships with a polished branded DMG and is installable via a single Homebrew command — no manual drag, no terminal gymnastics
-**Depends on**: Phase 26
-**Requirements**: DIST2-01, DIST2-02, DIST2-03
-**Success Criteria** (what must be TRUE):
-  1. Opening the DMG shows a CC-Beeper branded background and the volume is named "CC-Beeper" (not "Untitled" or a generic name)
-  2. Running `make dmg` on a clean checkout produces the branded DMG without any manual intervention — no extra scripts or assets to locate
-  3. Running `brew install vecartier/tap/cc-beeper` on a Mac without the app downloads and installs the latest release
-  4. The Homebrew tap formula references the correct GitHub release asset and passes `brew audit` with no errors
-**Plans**: 2 plans
-
-Plans:
-- [ ] 29-01-PLAN.md — Branded DMG background image + create-dmg.sh window styling
-- [x] 29-02-PLAN.md — Homebrew cask audit + tap update script
-
 ### Phase 30: Whisper STT
 **Goal**: Voice recording is transcribed by Whisper, supporting 99 languages with automatic language detection — Parakeet is fully replaced
 **Depends on**: Phase 29
@@ -405,7 +372,7 @@ Plans:
 
 Plans:
 - [x] 32-01-PLAN.md — Core wiring: language mappings, WhisperService hint, VoiceService propagation, ClaudeMonitor first-launch detection + dep flag
-- [ ] 32-02-PLAN.md — Human verification of unified language preference system (all 4 LANG requirements)
+- [x] 32-02-PLAN.md — Human verification of unified language preference system (all 4 LANG requirements)
 
 ### Phase 33: Settings & Onboarding
 **Goal**: Settings has a unified Voice tab with Language, Reader, and Record sections, and onboarding guides new users through language detection, confirmation, and dependency download
@@ -450,15 +417,13 @@ Note (v6.0): Phase 30 (Whisper STT) and Phase 31 (Kokoro Multilingual) both depe
 | 19. Cleanup | v3.1 Polish & Fixes | 2/2 | Complete | 2026-03-25 |
 | 20. Fix Auto-Speak TTS | v3.1 Polish & Fixes | 2/2 | Complete | 2026-03-25 |
 | 21. GitHub & Branding | v3.1 Polish & Fixes | 2/2 | Complete | 2026-03-26 |
-| 22. Final Branding | v3.1 Polish & Fixes | 0/2 | Not started | - |
 | 23. Foundation | v4.0 Offline Voice | 0/1 | Complete | 2026-03-27 |
 | 24. Offline STT | v4.0 Offline Voice | 2/2 | Complete | 2026-03-27 |
 | 25. Offline TTS | v4.0 Offline Voice | 2/2 | Complete | 2026-03-27 |
 | 26. Cleanup | v4.0 Offline Voice | 1/1 | Complete | 2026-03-27 |
 | 27. STT Reliability | v5.0 Polish & Distribution | 2/2 | Complete | 2026-03-27 |
 | 28. TTS Reliability + Rename | v5.0 Polish & Distribution | 2/2 | Complete | 2026-03-27 |
-| 29. Distribution | v5.0 Polish & Distribution | 1/2 | In Progress | - |
 | 30. Whisper STT | v6.0 Multilingual Voice | 2/2 | Complete   | 2026-03-28 |
 | 31. Kokoro Multilingual | v6.0 Multilingual Voice | 2/2 | Complete   | 2026-03-29 |
-| 32. Language Preference System | v6.0 Multilingual Voice | 1/2 | In Progress|  |
+| 32. Language Preference System | v6.0 Multilingual Voice | 2/2 | Complete    | 2026-03-29 |
 | 33. Settings & Onboarding | v6.0 Multilingual Voice | 0/TBD | Not started | - |

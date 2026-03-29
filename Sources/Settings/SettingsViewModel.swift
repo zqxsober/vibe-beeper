@@ -32,24 +32,35 @@ final class SettingsViewModel: ObservableObject {
         isSpeechGranted = SFSpeechRecognizer.authorizationStatus() == .authorized
     }
 
-    // MARK: - Deep Links
+    // MARK: - Permission Requests + Deep Links
 
-    private func openPrivacyPane(_ anchor: String) {
-        // Try multiple URL formats — macOS 26 ignores anchors in some formats
-        let urls = [
-            "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?\(anchor)",
-            "x-apple.systempreferences:com.apple.preference.security?\(anchor)",
-        ]
-        for urlString in urls {
-            if let url = URL(string: urlString) {
-                NSWorkspace.shared.open(url)
-                return
-            }
+    func openAccessibilitySettings() {
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        _ = AXIsProcessTrustedWithOptions(options)
+        if let url = URL(string: "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Accessibility") {
+            NSWorkspace.shared.open(url)
         }
     }
 
-    func openAccessibilitySettings() { openPrivacyPane("Privacy_Accessibility") }
-    func openMicrophoneSettings() { openPrivacyPane("Privacy_Microphone") }
-    func openSpeechSettings() { openPrivacyPane("Privacy_SpeechRecognition") }
-    func openSpokenContent() { openPrivacyPane("Privacy_Accessibility") }
+    func openMicrophoneSettings() {
+        AVCaptureDevice.requestAccess(for: .audio) { _ in
+            Task { @MainActor [weak self] in
+                self?.isMicGranted = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
+            }
+        }
+        if let url = URL(string: "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Microphone") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
+    func openSpeechSettings() {
+        SFSpeechRecognizer.requestAuthorization { _ in
+            Task { @MainActor [weak self] in
+                self?.isSpeechGranted = SFSpeechRecognizer.authorizationStatus() == .authorized
+            }
+        }
+        if let url = URL(string: "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_SpeechRecognition") {
+            NSWorkspace.shared.open(url)
+        }
+    }
 }

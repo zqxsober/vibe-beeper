@@ -76,29 +76,40 @@ enum BeeperIcon {
         return img
     }
 
-    // MARK: - Speaking (speech bubble)
+    // MARK: - Speaking (speaker with 2 sound waves)
 
     private static func speakingIcon() -> NSImage {
         let size = NSSize(width: 18, height: 18)
         let img = NSImage(size: size, flipped: true) { _ in
-            NSColor.black.setFill()
-            // Speech bubble body
-            let bubbleRect = NSRect(x: 1, y: 1, width: 16, height: 12)
-            NSBezierPath(roundedRect: bubbleRect, xRadius: 3, yRadius: 3).fill()
-            // Tail triangle
-            let tail = NSBezierPath()
-            tail.move(to: NSPoint(x: 4, y: 13))
-            tail.line(to: NSPoint(x: 2, y: 17))
-            tail.line(to: NSPoint(x: 8, y: 13))
-            tail.close()
-            tail.fill()
+            let color: NSColor = .black
+            color.setFill()
+            color.setStroke()
 
-            // Three dots inside bubble (speaking indicator)
-            NSGraphicsContext.current?.compositingOperation = .copy
-            NSColor.clear.setFill()
-            NSBezierPath(ovalIn: NSRect(x: 4.5, y: 5.5, width: 2, height: 2)).fill()
-            NSBezierPath(ovalIn: NSRect(x: 8, y: 5.5, width: 2, height: 2)).fill()
-            NSBezierPath(ovalIn: NSRect(x: 11.5, y: 5.5, width: 2, height: 2)).fill()
+            // Speaker cone (left side)
+            let cone = NSBezierPath()
+            cone.move(to: NSPoint(x: 1, y: 6.5))
+            cone.line(to: NSPoint(x: 4, y: 6.5))
+            cone.line(to: NSPoint(x: 8, y: 3))
+            cone.line(to: NSPoint(x: 8, y: 15))
+            cone.line(to: NSPoint(x: 4, y: 11.5))
+            cone.line(to: NSPoint(x: 1, y: 11.5))
+            cone.close()
+            cone.fill()
+
+            // Sound wave 1 (small arc)
+            let wave1 = NSBezierPath()
+            wave1.appendArc(withCenter: NSPoint(x: 9, y: 9), radius: 3,
+                            startAngle: -40, endAngle: 40, clockwise: false)
+            wave1.lineWidth = 1.5
+            wave1.stroke()
+
+            // Sound wave 2 (large arc)
+            let wave2 = NSBezierPath()
+            wave2.appendArc(withCenter: NSPoint(x: 9, y: 9), radius: 5.5,
+                            startAngle: -40, endAngle: 40, clockwise: false)
+            wave2.lineWidth = 1.5
+            wave2.stroke()
+
             return true
         }
         img.isTemplate = true

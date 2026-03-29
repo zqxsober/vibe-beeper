@@ -1,5 +1,4 @@
 import SwiftUI
-import Carbon.HIToolbox
 
 struct ShortcutsWindow: View {
     @EnvironmentObject var monitor: ClaudeMonitor
@@ -12,11 +11,11 @@ struct ShortcutsWindow: View {
 
             VStack(spacing: 0) {
                 ShortcutCategory(title: "Global Hotkeys", subtitle: "Work from any app") {
-                    ShortcutRow(action: "Accept Permission", keys: "⌥ \(keyCodeToString(monitor.hotkeyAccept))")
-                    ShortcutRow(action: "Deny Permission", keys: "⌥ \(keyCodeToString(monitor.hotkeyDeny))")
-                    ShortcutRow(action: "Voice Record", keys: "⌥ \(keyCodeToString(monitor.hotkeyVoice))")
-                    ShortcutRow(action: "Go to Terminal", keys: "⌥ \(keyCodeToString(monitor.hotkeyTerminal))")
-                    ShortcutRow(action: "Read Over / Stop", keys: "⌥ \(keyCodeToString(monitor.hotkeyMute))")
+                    ShortcutRow(action: "Accept Permission", keys: "⌥ \(monitor.hotkeyAccept)")
+                    ShortcutRow(action: "Deny Permission", keys: "⌥ \(monitor.hotkeyDeny)")
+                    ShortcutRow(action: "Voice Record", keys: "⌥ \(monitor.hotkeyVoice)")
+                    ShortcutRow(action: "Go to Terminal", keys: "⌥ \(monitor.hotkeyTerminal)")
+                    ShortcutRow(action: "Read Over / Stop", keys: "⌥ \(monitor.hotkeyMute)")
                 }
             }
 

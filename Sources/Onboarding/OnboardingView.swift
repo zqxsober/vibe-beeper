@@ -23,6 +23,8 @@ struct OnboardingView: View {
                     OnboardingPermissionsStep(viewModel: viewModel)
                 case .modelDownload:
                     OnboardingModelDownloadStep(viewModel: viewModel)
+                case .language:
+                    OnboardingLanguageStep(viewModel: viewModel)
                 case .done:
                     OnboardingDoneStep(viewModel: viewModel)
                 }
