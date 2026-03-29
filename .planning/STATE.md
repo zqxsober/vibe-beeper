@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
 status: executing
-stopped_at: Completed 35-02-PLAN.md
-last_updated: "2026-03-29T21:12:39.452Z"
+stopped_at: Completed 35-03-PLAN.md
+last_updated: "2026-03-29T21:13:51.387Z"
 last_activity: 2026-03-29
 progress:
-  total_phases: 31
-  completed_phases: 29
-  total_plans: 63
-  completed_plans: 61
+  total_phases: 4
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 7
   percent: 0
 ---
 
@@ -58,8 +58,8 @@ Progress: [░░░░░░░░░░] 0% (v7.0 phases, 7 phases total)
 - [Phase 35-01]: NWListener port range 19222-19230 with OS fallback; failure detected via stateUpdateHandler not thrown exceptions
 - [Phase 35-01]: Permission connection deferred: store NWConnection on permission_prompt, respond via sendPermissionResponse()
 - [Phase 35-01]: PID-based instance detection replaced with port ping; stale port file cleaned up on launch
-- [Phase 35-http-hooks-hook-improvements]: deinit actor isolation: httpServer.stop() moved to applicationWillTerminate since deinit is nonisolated and HTTPHookServer is @MainActor
-- [Phase 35-http-hooks-hook-improvements]: sessionLastSeen dict replaces sessions.json pruning in ClaudeMonitor - HTTP server tracks session lifecycle naturally from arriving events
+- [Phase 35-http-hooks-hook-improvements]: Notification hook is blocking (not async) — modern Claude Code routes permission_prompt via Notification (RESEARCH.md Pitfall 5)
+- [Phase 35-http-hooks-hook-improvements]: hookMarker = cc-beeper/port identifies HTTP hooks for safe update/removal without touching user hooks
 
 ### Pending Todos
 
@@ -71,6 +71,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-29T21:12:39.446Z
-Stopped at: Completed 35-02-PLAN.md
+Last session: 2026-03-29T21:13:51.383Z
+Stopped at: Completed 35-03-PLAN.md
 Resume file: None
