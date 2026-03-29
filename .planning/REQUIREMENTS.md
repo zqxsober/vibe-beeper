@@ -8,10 +8,10 @@
 ### HTTP Hooks
 
 - [x] **HTTP-01**: CC-Beeper runs a local HTTP server (NWListener, localhost only) that receives Claude Code hook events via POST /hook
-- [ ] **HTTP-02**: Hook events are routed by `hook_type` field to the LCD state machine (PreToolUse → WORKING, Stop → DONE, StopFailure → ERROR, Notification → classify per INPUT rules)
+- [x] **HTTP-02**: Hook events are routed by `hook_type` field to the LCD state machine (PreToolUse → WORKING, Stop → DONE, StopFailure → ERROR, Notification → classify per INPUT rules)
 - [x] **HTTP-03**: The active server port is written to `~/.claude/cc-beeper/port` on startup and deleted on quit
-- [ ] **HTTP-04**: On Stop events, CC-Beeper extracts the last assistant message from the transcript (via transcript_path) for TTS summary, replacing the old Python summary extraction
-- [ ] **HTTP-05**: The old Python hook script (cc-beeper-hook.py), JSONL file watcher, and file-based IPC code are removed from the codebase
+- [x] **HTTP-04**: On Stop events, CC-Beeper extracts the last assistant message from the transcript (via transcript_path) for TTS summary, replacing the old Python summary extraction
+- [x] **HTTP-05**: The old Python hook script (cc-beeper-hook.py), JSONL file watcher, and file-based IPC code are removed from the codebase
 - [ ] **HTTP-06**: Hook commands in settings.json use `curl -d @-` to pipe stdin JSON to CC-Beeper's HTTP endpoint, with `-o /dev/null` and `|| true` for silent failure
 
 ### LCD States
@@ -96,10 +96,10 @@ Deferred to future release.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | HTTP-01 | Phase 35 | Complete |
-| HTTP-02 | Phase 35 | Pending |
+| HTTP-02 | Phase 35 | Complete |
 | HTTP-03 | Phase 35 | Complete |
-| HTTP-04 | Phase 35 | Pending |
-| HTTP-05 | Phase 35 | Pending |
+| HTTP-04 | Phase 35 | Complete |
+| HTTP-05 | Phase 35 | Complete |
 | HTTP-06 | Phase 35 | Pending |
 | HOOK-01 | Phase 35 | Pending |
 | HOOK-02 | Phase 35 | Pending |

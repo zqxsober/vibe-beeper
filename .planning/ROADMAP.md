@@ -417,7 +417,7 @@ Plans:
 
 Plans:
 - [x] 35-01-PLAN.md — HTTP server (NWListener) + port file lifecycle + port-based instance detection
-- [ ] 35-02-PLAN.md — Wire HTTP to state machine + TTS from Stop + remove all file-based IPC + delete Python hook
+- [x] 35-02-PLAN.md — Wire HTTP to state machine + TTS from Stop + remove all file-based IPC + delete Python hook
 - [ ] 35-03-PLAN.md — Rewrite HookInstaller for curl hooks + async/timeout/statusMessage/zero-stdout
 
 ### Phase 36: LCD States + Input Classification + Animations
@@ -517,7 +517,7 @@ Note (v7.0): Phase 35 (HTTP Hooks) is the foundation — LCD states and onboardi
 | 31. Kokoro Multilingual | v6.0 Multilingual Voice | 2/2 | Complete | 2026-03-29 |
 | 32. Language Preference System | v6.0 Multilingual Voice | 2/2 | Complete | 2026-03-29 |
 | 33. Settings & Onboarding | v6.0 Multilingual Voice | 0/TBD | Not started | - |
-| 35. HTTP Hooks + Hook Improvements | v7.0 Pre-Launch | 1/3 | In Progress|  |
+| 35. HTTP Hooks + Hook Improvements | v7.0 Pre-Launch | 2/3 | In Progress|  |
 | 36. LCD States + Input Classification + Animations | v7.0 Pre-Launch | 0/TBD | Not started | - |
 | 37. Permission Spectrum + YOLO Sunglasses | v7.0 Pre-Launch | 0/TBD | Not started | - |
 | 39. Onboarding Polish | v7.0 Pre-Launch | 0/TBD | Not started | - |
