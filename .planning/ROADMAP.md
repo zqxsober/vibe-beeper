@@ -401,7 +401,11 @@ Plans:
   2. On first launch, the language preference is automatically set to match the macOS system language (e.g., French macOS → French preference)
   3. Selecting Japanese or Chinese triggers a one-time download of the required language dependencies (pyopenjtalk, ordered_set); selecting English or French does not
   4. On a macOS configured to an unsupported language, Settings or onboarding presents only the supported language options — no unsupported language appears in the picker
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 32-01-PLAN.md — Core wiring: language mappings, WhisperService hint, VoiceService propagation, ClaudeMonitor first-launch detection + dep flag
+- [ ] 32-02-PLAN.md — Human verification of unified language preference system (all 4 LANG requirements)
 
 ### Phase 33: Settings & Onboarding
 **Goal**: Settings has a unified Voice tab with Language, Reader, and Record sections, and onboarding guides new users through language detection, confirmation, and dependency download
@@ -456,5 +460,5 @@ Note (v6.0): Phase 30 (Whisper STT) and Phase 31 (Kokoro Multilingual) both depe
 | 29. Distribution | v5.0 Polish & Distribution | 1/2 | In Progress | - |
 | 30. Whisper STT | v6.0 Multilingual Voice | 2/2 | Complete   | 2026-03-28 |
 | 31. Kokoro Multilingual | v6.0 Multilingual Voice | 2/2 | Complete   | 2026-03-29 |
-| 32. Language Preference System | v6.0 Multilingual Voice | 0/TBD | Not started | - |
+| 32. Language Preference System | v6.0 Multilingual Voice | 0/2 | Not started | - |
 | 33. Settings & Onboarding | v6.0 Multilingual Voice | 0/TBD | Not started | - |

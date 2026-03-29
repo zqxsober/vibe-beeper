@@ -86,13 +86,21 @@ actor WhisperService {
 
     // MARK: - Batch Transcription (called AFTER recording stops)
 
-    /// Transcribe accumulated audio frames and auto-detect spoken language.
+    /// Transcribe accumulated audio frames with optional language hint for improved accuracy.
     ///
-    /// - Parameter audioFrames: 16kHz mono float32 PCM frames accumulated during recording.
+    /// - Parameters:
+    ///   - audioFrames: 16kHz mono float32 PCM frames accumulated during recording.
+    ///   - languageHint: Optional ISO 639-1 language code (e.g. "fr", "ja") to skip language detection.
+    ///                   When nil, auto-detection is used. Do not pass detectLanguage: true with a hint.
     /// - Returns: Tuple of (trimmed transcript text, ISO 639-1 language code e.g. "en", "fr").
-    func transcribe(_ audioFrames: [Float]) async throws -> (text: String, language: String) {
+    func transcribe(_ audioFrames: [Float], languageHint: String? = nil) async throws -> (text: String, language: String) {
         guard let pipe else { throw WhisperError.notLoaded }
-        let options = DecodingOptions(detectLanguage: true)
+        let options: DecodingOptions
+        if let hint = languageHint {
+            options = DecodingOptions(language: hint, detectLanguage: false)
+        } else {
+            options = DecodingOptions(detectLanguage: true)
+        }
         let results: [TranscriptionResult] = try await pipe.transcribe(
             audioArray: audioFrames,
             decodeOptions: options

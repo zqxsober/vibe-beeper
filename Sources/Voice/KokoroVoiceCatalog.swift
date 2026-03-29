@@ -97,6 +97,33 @@ enum KokoroVoiceCatalog {
     /// Languages that require extra pip install before use.
     static let langCodesRequiringDeps: Set<String> = ["j", "z"]
 
+    /// Maps Kokoro single-letter language codes to ISO 639-1 codes (used by WhisperKit).
+    static let kokoroLangToISO: [String: String] = [
+        "a": "en",   // American English
+        "b": "en",   // British English
+        "e": "es",   // Spanish
+        "f": "fr",   // French
+        "h": "hi",   // Hindi
+        "i": "it",   // Italian
+        "j": "ja",   // Japanese
+        "p": "pt",   // Portuguese
+        "z": "zh",   // Chinese
+    ]
+
+    /// Maps a BCP-47 locale string (e.g. "en-GB", "fr-FR") to a Kokoro single-letter lang code.
+    /// Returns nil if the language is not supported by Kokoro — caller should default to "a".
+    static func kokoroLangCode(fromSystemLocale locale: String) -> String? {
+        let lang = String(locale.prefix(2)).lowercased()
+        if lang == "en" {
+            return locale.hasPrefix("en-GB") ? "b" : "a"
+        }
+        let isoToKokoro: [String: String] = [
+            "fr": "f", "es": "e", "hi": "h",
+            "it": "i", "ja": "j", "pt": "p", "zh": "z"
+        ]
+        return isoToKokoro[lang]
+    }
+
     /// Returns the first voice ID for a given language code, or "af_heart" as ultimate fallback.
     static func defaultVoice(for langCode: String) -> String {
         voicesByLang[langCode]?.first?.id ?? "af_heart"
