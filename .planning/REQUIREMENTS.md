@@ -12,7 +12,7 @@
 - [x] **HTTP-03**: The active server port is written to `~/.claude/cc-beeper/port` on startup and deleted on quit
 - [ ] **HTTP-04**: On Stop events, CC-Beeper extracts the last assistant message from the transcript (via transcript_path) for TTS summary, replacing the old Python summary extraction
 - [ ] **HTTP-05**: The old Python hook script (cc-beeper-hook.py), JSONL file watcher, and file-based IPC code are removed from the codebase
-- [ ] **HTTP-06**: Hook commands in settings.json use `curl -d @-` to pipe stdin JSON to CC-Beeper's HTTP endpoint, with `-o /dev/null` and `|| true` for silent failure
+- [x] **HTTP-06**: Hook commands in settings.json use `curl -d @-` to pipe stdin JSON to CC-Beeper's HTTP endpoint, with `-o /dev/null` and `|| true` for silent failure
 
 ### LCD States
 
@@ -51,10 +51,10 @@
 
 ### Hook Improvements
 
-- [ ] **HOOK-01**: All CC-Beeper hook entries in settings.json have `async: true` and `timeout: 5000`
-- [ ] **HOOK-02**: Only the PreToolUse hook has `statusMessage: "CC-Beeper monitoring…"`
-- [ ] **HOOK-03**: All hook commands produce zero stdout output under all conditions (CC-Beeper running, not running, port file missing)
-- [ ] **HOOK-04**: CC-Beeper hooks are identified in settings.json by matching `cc-beeper` in the command string, enabling safe update/removal without touching user hooks
+- [x] **HOOK-01**: All CC-Beeper hook entries in settings.json have `async: true` and `timeout: 5000`
+- [x] **HOOK-02**: Only the PreToolUse hook has `statusMessage: "CC-Beeper monitoring…"`
+- [x] **HOOK-03**: All hook commands produce zero stdout output under all conditions (CC-Beeper running, not running, port file missing)
+- [x] **HOOK-04**: CC-Beeper hooks are identified in settings.json by matching `cc-beeper` in the command string, enabling safe update/removal without touching user hooks
 
 
 ### Onboarding
@@ -100,11 +100,11 @@ Deferred to future release.
 | HTTP-03 | Phase 35 | Complete |
 | HTTP-04 | Phase 35 | Pending |
 | HTTP-05 | Phase 35 | Pending |
-| HTTP-06 | Phase 35 | Pending |
-| HOOK-01 | Phase 35 | Pending |
-| HOOK-02 | Phase 35 | Pending |
-| HOOK-03 | Phase 35 | Pending |
-| HOOK-04 | Phase 35 | Pending |
+| HTTP-06 | Phase 35 | Complete |
+| HOOK-01 | Phase 35 | Complete |
+| HOOK-02 | Phase 35 | Complete |
+| HOOK-03 | Phase 35 | Complete |
+| HOOK-04 | Phase 35 | Complete |
 | LCD-01 | Phase 36 | Pending |
 | LCD-02 | Phase 36 | Pending |
 | LCD-03 | Phase 36 | Pending |
