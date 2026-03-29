@@ -404,7 +404,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 32-01-PLAN.md — Core wiring: language mappings, WhisperService hint, VoiceService propagation, ClaudeMonitor first-launch detection + dep flag
+- [x] 32-01-PLAN.md — Core wiring: language mappings, WhisperService hint, VoiceService propagation, ClaudeMonitor first-launch detection + dep flag
 - [ ] 32-02-PLAN.md — Human verification of unified language preference system (all 4 LANG requirements)
 
 ### Phase 33: Settings & Onboarding
@@ -460,5 +460,5 @@ Note (v6.0): Phase 30 (Whisper STT) and Phase 31 (Kokoro Multilingual) both depe
 | 29. Distribution | v5.0 Polish & Distribution | 1/2 | In Progress | - |
 | 30. Whisper STT | v6.0 Multilingual Voice | 2/2 | Complete   | 2026-03-28 |
 | 31. Kokoro Multilingual | v6.0 Multilingual Voice | 2/2 | Complete   | 2026-03-29 |
-| 32. Language Preference System | v6.0 Multilingual Voice | 0/2 | Not started | - |
+| 32. Language Preference System | v6.0 Multilingual Voice | 1/2 | In Progress|  |
 | 33. Settings & Onboarding | v6.0 Multilingual Voice | 0/TBD | Not started | - |

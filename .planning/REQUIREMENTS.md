@@ -16,10 +16,10 @@
 - [x] **TTS-03**: TTS reads Claude's responses in the user's chosen language
 
 ### LANG — Language Management
-- [ ] **LANG-01**: User has a single language preference that drives both TTS voice and Kokoro lang_code
-- [ ] **LANG-02**: Language preference defaults to macOS system language on first launch
-- [ ] **LANG-03**: Language-specific dependencies (pyopenjtalk, ordered_set) are downloaded only when needed
-- [ ] **LANG-04**: If macOS language is unsupported, onboarding shows available languages to pick from
+- [x] **LANG-01**: User has a single language preference that drives both TTS voice and Kokoro lang_code
+- [x] **LANG-02**: Language preference defaults to macOS system language on first launch
+- [x] **LANG-03**: Language-specific dependencies (pyopenjtalk, ordered_set) are downloaded only when needed
+- [x] **LANG-04**: If macOS language is unsupported, onboarding shows available languages to pick from
 
 ### UX — Settings & Onboarding
 - [ ] **UX-01**: Settings has a unified "Voice" tab with sections: Language, Reader, Record

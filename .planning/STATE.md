@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
 status: executing
-stopped_at: "Checkpoint 31-02 Task 2: human-verify multilingual TTS"
-last_updated: "2026-03-29T11:03:55.613Z"
+stopped_at: Completed 32-01-PLAN.md
+last_updated: "2026-03-29T13:08:30.518Z"
 last_activity: 2026-03-29
 progress:
-  total_phases: 30
+  total_phases: 31
   completed_phases: 28
-  total_plans: 60
-  completed_plans: 58
+  total_plans: 62
+  completed_plans: 59
   percent: 0
 ---
 
@@ -21,11 +21,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-28)
 
 **Core value:** Users can see what Claude is doing, respond to it, and give it instructions — without leaving their current workflow
-**Current focus:** Phase 31 — kokoro-multilingual
+**Current focus:** Phase 32 — language-preference-system
 
 ## Current Position
 
-Phase: 31 (kokoro-multilingual) — EXECUTING
+Phase: 32 (language-preference-system) — EXECUTING
 Plan: 2 of 2
 Status: Ready to execute
 Last activity: 2026-03-29
@@ -51,6 +51,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 30-whisper-stt P02 | 15min | 2 tasks | 2 files |
 | Phase 31-kokoro-multilingual P01 | 127s | 2 tasks | 5 files |
 | Phase 31 P02 | 1min | 1 tasks | 1 files |
+| Phase 32-language-preference-system P01 | 12min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,9 @@ Progress: [░░░░░░░░░░] 0%
 - [Phase 31-01]: kokoroLangCode defaults to 'a' (American English) until Phase 32 sets it from system language
 - [Phase 31-02]: Auto-voice-select on language change delegated to ClaudeMonitor.kokoroLangCode.didSet (no UI logic needed)
 - [Phase 31-02]: depsReady @State defaults to true to avoid flicker on app launch; checkDeps() called on language change
+- [Phase 32-language-preference-system]: object(forKey:) used for first-launch language detection — distinguishes never-set from explicit 'a' preference
+- [Phase 32-language-preference-system]: Single kokoroLangCode preference drives both Kokoro TTS and WhisperKit STT via languageHint; detectLanguage: false when hint provided
+- [Phase 32-language-preference-system]: depsNeededForCurrentLang is published flag only — does NOT auto-trigger pip install; UI-triggered only per LANG-03
 
 ### Pending Todos
 
@@ -79,6 +83,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-29T11:03:46.445Z
-Stopped at: Checkpoint 31-02 Task 2: human-verify multilingual TTS
+Last session: 2026-03-29T13:08:30.513Z
+Stopped at: Completed 32-01-PLAN.md
 Resume file: None
