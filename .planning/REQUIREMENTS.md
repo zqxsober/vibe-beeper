@@ -32,17 +32,17 @@
 
 ### Permission Spectrum
 
-- [ ] **PERM-01**: The native MenuBarExtra menu contains 4 permission presets (Cautious, Relaxed, Trusted, YOLO) shown inline with descriptions and a checkmark on the current mode
+- [x] **PERM-01**: The native MenuBarExtra menu contains 4 permission presets (Cautious, Relaxed, Trusted, YOLO) shown inline with descriptions and a checkmark on the current mode
 - [x] **PERM-02**: Selecting a preset reads settings.json, writes `permission_mode` and `allowedTools` atomically (tmp + rename) without reformatting other fields
-- [ ] **PERM-03**: On mode change, the LCD shows a toast overlay "RESTART SESSION TO APPLY" for 5 seconds
-- [ ] **PERM-04**: Each preset shows an inline description explaining what it auto-approves
-- [ ] **PERM-05**: The old YOLO toggle in MenuBarExtra and YOLO QuickActionButton in the popover are removed, replaced by the preset picker
+- [x] **PERM-03**: On mode change, the LCD shows a toast overlay "RESTART SESSION TO APPLY" for 5 seconds
+- [x] **PERM-04**: Each preset shows an inline description explaining what it auto-approves
+- [x] **PERM-05**: The old YOLO toggle in MenuBarExtra and YOLO QuickActionButton in the popover are removed, replaced by the preset picker
 - [x] **PERM-06**: If settings.json is malformed, the preset picker items are disabled with a warning
 
 ### YOLO Indicator
 
 - [x] **YOLO-01**: When permission preset is YOLO, the beeper character renders with a rabbit pixel icon, persisting across all LCD states
-- [ ] **YOLO-02**: Rabbit appears/disappears with a simple swap on mode change (no animation)
+- [x] **YOLO-02**: Rabbit appears/disappears with a simple swap on mode change (no animation)
 
 ### LCD Animations
 
@@ -115,14 +115,14 @@ Deferred to future release.
 | INP-01 | Phase 36 | Pending |
 | INP-02 | Phase 36 | Pending |
 | INP-03 | Phase 36 | Pending |
-| PERM-01 | Phase 37 | Pending |
+| PERM-01 | Phase 37 | Complete |
 | PERM-02 | Phase 37 | Complete |
-| PERM-03 | Phase 37 | Pending |
-| PERM-04 | Phase 37 | Pending |
-| PERM-05 | Phase 37 | Pending |
+| PERM-03 | Phase 37 | Complete |
+| PERM-04 | Phase 37 | Complete |
+| PERM-05 | Phase 37 | Complete |
 | PERM-06 | Phase 37 | Complete |
 | YOLO-01 | Phase 37 | Complete |
-| YOLO-02 | Phase 37 | Pending |
+| YOLO-02 | Phase 37 | Complete |
 | ANIM-01 | Phase 36 | Pending |
 | ANIM-02 | Phase 36 | Pending |
 | ONBD-01 | Phase 39 | Pending |
