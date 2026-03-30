@@ -7,9 +7,13 @@ struct ScreenContentView: View {
     @State private var tick = 0
     @State private var isWindowVisible = true
     @State private var bounceOffset: CGFloat = 0
+    @State private var blinkOn: Bool = true
+    @State private var pulseOpacity: Double = 1.0
+    @State private var glitchActive: Bool = false
 
     private let animTimer = Timer.publish(every: 0.45, on: .main, in: .common).autoconnect()
     private let ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let blinkTimer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
 
     private var isYoloActive: Bool { monitor.autoAccept }
 
@@ -23,7 +27,8 @@ struct ScreenContentView: View {
                     state: monitor.state,
                     frame: animFrame,
                     onColor: themeManager.lcdOn,
-                    isYolo: isYoloActive
+                    isYolo: isYoloActive,
+                    isGlitching: glitchActive
                 )
                 .frame(width: 35, height: 30)
                 .offset(y: bounceOffset)
@@ -35,6 +40,7 @@ struct ScreenContentView: View {
                         .foregroundColor(themeManager.lcdOn)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
+                        .opacity(titleOpacity)
 
                     if let detail = detailText {
                         MarqueeText(text: detail, font: .system(size: 8, weight: .medium, design: .monospaced), color: themeManager.lcdOn.opacity(0.7))
@@ -64,6 +70,16 @@ struct ScreenContentView: View {
             .padding(.leading, 10)
             .padding(.trailing, 6)
             .padding(.vertical, 3)
+
+            // Auth flash overlay (LCD-07) — shows over current content for 2-3s
+            if let flashText = monitor.authFlashMessage {
+                Text(flashText)
+                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                    .foregroundColor(themeManager.lcdOn)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(themeManager.darkMode ? themeManager.lcdBg.opacity(0.9) : Color.clear.opacity(0.9))
+                    .transition(.opacity)
+            }
 
             // Vignette
             RadialGradient(
@@ -112,6 +128,16 @@ struct ScreenContentView: View {
         }
         .onReceive(ticker) { _ in
             tick += 1
+            // Slow pulse for NEEDS INPUT (D-16) — sine wave oscillating 0.4 to 1.0
+            if monitor.state == .needsInput {
+                pulseOpacity = 0.4 + 0.6 * (0.5 + 0.5 * sin(Double(tick) * .pi))
+            }
+        }
+        .onReceive(blinkTimer) { _ in
+            // Fast blink only for APPROVE? (D-16, Pitfall 5)
+            if monitor.state == .approveQuestion {
+                blinkOn.toggle()
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didChangeOcclusionStateNotification)) { notification in
             if let window = notification.object as? NSWindow {
@@ -120,6 +146,19 @@ struct ScreenContentView: View {
         }
         .onChange(of: monitor.state) { oldState, newState in
             guard oldState != newState else { return }
+            // Reset per-state animation vars
+            blinkOn = true
+            pulseOpacity = 1.0
+
+            // Glitch entrance for ERROR (D-17)
+            if newState == .error {
+                glitchActive = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    glitchActive = false
+                }
+            }
+
+            // Bounce animation (existing)
             withAnimation(.easeOut(duration: 0.1)) {
                 bounceOffset = -4
             }
@@ -135,42 +174,72 @@ struct ScreenContentView: View {
 
     private var titleText: String {
         switch monitor.state {
-        case .working: return monitor.state.label
-        case .done: return monitor.state.label
-        case .approveQuestion: return monitor.state.label
-        case .needsInput: return monitor.state.label
-        case .error: return monitor.state.label
-        case .idle: return monitor.state.label
-        // TODO: Phase 36 Plan 02 — full text wiring pending
+        case .idle: return "ZZZ..."
+        case .working: return "WORKING"
+        case .done: return "DONE!"
+        case .error: return "ERROR"
+        case .approveQuestion: return "APPROVE?"
+        case .needsInput: return "NEEDS INPUT"
         }
     }
 
     private var detailText: String? {
         switch monitor.state {
         case .working:
+            // D-06: Humanized tool context, truncated to 30 chars, marquee scrolls if longer
             let tool = humanToolName(monitor.currentTool ?? "")
             let elapsed = monitor.elapsedSeconds
-            return "\(tool) · \(elapsed)s"
-        case .approveQuestion:
-            if let p = monitor.pendingPermission {
-                let tool = humanToolName(p.tool)
-                return "\(tool) · \(p.summary)"
+            let detail = "\(tool) \u{00B7} \(elapsed)s"
+            return String(detail.prefix(30))
+        case .done:
+            // D-07: First ~50 chars of last_assistant_message
+            if let summary = monitor.lastSummary, !summary.isEmpty {
+                return String(summary.prefix(50))
             }
             return nil
-        case .done:
-            if let summary = monitor.lastSummary, summary != "Done!" {
-                return summary
+        case .idle:
+            // D-08: Elapsed idle time — "Idle 5m", "Idle 2h"
+            if let start = monitor.idleStartTime {
+                let elapsed = Int(Date().timeIntervalSince(start))
+                if elapsed < 60 { return "Idle \(elapsed)s" }
+                else if elapsed < 3600 { return "Idle \(elapsed / 60)m" }
+                else { return "Idle \(elapsed / 3600)h" }
+            }
+            return nil
+        case .approveQuestion:
+            // D-09: Tool + permission summary, truncated to 30 chars
+            if let p = monitor.pendingPermission {
+                let tool = humanToolName(p.tool)
+                let detail = "\(tool) \u{00B7} \(p.summary)"
+                return String(detail.prefix(30))
             }
             return nil
         case .needsInput:
-            return monitor.inputMessage
-        case .error:
-            return monitor.errorDetail
-        case .idle:
+            // D-10: Notification message truncated to 30 chars
+            if let msg = monitor.inputMessage {
+                return String(msg.prefix(30))
+            }
             return nil
-        // TODO: Phase 36 Plan 02 — full animation wiring pending
+        case .error:
+            // D-11: Error detail from StopFailure, truncated to 30 chars
+            return monitor.errorDetail
         }
     }
+
+    // MARK: - Animation
+
+    private var titleOpacity: Double {
+        switch monitor.state {
+        case .approveQuestion:
+            return blinkOn ? 1.0 : 0.0  // Fast blink (D-16)
+        case .needsInput:
+            return pulseOpacity  // Slow pulse (D-16)
+        default:
+            return 1.0
+        }
+    }
+
+    // MARK: - Tool Name
 
     private func humanToolName(_ tool: String) -> String {
         switch tool.lowercased() {
