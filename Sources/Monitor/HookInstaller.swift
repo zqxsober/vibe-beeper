@@ -171,9 +171,10 @@ struct HookInstaller {
         settings["hooks"] = hooks
 
         // 4. Write settings.json atomically (per spec section 9 item 10: don't reformat)
+        // Note: .sortedKeys intentionally removed — it caused full-file key reordering (D-03)
         let data = try JSONSerialization.data(
             withJSONObject: settings,
-            options: [.prettyPrinted, .sortedKeys]
+            options: [.prettyPrinted]
         )
         let tmpPath = settingsPath + ".tmp"
         try data.write(to: URL(fileURLWithPath: tmpPath))
@@ -225,11 +226,22 @@ struct HookInstaller {
         }
         settings["hooks"] = hooks
 
+        // Note: .sortedKeys intentionally removed — it caused full-file key reordering (D-03)
         let writeData = try JSONSerialization.data(
             withJSONObject: settings,
-            options: [.prettyPrinted, .sortedKeys]
+            options: [.prettyPrinted]
         )
-        try writeData.write(to: URL(fileURLWithPath: settingsPath))
+        // Atomic write via tmp + rename (same pattern as install())
+        let tmpPath = settingsPath + ".tmp"
+        try writeData.write(to: URL(fileURLWithPath: tmpPath))
+        if fm.fileExists(atPath: settingsPath) {
+            _ = try fm.replaceItemAt(
+                URL(fileURLWithPath: settingsPath),
+                withItemAt: URL(fileURLWithPath: tmpPath)
+            )
+        } else {
+            try fm.moveItem(atPath: tmpPath, toPath: settingsPath)
+        }
     }
 
     enum InstallError: LocalizedError {

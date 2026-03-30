@@ -443,21 +443,22 @@ Plans:
 **Notes**: Phase 36 needs a lightweight `readPermissionMode()` utility to check current mode from settings.json for YOLO suppression logic. This is a read-only dependency — Phase 37 builds the write path + UI. Input classification must explicitly enumerate known input types (question, gsd, discuss, multiple_choice, wcv) and default unknown types to input (false positives over false negatives).
 
 ### Phase 37: Permission Spectrum + YOLO Rabbit
-**Goal**: Users can select from 4 permission modes in the popover; the beeper shows a rabbit pixel character in YOLO modes; settings.json is written atomically without reformatting
+**Goal**: Users can select from 4 permission presets in the native MenuBarExtra menu; the beeper shows a rabbit pixel character in YOLO mode; settings.json is written atomically without reformatting
 **Depends on**: Phase 35
 **Requirements**: PERM-01, PERM-02, PERM-03, PERM-04, PERM-05, PERM-06, YOLO-01, YOLO-02
 **Success Criteria** (what must be TRUE):
-  1. The menu bar popover contains a 4-position segmented control labeled Cautious, Guided, Guarded YOLO, and Full YOLO — selecting each mode updates the permission_mode in settings.json without touching any other fields
-  2. Switching to Guarded YOLO or Full YOLO causes the beeper pixel character to become a rabbit; switching back swaps to the normal character (no slide animation)
-  3. Switching from Full YOLO to any other mode restores the previously cached deny rules from cached-deny-rules.json
-  4. If settings.json is malformed, the segmented control is visibly disabled and shows a warning rather than silently failing to write
+  1. The native MenuBarExtra menu contains 4 permission presets (Cautious, Relaxed, Trusted, YOLO) with inline descriptions and a checkmark on the current mode
+  2. Selecting a preset writes permission_mode and allowedTools to settings.json atomically without reformatting other fields
+  3. Switching to YOLO causes the beeper pixel character to become a rabbit; switching back swaps to the normal character (simple swap, no animation)
+  4. If settings.json is malformed, the preset picker is visibly disabled with a warning
   5. On any mode change, the LCD shows "RESTART SESSION TO APPLY" as a toast overlay for 5 seconds
+  6. The old YOLO toggle in MenuBarExtra and YOLO QuickActionButton in the popover are removed
 **Plans**: 2 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 37-01-PLAN.md — PermissionMode enum expansion, PermissionModeWriter, HookInstaller fix, AskUserQuestion bug fix, tests
-- [ ] 37-02-PLAN.md — Popover segmented picker, rabbit sprites, toast overlay, autoAccept removal, human verify
+- [ ] 37-01-PLAN.md — PermissionPreset enum, PermissionPresetWriter, HookInstaller prettyPrinted fix, AskUserQuestion bug fix, rabbit sprite, tests
+- [ ] 37-02-PLAN.md — MenuBarExtra inline picker, toast overlay, rabbit rendering, autoAccept removal, human verify
 
 ### Phase 39: Onboarding Polish
 **Goal**: Returning users with old JSONL-based hooks see a clear migration path; new users start CC-Beeper with the HTTP server confirmed running; all existing voice and language steps are preserved
