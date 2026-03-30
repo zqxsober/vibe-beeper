@@ -578,6 +578,25 @@ enum Sprites {
         "..##......##..",
     ]
 
+    // MARK: YOLO Rabbit — replaces character in YOLO mode (per D-07)
+
+    /// A single static sprite (not animated) — the rabbit sits in all states when YOLO is active.
+    /// 14 wide x 12 tall. Long upright ears, round face, whisker mouth.
+    static let rabbit: [String] = [
+        "..##......##..",
+        "..##......##..",
+        "..##......##..",
+        "..##......##..",
+        "..############",
+        ".#..........#.",
+        ".#..##..##..#.",
+        ".#..........#.",
+        ".#....##....#.",
+        ".#..........#.",
+        "..##########..",
+        "..............",
+    ]
+
         // MARK: Glitch helper (D-17 — randomized pixels for ~0.5s ERROR entrance)
 
     /// Pseudo-random grid using frame as seed — deterministic for visual consistency

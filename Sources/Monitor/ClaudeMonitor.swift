@@ -524,6 +524,50 @@ final class ClaudeMonitor: ObservableObject {
                 errorDetail = "Unknown error"
             }
 
+        case "PermissionRequest":
+            // PermissionRequest hook fires for tool permission requests.
+            // AskUserQuestion is a special case — it's a question to the user,
+            // not a tool permission. Classify as input (per D-04).
+            let tool = toolName ?? ""
+            if tool == "AskUserQuestion" {
+                // Treat as input — always surfaces regardless of mode
+                let message = payload["message"] as? String ?? payload["description"] as? String ?? ""
+                inputMessage = String(message.prefix(30))
+                let syntheticEvent: [String: Any] = [
+                    "event": "notification",
+                    "type": "needs_input",
+                    "sid": sessionId,
+                    "ts": ts,
+                    "message": message,
+                ]
+                if let json = try? JSONSerialization.data(withJSONObject: syntheticEvent),
+                   let jsonStr = String(data: json, encoding: .utf8) {
+                    processEvent(jsonStr)
+                }
+                return ["_hold_connection": true]  // Blocking — hold for user response
+            }
+            // All other PermissionRequest tools — treat as permission prompt
+            let mode = readPermissionMode()
+            if mode == .bypass {
+                return nil  // Suppress in YOLO
+            }
+            var permSyntheticEvent: [String: Any] = [
+                "event": "notification",
+                "type": "permission_prompt",
+                "sid": sessionId,
+                "ts": ts,
+            ]
+            if !tool.isEmpty {
+                permSyntheticEvent["tool"] = tool
+            }
+            if let msg = payload["message"] as? String ?? payload["description"] as? String {
+                permSyntheticEvent["summary"] = msg
+            }
+            let permJson = (try? JSONSerialization.data(withJSONObject: permSyntheticEvent))
+                .flatMap { String(data: $0, encoding: .utf8) } ?? ""
+            processEvent(permJson)
+            return ["_hold_connection": true]
+
         default:
             return nil // Unknown event — ignore
         }
