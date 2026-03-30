@@ -10,9 +10,6 @@ struct MenuBarPopoverView: View {
         VStack(alignment: .leading, spacing: 0) {
             // Quick actions — 2x2 grid
             HStack(spacing: 8) {
-                QuickActionButton(icon: "bolt.fill", label: "YOLO", isActive: monitor.autoAccept) {
-                    monitor.autoAccept.toggle()
-                }
                 QuickActionButton(icon: monitor.soundEnabled ? "speaker.fill" : "speaker.slash.fill", label: monitor.soundEnabled ? "Sound" : "Muted", isActive: !monitor.soundEnabled) {
                     monitor.soundEnabled.toggle()
                 }

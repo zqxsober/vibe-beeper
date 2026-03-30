@@ -14,7 +14,7 @@ struct ScreenContentView: View {
     private let animTimer = Timer.publish(every: 0.45, on: .main, in: .common).autoconnect()
     private let ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
-    private var isYoloActive: Bool { monitor.autoAccept }
+    private var isYoloActive: Bool { monitor.currentPreset == .yolo }
 
     var body: some View {
         ZStack {
@@ -74,6 +74,16 @@ struct ScreenContentView: View {
             if let flashText = monitor.authFlashMessage {
                 Text(flashText)
                     .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                    .foregroundColor(themeManager.lcdOn)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(themeManager.darkMode ? themeManager.lcdBg.opacity(0.9) : Color.clear.opacity(0.9))
+                    .transition(.opacity)
+            }
+
+            // Preset change toast (PERM-03, D-08) — shows for 5s on mode change
+            if let toastText = monitor.presetToastMessage {
+                Text(toastText)
+                    .font(.system(size: 9, weight: .heavy, design: .monospaced))
                     .foregroundColor(themeManager.lcdOn)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(themeManager.darkMode ? themeManager.lcdBg.opacity(0.9) : Color.clear.opacity(0.9))

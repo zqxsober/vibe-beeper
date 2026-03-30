@@ -32,6 +32,10 @@ struct PixelCharacterView: View {
     private let pixelSize: CGFloat = 2.5
 
     private var currentSprite: [String] {
+        // YOLO rabbit — persists across all states (per D-07, YOLO-01)
+        if isYolo {
+            return Sprites.rabbit
+        }
         if isGlitching {
             return Sprites.glitchFrame(frame: frame)
         }

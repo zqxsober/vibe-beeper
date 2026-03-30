@@ -55,7 +55,23 @@ struct CCBeeperApp: App {
 
             Divider()
 
-            Toggle("YOLO Mode", isOn: $monitor.autoAccept)
+            Section("Permission Mode") {
+                Picker("Permission Mode", selection: $monitor.currentPreset) {
+                    ForEach(PermissionPreset.allCases, id: \.self) { preset in
+                        Text("\(preset.label) \u{2014} \(preset.menuDescription)")
+                            .tag(preset)
+                    }
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+                .disabled(monitor.isSettingsMalformed)
+
+                if monitor.isSettingsMalformed {
+                    Text("settings.json is malformed")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+            }
 
             Divider()
 
