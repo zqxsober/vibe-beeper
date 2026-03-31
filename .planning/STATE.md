@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v3.1
 milestone_name: Polish & Fixes
 status: verifying
-stopped_at: "Checkpoint 37-02: awaiting human visual verification of permission spectrum UI"
-last_updated: "2026-03-30T20:56:33.211Z"
-last_activity: 2026-03-30
+stopped_at: Completed 38-visibility-spectrum 38-01-PLAN.md
+last_updated: "2026-03-31T07:40:39.535Z"
+last_activity: 2026-03-31
 progress:
-  total_phases: 34
-  completed_phases: 31
-  total_plans: 67
-  completed_plans: 65
+  total_phases: 6
+  completed_phases: 3
+  total_plans: 6
+  completed_plans: 10
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ Phase: 37 (permission-spectrum) — EXECUTING
 Plan: 2 of 2
 Status: Phase complete — ready for verification
 Next: /gsd:plan-phase 37 (or /gsd:discuss-phase 37 if you want to refine context first)
-Last activity: 2026-03-30
+Last activity: 2026-03-31
 
 Progress: [░░░░░░░░░░] 0% (v7.0 phases, 7 phases total)
 
@@ -67,6 +67,9 @@ Progress: [░░░░░░░░░░] 0% (v7.0 phases, 7 phases total)
 - [Phase 37-02]: currentPreset (PermissionPreset) replaces autoAccept (Bool) as source of truth for YOLO mode
 - [Phase 37-02]: Preset toast (RESTART SESSION TO APPLY) fires from ClaudeMonitor didSet, not from UI layer
 - [Phase 37-02]: Rabbit character takes absolute priority over glitch animation when isYolo
+- [Phase 38-01]: smallShellImageName uses currentThemeId directly — all 10 color IDs match exactly between large and small shell sets
+- [Phase 38-01]: TTS stopSpeaking fires after sessionStates[sid] = .working so Combine sink resolves state correctly before TTS stops
+- [Phase 38-01]: isPermissionPrompt matches eventName == PermissionRequest to fix connection storage for PermissionRequest hook events
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-30T20:56:33.205Z
-Stopped at: Checkpoint 37-02: awaiting human visual verification of permission spectrum UI
+Last session: 2026-03-31T07:40:39.530Z
+Stopped at: Completed 38-visibility-spectrum 38-01-PLAN.md
 Resume file: None

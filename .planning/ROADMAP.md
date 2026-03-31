@@ -460,6 +460,26 @@ Plans:
 - [x] 37-01-PLAN.md — PermissionPreset enum, PermissionPresetWriter, HookInstaller prettyPrinted fix, AskUserQuestion bug fix, rabbit sprite, tests
 - [x] 37-02-PLAN.md — MenuBarExtra inline picker, toast overlay, rabbit rendering, autoAccept removal, human verify
 
+### Phase 38: Visibility Spectrum
+**Goal**: Users choose between three visibility modes — Full (large beeper with all buttons), Compact (small shell with LCD only, hotkey control), and Menu (no widget, menu bar icon only) — with clean window transitions and hotkeys working in all modes
+**Depends on**: Phase 37
+**Requirements**: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, TTS-FIX, PERM-BUG
+**Success Criteria** (what must be TRUE):
+  1. Selecting "Compact" in the Size menu shows the small shell with LCD content (character, title, subtitle) — no buttons, LEDs, or speaker grille visible
+  2. Selecting "Menu only" hides the widget window entirely — the menu bar icon remains and all hotkeys still work
+  3. Selecting "Large" restores the full beeper with all buttons and controls
+  4. Switching between Full and Compact resizes the window smoothly, anchored to the top-left corner — no jarring jumps or off-screen positioning
+  5. All 10 small shell PNG colors match the existing large shell color set and the current theme selection
+  6. When a PreToolUse event arrives while TTS is speaking, TTS stops immediately and the state transitions to working
+  7. Accept/deny buttons successfully send HTTP responses for both Notification-based and PermissionRequest-based permission prompts
+**Plans**: 2 plans
+**UI hint**: yes
+
+Plans:
+- [ ] 38-01-PLAN.md — Copy 10 small shell PNGs, add ThemeManager.smallShellImageName, fix TTS interrupt on PreToolUse, fix HTTP permission connection for PermissionRequest
+- [ ] 38-02-PLAN.md — Create CompactView, wire 3-mode view routing in CCBeeperApp, add window resize with top-left anchoring, human visual verification
+
+
 ### Phase 39: Onboarding Polish
 **Goal**: Returning users with old JSONL-based hooks see a clear migration path; new users start CC-Beeper with the HTTP server confirmed running; all existing voice and language steps are preserved
 **Depends on**: Phase 35, Phase 37
@@ -530,6 +550,7 @@ Note (v7.0): Phase 35 (HTTP Hooks) is the foundation — LCD states and onboardi
 | 33. Settings & Onboarding | v6.0 Multilingual Voice | 0/TBD | Not started | - |
 | 35. HTTP Hooks + Hook Improvements | v7.0 Pre-Launch | 2/3 | Complete    | 2026-03-29 |
 | 36. LCD States + Input Classification + Animations | v7.0 Pre-Launch | 0/TBD | Not started | - |
-| 37. Permission Spectrum + YOLO Sunglasses | v7.0 Pre-Launch | 2/2 | Complete   | 2026-03-30 |
+| 37. Permission Spectrum + YOLO Sunglasses | v7.0 Pre-Launch | 2/2 | Complete    | 2026-03-30 |
+| 38. Visibility Spectrum | v7.0 Pre-Launch | 0/2 | Not started | - |
 | 39. Onboarding Polish | v7.0 Pre-Launch | 0/TBD | Not started | - |
 | 40. README Overhaul | v7.0 Pre-Launch | 0/TBD | Not started | - |
