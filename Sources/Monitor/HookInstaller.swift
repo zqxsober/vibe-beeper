@@ -13,7 +13,7 @@ struct HookInstaller {
     /// Reads port file, pipes stdin JSON to CC-Beeper's HTTP endpoint.
     /// -s: silent mode (no progress), -o /dev/null: suppress response body,
     /// --max-time 3: fail fast if server unresponsive, || true: never fail the hook.
-    private static let asyncCommand = "PORT=$(cat ~/.claude/cc-beeper/port 2>/dev/null || echo 19222) && curl -s -o /dev/null -X POST http://localhost:${PORT}/hook -H 'Content-Type: application/json' -d @- --max-time 3 || true"
+    private static let asyncCommand = "PORT=$(cat ~/.claude/cc-beeper/port 2>/dev/null || echo 19222) && TOKEN=$(cat ~/.claude/cc-beeper/token 2>/dev/null) && curl -s -o /dev/null -X POST http://localhost:${PORT}/hook -H 'Content-Type: application/json' -H \"Authorization: Bearer ${TOKEN}\" -d @- --max-time 3 || true"
 
     /// Blocking curl command for Notification and PermissionRequest hooks (per D-01, D-02).
     /// Notification is blocking because modern Claude Code routes permission_prompt via
@@ -23,7 +23,7 @@ struct HookInstaller {
     /// No -o /dev/null: stdout carries the hookSpecificOutput response back to Claude Code.
     /// No || true: if CC-Beeper isn't running, curl fails and Claude Code shows terminal prompt.
     /// --max-time 55: client-side timeout (hook timeout is 60 seconds).
-    private static let blockingCommand = "PORT=$(cat ~/.claude/cc-beeper/port 2>/dev/null || echo 19222) && curl -s -X POST http://localhost:${PORT}/hook -H 'Content-Type: application/json' -d @- --max-time 55"
+    private static let blockingCommand = "PORT=$(cat ~/.claude/cc-beeper/port 2>/dev/null || echo 19222) && TOKEN=$(cat ~/.claude/cc-beeper/token 2>/dev/null) && curl -s -X POST http://localhost:${PORT}/hook -H 'Content-Type: application/json' -H \"Authorization: Bearer ${TOKEN}\" -d @- --max-time 55"
 
     /// Returns true when settings.json contains at least one hook entry
     /// whose command references cc-beeper/port (HTTP hooks).

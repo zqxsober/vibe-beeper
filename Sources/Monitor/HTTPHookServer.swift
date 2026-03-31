@@ -24,6 +24,7 @@ final class HTTPHookServer {
     // MARK: - Constants
 
     static let portFile = NSHomeDirectory() + "/.claude/cc-beeper/port"
+    static let tokenFile = NSHomeDirectory() + "/.claude/cc-beeper/token"
     private static let portRange: [UInt16] = Array(19222...19230)
 
     // MARK: - State
@@ -31,6 +32,7 @@ final class HTTPHookServer {
     private var listener: NWListener?
     private var handler: HookHandler?
     private(set) var activePort: UInt16 = 0
+    private(set) var bearerToken: String = ""
 
     /// Per-connection receive buffers, keyed by ObjectIdentifier of the NWConnection.
     private var connectionBuffers: [ObjectIdentifier: Data] = [:]
@@ -42,17 +44,57 @@ final class HTTPHookServer {
     // MARK: - Public API
 
     /// Start the HTTP server. Tries ports 19222-19230, falls back to OS-assigned port.
+    /// Generates a cryptographic bearer token and writes it to the token file (SEC-01, SEC-02).
     func start(handler: @escaping HookHandler) {
         self.handler = handler
+        generateAndWriteToken()
         startListener(portIndex: 0)
     }
 
-    /// Stop the HTTP server and remove the port file.
+    /// Stop the HTTP server and remove the port file and token file.
     func stop() {
         listener?.cancel()
         listener = nil
         removePort()
+        removeToken()
         activePort = 0
+    }
+
+    // MARK: - Token Management (SEC-01, SEC-02)
+
+    /// Generate a cryptographically random bearer token and write it to the token file.
+    private func generateAndWriteToken() {
+        var bytes = [UInt8](repeating: 0, count: 32)
+        _ = SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
+        bearerToken = bytes.map { String(format: "%02x", $0) }.joined()
+
+        let fm = FileManager.default
+        let dir = (Self.tokenFile as NSString).deletingLastPathComponent
+        try? fm.createDirectory(atPath: dir, withIntermediateDirectories: true)
+
+        // Write atomically with 0o600 permissions
+        let tmp = Self.tokenFile + ".tmp"
+        do {
+            try bearerToken.write(toFile: tmp, atomically: false, encoding: .utf8)
+            try? fm.removeItem(atPath: Self.tokenFile)
+            try fm.moveItem(atPath: tmp, toPath: Self.tokenFile)
+            try fm.setAttributes([.posixPermissions: 0o600], ofItemAtPath: Self.tokenFile)
+        } catch {
+            portWriteError = "Failed to write token file: \(error.localizedDescription)"
+        }
+    }
+
+    /// Remove the token file.
+    private func removeToken() {
+        try? FileManager.default.removeItem(atPath: Self.tokenFile)
+    }
+
+    /// Read the bearer token from the token file (used by HookInstaller).
+    static func readToken() -> String? {
+        guard let data = FileManager.default.contents(atPath: tokenFile),
+              let str = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !str.isEmpty else { return nil }
+        return str
     }
 
     /// Send a permission response to the deferred HTTP connection for a specific session (AUDIT-04).
@@ -292,6 +334,17 @@ final class HTTPHookServer {
             return
         }
 
+        // Validate bearer token (SEC-03)
+        if !bearerToken.isEmpty {
+            let authHeader = parseHeader("authorization", from: headerStr)
+            let expectedPrefix = "Bearer "
+            if !authHeader.hasPrefix(expectedPrefix) || String(authHeader.dropFirst(expectedPrefix.count)) != bearerToken {
+                connectionBuffers.removeValue(forKey: key)
+                sendResponse(401, body: Data(), on: connection)
+                return
+            }
+        }
+
         let bodyData = buffer[bodyStart ..< bodyStart + contentLength]
         connectionBuffers.removeValue(forKey: key)
         handleBody(bodyData, connection: connection)
@@ -304,15 +357,20 @@ final class HTTPHookServer {
     }
 
     private func parseContentLength(from headerStr: String) -> Int? {
-        let lines = headerStr.components(separatedBy: "\r\n")
-        for line in lines {
-            let lowered = line.lowercased()
-            if lowered.hasPrefix("content-length:") {
-                let value = line.dropFirst("content-length:".count).trimmingCharacters(in: .whitespaces)
-                return Int(value)
+        guard let value = parseHeader("content-length", from: headerStr) as String?,
+              !value.isEmpty else { return nil }
+        return Int(value)
+    }
+
+    /// Parse an HTTP header value by name (case-insensitive).
+    private func parseHeader(_ name: String, from headerStr: String) -> String {
+        let target = name.lowercased() + ":"
+        for line in headerStr.components(separatedBy: "\r\n") {
+            if line.lowercased().hasPrefix(target) {
+                return String(line.dropFirst(target.count)).trimmingCharacters(in: .whitespaces)
             }
         }
-        return nil
+        return ""
     }
 
     private func handleBody(_ bodyData: Data, connection: NWConnection) {
@@ -374,6 +432,7 @@ final class HTTPHookServer {
         switch statusCode {
         case 200: statusText = "OK"
         case 400: statusText = "Bad Request"
+        case 401: statusText = "Unauthorized"
         case 404: statusText = "Not Found"
         case 405: statusText = "Method Not Allowed"
         default: statusText = "Error"

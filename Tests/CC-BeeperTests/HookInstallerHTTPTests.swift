@@ -10,8 +10,8 @@ final class HookInstallerHTTPTests: XCTestCase {
 
     // Replicate constants from HookInstaller (must stay in sync)
     private let hookMarker = "cc-beeper/port"
-    private let asyncCommand = "PORT=$(cat ~/.claude/cc-beeper/port 2>/dev/null || echo 19222) && curl -s -o /dev/null -X POST http://localhost:${PORT}/hook -H 'Content-Type: application/json' -d @- --max-time 3 || true"
-    private let blockingCommand = "PORT=$(cat ~/.claude/cc-beeper/port 2>/dev/null || echo 19222) && curl -s -X POST http://localhost:${PORT}/hook -H 'Content-Type: application/json' -d @- --max-time 55"
+    private let asyncCommand = "PORT=$(cat ~/.claude/cc-beeper/port 2>/dev/null || echo 19222) && TOKEN=$(cat ~/.claude/cc-beeper/token 2>/dev/null) && curl -s -o /dev/null -X POST http://localhost:${PORT}/hook -H 'Content-Type: application/json' -H \"Authorization: Bearer ${TOKEN}\" -d @- --max-time 3 || true"
+    private let blockingCommand = "PORT=$(cat ~/.claude/cc-beeper/port 2>/dev/null || echo 19222) && TOKEN=$(cat ~/.claude/cc-beeper/token 2>/dev/null) && curl -s -X POST http://localhost:${PORT}/hook -H 'Content-Type: application/json' -H \"Authorization: Bearer ${TOKEN}\" -d @- --max-time 55"
 
     // Replicate event configs from HookInstaller (must stay in sync)
     private let asyncConfigs: [(String, Int, String?)] = [
@@ -97,6 +97,20 @@ final class HookInstallerHTTPTests: XCTestCase {
                       "Async command must fall back to port 19222 when port file missing")
         XCTAssertTrue(blockingCommand.contains("|| echo 19222"),
                       "Blocking command must fall back to port 19222 when port file missing")
+    }
+
+    // MARK: - Auth token tests (SEC-04)
+
+    /// Both command types must include Authorization: Bearer header reading from token file.
+    func testHookCommandsIncludeAuthorizationHeader() {
+        XCTAssertTrue(asyncCommand.contains("Authorization: Bearer"),
+                      "Async command must include Authorization: Bearer header (SEC-04)")
+        XCTAssertTrue(blockingCommand.contains("Authorization: Bearer"),
+                      "Blocking command must include Authorization: Bearer header (SEC-04)")
+        XCTAssertTrue(asyncCommand.contains("cc-beeper/token"),
+                      "Async command must read token from cc-beeper/token file")
+        XCTAssertTrue(blockingCommand.contains("cc-beeper/token"),
+                      "Blocking command must read token from cc-beeper/token file")
     }
 
     // MARK: - statusMessage test
