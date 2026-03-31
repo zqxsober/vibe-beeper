@@ -120,3 +120,12 @@ None - all data flows from existing ClaudeMonitor/ThemeManager state; no hardcod
 ---
 *Phase: 38-visibility-spectrum*
 *Completed: 2026-03-31 (pending visual verification)*
+
+## Self-Check: PASSED
+
+- Sources/Widget/CompactView.swift exists and contains `struct CompactView: View`
+- CCBeeperApp.swift contains `if monitor.widgetSize == .compact` routing
+- CCBeeperApp.swift contains `resizeMainWindow(to:)` static method
+- Commit 9a80dcb verified in git log (feat: CompactView and window routing)
+- 38-02-SUMMARY.md exists at .planning/phases/38-visibility-spectrum/
+- `swift build` exits 0 (Build complete! in 52.98s)

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Needs Input — Animation Alternatives</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a1a;color:#c8d6a0;font-family:monospace;padding:20px}
+h1{color:#c8d6a0;margin-bottom:8px;font-size:18px}
+p.desc{color:#777;font-size:12px;margin-bottom:24px}
+.alts{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:1100px}
+.card{background:#2a2a2a;border-radius:12px;padding:16px;border:2px solid #3a3a3a}
+.card h2{font-size:14px;margin-bottom:4px;color:#fff}
+.card .sub{font-size:11px;color:#999;margin-bottom:12px;line-height:1.6}
+.lcd{background:#b8c878;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;min-height:80px}
+canvas{image-rendering:pixelated;flex-shrink:0}
+.lt{flex:1}.lt .t{font-size:14px;font-weight:900;color:#4a5a28}
+.lt .d{font-size:9px;color:#4a5a28;opacity:.7;margin-top:2px}
+.fi{font-size:10px;color:#666;margin-top:8px;text-align:center}
+.ctrls{margin-top:8px;display:flex;gap:8px;justify-content:center}
+.ctrls button{background:#3a3a3a;border:1px solid #555;color:#ccc;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px}
+.ctrls button:hover{background:#4a4a4a}
+.ctrls button.on{background:#5a7a2a;border-color:#7a9a3a}
+</style>
+</head>
+<body>
+<h1>Needs Input — Pick an animation</h1>
+<p class="desc">4 alternatives. Each loops 4 frames at 450ms. Which reads best as "hey, come check the terminal"?</p>
+<div class="alts" id="S"></div>
+<script>
+var PX=3,ON="#4a5a28";
+
+var alts = {
+  "A: Hand wave": {
+    desc: "Arm waves left-right, beckoning you over",
+    frames: [
+      ["......##......","....######....","..##########..",".#..........#.",".#..##..##..#.",".#..........#.",".#....##....#.",".#..........#.","..##########..","....######....","####......#...","....#.....##.."],
+      ["......##......","....######....","..##########..",".#..........#.",".#..##..##..#.",".#..........#.",".#....##....#.",".#..........#.","..##########..","....######....","..#.......####","..##.....#...."],
+      ["......##......","....######....","..##########..",".#..........#.",".#..##..##..#.",".#..........#.",".#....##....#.",".#..........#.","..##########..","....######....","####......#...","....#.....##.."],
+      ["......##......","....######....","..##########..",".#..........#.",".#..##..##..#.",".#..........#.",".#....##....#.",".#..........#.","..##########..","....######....","...#......#...","..##......##.."]
+    ]
+  },
+  "B: Staring + tap": {
+    desc: "Big eyes stare straight at you, foot taps impatiently",
+    frames: [
+      ["......##......","....######....","..##########..",".#..........#.",".#.###.###..#.",".#.###.###..#.",".#..........#.",".#....##....#.","..##########..","....######....","...#......#...","..##......##.."],
+      ["......##......","....######....","..##########..",".#..........#.",".#.###.###..#.",".#.###.###..#.",".#..........#.",".#....##....#.","..##########..","....######....","...#......#...","..##.....###.."],
+      ["......##......","....######....","..##########..",".#..........#.",".#.###.###..#.",".#.###.###..#.",".#..........#.",".#....##....#.","..##########..","....######....","...#......#...","..##......##.."],
+      ["......##......","....######....","..##########..",".#..........#.",".#..........#.",".#.###.###..#.",".#.###.###..#.",".#....##....#.","..##########..","....######....","...#......#...","..###.....##.."]
+    ]
+  },
+  "C: Pointing down": {
+    desc: "Points down toward the terminal — go look!",
+    frames: [
+      ["......##......","....######....","..##########..",".#..........#.",".#..##..##..#.",".#..........#.",".#....##....#.",".#..........#.","..##########..","....######....","...#......#...","..##......##.."],
+      ["......##......","....######....","..##########..",".#..........#.",".#..##...##.#.",".#..........#.",".#....##....#.",".#..........#.","..##########..","....######....","...#......####","..##.......#.."],
+      ["......##......","....######....","..##########..",".#..........#.",".#..##...##.#.",".#..........#.",".#....##....#.",".#..........#.","..##########..","....######....","...#......####","..##.......#.."],
+      ["......##......","....######....","..##########..",".#..........#.",".#..##..##..#.",".#..........#.",".#....##....#.",".#..........#.","..##########..","....######....","...#......#.#.","..##......####"]
+    ]
+  },
+  "D: Mouth open yell": {
+    desc: "Mouth opens wide, calling out to you — with little shout lines",
+    frames: [
+      ["......##......","....######....","..##########..",".#..........#.",".#..##..##..#.",".#..........#.",".#..######..#.",".#..#....#..#.","..##########..","....######....","...#......#...","..##......##.."],
+      ["......##......","....######....",".###########.#",".#..........#.",".#..##..##..#.",".#..........#.",".#..######..#.",".#..#....#..#.","..##########..","....######....","...#......#...","..##......##.."],
+      ["......##......","....######....","..##########..",".#..........#.",".#..##..##..#.",".#..........#.",".#..######..#.",".#..#....#..#.","..##########..","....######....","...#......#...","..##......##.."],
+      ["......##......","....######....","#.##########..",".#..........#.",".#..##..##..#.",".#..........#.",".#..######..#.",".#..#....#..#.","..##########..","....######....","...#......#...","..##......##.."]
+    ]
+  }
+};
+
+var st={};
+var S=document.getElementById("S");
+
+Object.keys(alts).forEach(function(k){
+  var a=alts[k];
+  var d=document.createElement("div");d.className="card";
+  d.innerHTML='<h2>'+k+'</h2><div class="sub">'+a.desc+'</div>'
+    +'<div class="lcd"><canvas id="c'+k+'"></canvas><div class="lt"><div class="t">Needs input</div><div class="d">Psst · Which file?</div></div></div>'
+    +'<div class="fi" id="f'+k+'">Frame 1/4</div>'
+    +'<div class="ctrls"><button onclick="pv(\''+k+'\')"> < </button>'
+    +'<button class="on" id="p'+k+'" onclick="tg(\''+k+'\')">Playing</button>'
+    +'<button onclick="nx(\''+k+'\')"> > </button></div>';
+  S.appendChild(d);
+  st[k]={f:0,p:true};
+  draw(document.getElementById("c"+k),a.frames[0]);
+});
+
+function draw(c,rows){
+  var x=c.getContext("2d"),cols=rows[0].length;
+  c.width=cols*PX;c.height=rows.length*PX;
+  x.clearRect(0,0,c.width,c.height);x.fillStyle=ON;
+  rows.forEach(function(row,r){
+    for(var i=0;i<row.length;i++){if(row[i]==="#")x.fillRect(i*PX,r*PX,PX,PX)}
+  });
+}
+function upd(k){draw(document.getElementById("c"+k),alts[k].frames[st[k].f]);document.getElementById("f"+k).textContent="Frame "+(st[k].f+1)+"/4"}
+function nx(k){st[k].f=(st[k].f+1)%4;upd(k)}
+function pv(k){st[k].f=(st[k].f-1+4)%4;upd(k)}
+function tg(k){st[k].p=!st[k].p;var b=document.getElementById("p"+k);b.textContent=st[k].p?"Playing":"Paused";b.className=st[k].p?"on":""}
+setInterval(function(){Object.keys(st).forEach(function(k){if(st[k].p)nx(k)})},450);
+</script>
+</body>
+</html>
