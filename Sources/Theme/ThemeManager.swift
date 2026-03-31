@@ -41,6 +41,7 @@ final class ThemeManager: ObservableObject {
     }
 
     var shellImageName: String { theme.shellImage }
+    var smallShellImageName: String { "beeper-small-\(currentThemeId).png" }
 
     // MARK: - LCD Colors (dark mode support)
 
