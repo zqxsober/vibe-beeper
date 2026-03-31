@@ -203,7 +203,7 @@ v1.1 hardened the foundation. v2.0 Voice Loop added hands-free voice I/O and aut
 - [x] **Phase 35: HTTP Hooks + Hook Improvements** - Replace Python JSONL IPC with NWListener HTTP server; hook commands use curl; all hooks async with timeout (foundation for LCD and onboarding) (completed 2026-03-29)
 - [ ] **Phase 36: LCD States + Input Classification + Animations** - 7-state LCD with tool/permission/input context; state priority enforcement; input vs permission differentiation; per-state animations (no color changes)
 - [x] **Phase 37: Permission Spectrum + YOLO Rabbit** - 4-mode segmented control in popover; atomic settings.json writes; rabbit icon in YOLO modes (completed 2026-03-30)
-- [ ] **Phase 38: Visibility Spectrum** - 3-mode visibility (Full beeper with buttons / Compact screen-only with small shells / Menu bar only); 10 small shell PNGs; hotkey-only control in compact+menu modes; rabbit icon replaces YOLO sunglasses
+- [x] **Phase 38: Visibility Spectrum** - 3-mode visibility (Full beeper with buttons / Compact screen-only with small shells / Menu bar only); 10 small shell PNGs; hotkey-only control in compact+menu modes; rabbit icon replaces YOLO sunglasses (completed 2026-03-31)
 - [ ] **Phase 39: Onboarding Polish** - HTTP migration detection and upgrade path; server startup confirmation; preserve voice/language steps
 - [ ] **Phase 40: README Overhaul** - Hero GIF, feature screenshots, install instructions, how-it-works paragraph
 
@@ -551,6 +551,6 @@ Note (v7.0): Phase 35 (HTTP Hooks) is the foundation — LCD states and onboardi
 | 35. HTTP Hooks + Hook Improvements | v7.0 Pre-Launch | 2/3 | Complete    | 2026-03-29 |
 | 36. LCD States + Input Classification + Animations | v7.0 Pre-Launch | 0/TBD | Not started | - |
 | 37. Permission Spectrum + YOLO Sunglasses | v7.0 Pre-Launch | 2/2 | Complete    | 2026-03-30 |
-| 38. Visibility Spectrum | v7.0 Pre-Launch | 0/2 | Not started | - |
+| 38. Visibility Spectrum | v7.0 Pre-Launch | 0/2 | Complete    | 2026-03-31 |
 | 39. Onboarding Polish | v7.0 Pre-Launch | 0/TBD | Not started | - |
 | 40. README Overhaul | v7.0 Pre-Launch | 0/TBD | Not started | - |

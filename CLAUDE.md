@@ -41,7 +41,20 @@ Communication uses a local HTTP server (`HTTPHookServer.swift`) running on `127.
 
 ### State Machine (`ClaudeMonitor.swift`)
 
-The core orchestrator. Four states: `.thinking` (tool calls in progress), `.finished` (idle, awaiting user), `.needsYou` (permission required), `.idle` (no sessions for 60s). Tracks multiple concurrent sessions via `sessionStates` dictionary.
+The core orchestrator. Eight states with priority-based resolution:
+
+| Priority | State | LCD Text | Trigger |
+|----------|-------|----------|---------|
+| 7 | `.error` | ERROR | StopFailure event |
+| 6 | `.approveQuestion` | APPROVE? | Permission prompt (non-YOLO) |
+| 5 | `.needsInput` | NEEDS INPUT | Question/discussion from Claude |
+| 4 | `.listening` | LISTENING | Voice recording active |
+| 3 | `.speaking` | SPEAKING | TTS reading response |
+| 2 | `.working` | WORKING | PreToolUse event |
+| 1 | `.done` | DONE! | Stop event (auto-transitions to idle) |
+| 0 | `.idle` | ZZZ... | No sessions for 60s |
+
+Higher priority states override lower ones. Tracks multiple concurrent sessions via `sessionStates` dictionary.
 
 ### Voice — Dual-Engine Multilingual Architecture
 
@@ -53,10 +66,14 @@ Both STT and TTS use a primary engine with automatic fallback, driven by a singl
 
 ### UI Structure
 
-- **Main window**: Transparent, always-on-top, 360×160px pager shell with LCD display
-- **LCD**: 286×45px screen with 14×12px animated pixel-art character, state text, clock, icons
-- **Buttons**: PNG-based with press states — Accept/Deny pill, Record, Terminal, Sound
+- **Main window**: Transparent, always-on-top pager shell with LCD display. Three sizes:
+  - **Large** (440×240): Full beeper with buttons (Accept/Deny pill, Record, Terminal, Sound)
+  - **Compact** (300×193): LCD screen only, no buttons — interact via hotkeys
+  - **Menu Only**: No widget, menu bar icon only
+- **LCD**: 286×45px screen with 14×12px animated pixel-art character, state text, clock, preset badge
+- **Buttons**: PNG-based with press states (large mode only)
 - **Themes**: 10 shell colors (PNG images), dark mode toggle affects LCD colors
+- **Permission presets**: 4 modes (Strict/Relaxed/Cautious/YOLO) switchable from menu bar. YOLO shows rabbit character.
 - **Settings**: 8-tab window (General, Audio, Voice, VoiceOver, Feedback, Hotkeys, Permissions, Setup, About)
 - **Onboarding**: Multi-step wizard (Welcome, CLI detection, Permissions, Language, Model download, Done)
 
