@@ -281,22 +281,35 @@ final class HTTPHookServer {
         // Call handler — nil means async (send 200 now), non-nil means blocking (defer response)
         let result = handler?(payload)
 
-        if result != nil {
-            // Blocking hook (permission_prompt): store connection, response sent later via sendPermissionResponse()
-            // Check if this is a permission_prompt notification
-            let eventName = payload["hook_event_name"] as? String ?? ""
-            let notifType = payload["notification_type"] as? String ?? ""
-            let isPermissionPrompt = (eventName == "Notification" && notifType == "permission_prompt")
+        if let result {
+            // Check if handler wants to send immediately (auto-approve in YOLO/preset)
+            let sendNow = result["_send_immediately"] as? Bool ?? false
 
-            if isPermissionPrompt {
-                permissionConnection = connection
-                // Do NOT send response yet — waiting for user to approve/deny
-            } else {
-                // Handler returned a dict for a non-permission event — respond immediately
-                if let body = try? JSONSerialization.data(withJSONObject: result!) {
+            if sendNow {
+                // Auto-approve: strip marker and send response right away
+                var cleaned = result
+                cleaned.removeValue(forKey: "_send_immediately")
+                if let body = try? JSONSerialization.data(withJSONObject: cleaned) {
                     sendResponse(200, body: body, on: connection)
                 } else {
                     sendResponse(200, body: Data(), on: connection)
+                }
+            } else {
+                // Blocking hook: check if it's a permission prompt that needs deferred response
+                let eventName = payload["hook_event_name"] as? String ?? ""
+                let notifType = payload["notification_type"] as? String ?? ""
+                let isPermissionPrompt = (eventName == "Notification" && notifType == "permission_prompt")
+                    || eventName == "PermissionRequest"
+
+                if isPermissionPrompt {
+                    permissionConnection = connection
+                    // Do NOT send response yet — waiting for user to approve/deny
+                } else {
+                    if let body = try? JSONSerialization.data(withJSONObject: result) {
+                        sendResponse(200, body: body, on: connection)
+                    } else {
+                        sendResponse(200, body: Data(), on: connection)
+                    }
                 }
             }
         } else {

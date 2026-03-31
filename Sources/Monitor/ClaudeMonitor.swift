@@ -87,6 +87,17 @@ struct PendingPermission: Equatable {
 final class ClaudeMonitor: ObservableObject {
     static let ipcDir = NSHomeDirectory() + "/.claude/cc-beeper"
 
+    /// Auto-approve response sent back to Claude Code for YOLO/allowed tools.
+    /// `_send_immediately` tells HTTPHookServer to respond right away instead of storing the connection.
+    private static let autoApproveResponse: [String: Any] = [
+        "_send_immediately": true,
+        "hookSpecificOutput": [
+            "hookEventName": "Notification",
+            "decision": "allow",
+            "updatedPermissions": ["allow": true, "reason": "Auto-approved by CC-Beeper"]
+        ]
+    ]
+
     @Published var state: ClaudeState = .done
     @Published var pendingPermission: PendingPermission?
     private var cancellables = Set<AnyCancellable>()
@@ -432,15 +443,13 @@ final class ClaudeMonitor: ObservableObject {
 
             switch notificationType {
             case "permission_prompt":
-                // Check YOLO suppression (per D-13, INP-02)
+                // Auto-approve in YOLO or for preset-allowed tools
                 let mode = readPermissionMode()
-                if mode == .bypass {
-                    return nil  // Suppress in YOLO — LCD stays on current state
-                }
-                // Suppress for tools the current preset auto-approves
                 let promptTool = toolName ?? payload["title"] as? String ?? ""
-                if let allowed = currentPreset.allowedTools, allowed.contains(promptTool) {
-                    return nil  // Auto-approved — stay on working state
+                let isAutoApproved = mode == .bypass ||
+                    (currentPreset.allowedTools?.contains(promptTool) == true)
+                if isAutoApproved {
+                    return Self.autoApproveResponse  // Send approve back to Claude Code
                 }
                 // Build synthetic JSONL event with permission type marker
                 var syntheticEvent: [String: Any] = [
@@ -571,12 +580,10 @@ final class ClaudeMonitor: ObservableObject {
             }
             // All other PermissionRequest tools — treat as permission prompt
             let mode = readPermissionMode()
-            if mode == .bypass {
-                return nil  // Suppress in YOLO
-            }
-            // Suppress for tools the current preset auto-approves
-            if let allowed = currentPreset.allowedTools, allowed.contains(tool) {
-                return nil  // Auto-approved — stay on working state
+            let isAutoApproved = mode == .bypass ||
+                (currentPreset.allowedTools?.contains(tool) == true)
+            if isAutoApproved {
+                return Self.autoApproveResponse  // Send approve back to Claude Code
             }
             var permSyntheticEvent: [String: Any] = [
                 "event": "notification",
