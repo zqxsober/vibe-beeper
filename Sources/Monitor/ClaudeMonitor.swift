@@ -735,6 +735,10 @@ final class ClaudeMonitor: ObservableObject {
                 thinkingStartTime = Date()
             }
             if !sid.isEmpty { sessionStates[sid] = .working }
+            // Stop TTS if speaking -- user is back in terminal, no need to finish recap
+            if ttsService.isSpeaking {
+                ttsService.stopSpeaking()
+            }
             updateAggregateState()
         case "post_tool_error":
             if !sid.isEmpty { sessionStates[sid] = .working }

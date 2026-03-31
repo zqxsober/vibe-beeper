@@ -287,6 +287,7 @@ final class HTTPHookServer {
             let eventName = payload["hook_event_name"] as? String ?? ""
             let notifType = payload["notification_type"] as? String ?? ""
             let isPermissionPrompt = (eventName == "Notification" && notifType == "permission_prompt")
+                || eventName == "PermissionRequest"
 
             if isPermissionPrompt {
                 permissionConnection = connection
