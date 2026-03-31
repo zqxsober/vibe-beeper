@@ -12,18 +12,27 @@ struct CCBeeperApp: App {
 
     var body: some Scene {
         Window("CC-Beeper", id: "main") {
-            ContentView()
-                .environmentObject(monitor)
-                .environmentObject(themeManager)
-                .background(WindowConfigurator())
-                .onAppear {
-                    if !hasCompletedOnboarding {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            Self.hideMainWindow()
-                            openWindow(id: "onboarding")
-                        }
+            Group {
+                if monitor.widgetSize == .compact {
+                    CompactView()
+                        .environmentObject(monitor)
+                        .environmentObject(themeManager)
+                        .background(WindowConfigurator())
+                } else {
+                    ContentView()
+                        .environmentObject(monitor)
+                        .environmentObject(themeManager)
+                        .background(WindowConfigurator())
+                }
+            }
+            .onAppear {
+                if !hasCompletedOnboarding {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        Self.hideMainWindow()
+                        openWindow(id: "onboarding")
                     }
                 }
+            }
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
@@ -60,8 +69,14 @@ struct CCBeeperApp: App {
                 monitor.isActive.toggle()
                 if !monitor.isActive {
                     Self.hideMainWindow()
-                } else if monitor.widgetSize != .menuOnly {
+                } else if monitor.widgetSize == .menuOnly {
+                    // Menu mode: don't show window
+                } else {
                     Self.showMainWindow()
+                    let windowSize = monitor.widgetSize == .compact
+                        ? NSSize(width: 300, height: 193)
+                        : NSSize(width: 440, height: 240)
+                    Self.resizeMainWindow(to: windowSize)
                 }
             }
 
@@ -92,8 +107,12 @@ struct CCBeeperApp: App {
                     Button {
                         monitor.widgetSize = size
                         switch size {
-                        case .large, .compact:
+                        case .large:
                             Self.showMainWindow()
+                            Self.resizeMainWindow(to: NSSize(width: 440, height: 240))
+                        case .compact:
+                            Self.showMainWindow()
+                            Self.resizeMainWindow(to: NSSize(width: 300, height: 193))
                         case .menuOnly:
                             Self.hideMainWindow()
                         }
@@ -161,6 +180,18 @@ struct CCBeeperApp: App {
     static func hideMainWindow() {
         for window in NSApp.windows where window.identifier?.rawValue == "main" {
             window.orderOut(nil)
+            return
+        }
+    }
+
+    static func resizeMainWindow(to size: NSSize) {
+        for window in NSApp.windows where window.identifier?.rawValue == "main" {
+            var frame = window.frame
+            // Anchor top-left: adjust y so the top edge stays put
+            frame.origin.y += frame.height - size.height
+            frame.size = size
+            window.setFrame(frame, display: true, animate: true)
+            constrainToScreen(window)
             return
         }
     }
