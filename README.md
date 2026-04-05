@@ -9,12 +9,11 @@
 
 Never miss a permission request, task completion, or error again — even when Claude Code is buried under 30 tabs.
 
-<!-- ![macOS](https://img.shields.io/badge/macOS-26%2B-000?logo=apple&logoColor=white) -->
-<!-- ![Swift](https://img.shields.io/badge/Swift-6.2-F05138?logo=swift&logoColor=white) -->
-<!-- ![License](https://img.shields.io/badge/license-GPL--3.0-blue) -->
 
-<!-- Screenshot / GIF placeholder -->
-<!-- ![CC-Beeper in action](assets/demo.gif) -->
+
+https://github.com/user-attachments/assets/d65f557b-1b5e-41f9-b9fe-9826897f9140
+
+
 
 </div>
 
