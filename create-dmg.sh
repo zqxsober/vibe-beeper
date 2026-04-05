@@ -100,3 +100,21 @@ echo ""
 echo "Created $DMG_FINAL"
 echo "Volume name: $VOLUME_NAME"
 echo "Users drag CC-Beeper.app to Applications to install."
+
+# Notarize the DMG if a notary credential profile was provided.
+# Example: NOTARY_PROFILE=cc-beeper-notary SIGNING_IDENTITY='Developer ID Application: ...' make dmg
+if [ -n "$NOTARY_PROFILE" ]; then
+    echo ""
+    echo "Submitting $DMG_FINAL for notarization (profile: $NOTARY_PROFILE)..."
+    xcrun notarytool submit "$DMG_FINAL" \
+        --keychain-profile "$NOTARY_PROFILE" \
+        --wait
+    echo "Stapling notarization ticket to $DMG_FINAL..."
+    xcrun stapler staple "$DMG_FINAL"
+    echo "Stapling notarization ticket to CC-Beeper.app..."
+    xcrun stapler staple CC-Beeper.app
+    echo "Notarization complete."
+else
+    echo ""
+    echo "Skipped notarization (set NOTARY_PROFILE to enable)."
+fi

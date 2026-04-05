@@ -10,5 +10,12 @@
     <true/>
     <key>com.apple.security.automation.apple-events</key>
     <true/>
+    <!-- Required for Kokoro Python subprocess + CoreML under hardened runtime -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
 </dict>
 </plist>

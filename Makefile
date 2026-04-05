@@ -22,7 +22,7 @@ clean:
 	@rm -rf .build CC-Beeper.app CC-Beeper.dmg
 	@echo "Cleaned build artifacts"
 
-dmg: build
+dmg:
 	@./create-dmg.sh
 
 update:

@@ -89,5 +89,15 @@ cp Sources/kokoro-tts-server.py "$RESOURCES_DIR/kokoro-tts-server.py" 2>/dev/nul
 
 echo "Built CC-Beeper.app"
 
-codesign --force --deep --sign "$SIGNING_IDENTITY" --entitlements CC-Beeper.entitlements CC-Beeper.app
+# Hardened runtime + secure timestamp are required for notarization.
+# Enable them only for Developer ID signing (not for ad-hoc "-" local builds).
+if [ "$SIGNING_IDENTITY" = "-" ]; then
+    codesign --force --deep --sign "$SIGNING_IDENTITY" --entitlements CC-Beeper.entitlements CC-Beeper.app
+else
+    codesign --force --deep --sign "$SIGNING_IDENTITY" \
+        --entitlements CC-Beeper.entitlements \
+        --options runtime \
+        --timestamp \
+        CC-Beeper.app
+fi
 echo "Signed CC-Beeper.app (identity: $SIGNING_IDENTITY)"
