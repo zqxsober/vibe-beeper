@@ -13,7 +13,7 @@ struct ShortcutsWindow: View {
                 ShortcutCategory(title: "Global Hotkeys", subtitle: "Work from any app") {
                     ShortcutRow(action: "Accept Permission", keys: "⌥ \(monitor.hotkeyAccept)")
                     ShortcutRow(action: "Deny Permission", keys: "⌥ \(monitor.hotkeyDeny)")
-                    ShortcutRow(action: "Voice Record", keys: "⌥ \(monitor.hotkeyVoice)")
+                    ShortcutRow(action: "Dictation", keys: "⌥ \(monitor.hotkeyVoice)")
                     ShortcutRow(action: "Go to Terminal", keys: "⌥ \(monitor.hotkeyTerminal)")
                     ShortcutRow(action: "Read Over / Stop", keys: "⌥ \(monitor.hotkeyMute)")
                 }

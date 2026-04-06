@@ -89,6 +89,10 @@ cp Sources/kokoro-tts-server.py "$RESOURCES_DIR/kokoro-tts-server.py" 2>/dev/nul
 
 echo "Built CC-Beeper.app"
 
+# Strip extended attributes (quarantine, etc.) from the bundle.
+# Apple's notary service silently hangs on bundles containing com.apple.quarantine xattrs.
+xattr -cr CC-Beeper.app
+
 # Hardened runtime + secure timestamp are required for notarization.
 # Enable them only for Developer ID signing (not for ad-hoc "-" local builds).
 if [ "$SIGNING_IDENTITY" = "-" ]; then

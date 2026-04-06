@@ -4,45 +4,59 @@ struct OnboardingWelcomeStep: View {
     @ObservedObject var viewModel: OnboardingViewModel
 
     var body: some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 24) {
-                Spacer()
-
-                // App icon with macOS squircle mask
-                if let iconPath = Bundle.main.path(forResource: "AppIcon", ofType: "icns"),
-                   let nsImage = NSImage(contentsOfFile: iconPath) {
-                    Image(nsImage: nsImage)
-                        .resizable()
-                        .frame(width: 96, height: 96)
-                        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-                } else if let iconPath = (Bundle.main.resourcePath.map { $0 + "/../../../icon.png" }),
-                          let nsImage = NSImage(contentsOfFile: iconPath) {
-                    Image(nsImage: nsImage)
-                        .resizable()
-                        .frame(width: 96, height: 96)
-                        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-                }
-
-                VStack(spacing: 10) {
-                    Text("Welcome to CC-Beeper")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-
-                    Text("Your desktop companion for Claude Code.\nSee what Claude is doing, respond to permissions,\nand talk to it — without leaving your workflow.")
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(2)
-                }
-
-                Spacer()
-            }
-            .padding(.horizontal, 48)
-
-            OnboardingFooter(
-                primaryLabel: "Get Started",
-                primaryAction: { viewModel.goNext() }
-            )
+        OnboardingSplashShell(
+            eyebrow: "",
+            title: "CC-Beeper",
+            subtitle: "A floating macOS pager for Claude Code.\nNever miss an update. Respond without breaking your flow.",
+            titleIsHero: true,
+            isDark: true,
+            showBack: false,
+            onBack: {},
+            primaryLabel: "Get Started",
+            primaryAction: { viewModel.goNext() }
+        ) {
+            appIcon
         }
+    }
+
+    // MARK: Lead icon
+
+    private var appIcon: some View {
+        Group {
+            if let nsImage = Self.loadAppIcon() {
+                Image(nsImage: nsImage)
+                    .resizable()
+                    .frame(width: 88, height: 88)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 6)
+            } else {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [ClaudeTheme.terracotta, ClaudeTheme.coral],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 88, height: 88)
+                    .overlay(
+                        Image(systemName: "bell.fill")
+                            .font(.system(size: 36, weight: .semibold))
+                            .foregroundStyle(ClaudeTheme.ivory)
+                    )
+            }
+        }
+    }
+
+    private static func loadAppIcon() -> NSImage? {
+        if let iconPath = Bundle.main.path(forResource: "AppIcon", ofType: "icns"),
+           let image = NSImage(contentsOfFile: iconPath) {
+            return image
+        }
+        if let resourcePath = Bundle.main.resourcePath,
+           let image = NSImage(contentsOfFile: resourcePath + "/../../../icon.png") {
+            return image
+        }
+        return nil
     }
 }

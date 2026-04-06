@@ -141,7 +141,7 @@ enum WhisperError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notLoaded:
-            return "Whisper model is not loaded. Download the model in Settings > Voice Record."
+            return "Whisper model is not loaded. Download the model in Settings > Dictation."
         }
     }
 }

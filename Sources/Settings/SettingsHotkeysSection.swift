@@ -11,7 +11,7 @@ struct SettingsHotkeysSection: View {
 
             HotkeyRow(action: "Accept Permission", key: $monitor.hotkeyAccept)
             HotkeyRow(action: "Deny Permission", key: $monitor.hotkeyDeny)
-            HotkeyRow(action: "Voice Record", key: $monitor.hotkeyVoice)
+            HotkeyRow(action: "Dictation", key: $monitor.hotkeyVoice)
             HotkeyRow(action: "Go to Terminal", key: $monitor.hotkeyTerminal)
             HotkeyRow(action: "Read Over / Stop", key: $monitor.hotkeyMute)
         }

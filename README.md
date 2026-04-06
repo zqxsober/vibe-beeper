@@ -1,6 +1,3 @@
-<!-- Hero banner placeholder -->
-<!-- ![CC-Beeper hero banner](assets/hero-banner.png) -->
-
 <div align="center">
 
 # CC-Beeper
@@ -9,11 +6,7 @@
 
 Never miss a permission request, task completion, or error again — even when Claude Code is buried under 30 tabs.
 
-
-
-https://github.com/user-attachments/assets/d65f557b-1b5e-41f9-b9fe-9826897f9140
-
-
+![CC-Beeper](assets/hero.gif)
 
 </div>
 
@@ -24,6 +17,12 @@ https://github.com/user-attachments/assets/d65f557b-1b5e-41f9-b9fe-9826897f9140
 CC-Beeper is a tiny macOS widget that sits on your desktop (or hides in the menu bar) and stays connected to Claude Code via HTTP hooks. It shows you what Claude is doing in real time on a retro pixel-art LCD screen, plays sounds when it needs your attention, and lets you approve or deny permissions with a hotkey — no terminal switching required.
 
 Think of it as a pager for your AI coding assistant. It beeps, it buzzes, it shows a little pixel character doing the work. And when Claude Code needs you, you'll know.
+
+---
+
+## Launch Video
+
+https://github.com/user-attachments/assets/d65f557b-1b5e-41f9-b9fe-9826897f9140
 
 ---
 
@@ -45,16 +44,15 @@ If you use Claude Code, you know the friction: you kick off a task, switch to so
 
 CC-Beeper's screen shows 8 distinct states, each with its own animation, subtitle pool, and priority level:
 
-| State | Trigger | What you see |
-|-------|---------|-------------|
-| **SNOOZING** | No activity for 60s | Sleep bubbles float up. Subtitle rotates: *Idle*, *Out cold*, *Gone fishing*... |
-| **WORKING** | Claude runs a tool | Eyes dart, typing motion. Shows the tool name: *Busy with bash*, *Tinkering with write*... |
-| **DONE!** | Task completes | Hat toss animation. Title blinks 10x, then fades to idle after 3 min. |
-| **ERROR** | Task fails | Glitch entrance (0.5s random pixels), then a 4-frame face meltdown. |
-| **ALLOW?** | Permission requested | Bouncing alarm animation. 10 title blinks. *Knocking*, *Pretty please*... |
-| **INPUT?** | Claude asks a question | Hand wave beckoning. *Psst*, *Hey*, *Paging you*... |
-| **LISTENING** | Voice recording active | Antenna wobbles with a gentle flash. |
-| **RECAP** | TTS reading response | Mouth opens/closes with sound wave rings. |
+| State | Preview |
+|-------|---------|
+| **SNOOZING** | ![Snoozing](assets/states/snoozing.png) |
+| **WORKING** | ![Working](assets/states/working.png) |
+| **DONE!** | ![Done](assets/states/done.png) |
+| **ERROR** | ![Error](assets/states/error.png) |
+| **ALLOW?** | ![Allow](assets/states/allow.png) |
+| **LISTENING** | ![Listening](assets/states/listening.png) |
+| **RECAP** | ![Recap](assets/states/recap.png) |
 
 Every state transition triggers a bounce — the character hops 4px up and snaps back in 0.25s. Subtitles are randomly picked from each pool on every change.
 

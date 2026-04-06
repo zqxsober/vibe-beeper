@@ -2,7 +2,7 @@ import SwiftUI
 
 enum SettingsTab: String, CaseIterable, Identifiable {
     case theme = "Theme"
-    case voice = "Voice Record"
+    case voice = "Dictation"
     case voiceOver = "Read Over"
     case feedback = "Feedback"
     case hotkeys = "Hotkeys"

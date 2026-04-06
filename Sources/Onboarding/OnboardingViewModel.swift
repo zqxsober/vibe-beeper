@@ -10,12 +10,32 @@ final class OnboardingViewModel: ObservableObject {
         case welcome = 0
         case cliAndHooks = 1
         case theme = 2
-        case mode = 3
-        case permissions = 4
-        case voice = 5
-        case hotkeys = 6
-        case done = 7
+        case sizes = 3
+        case mode = 4
+        case permissions = 5
+        case voice = 6
+        case hotkeys = 7
+        case done = 8
+
+        /// 1-based counter position (nil for splash screens: welcome, done).
+        var countedNumber: Int? {
+            switch self {
+            case .welcome, .done: return nil
+            case .cliAndHooks: return 1
+            case .theme: return 2
+            case .sizes: return 3
+            case .mode: return 4
+            case .permissions: return 5
+            case .voice: return 6
+            case .hotkeys: return 7
+            }
+        }
+
+        var isSplash: Bool { self == .welcome || self == .done }
     }
+
+    /// Total number of counted steps (splashes excluded).
+    static let totalCountedSteps: Int = 7
 
     @Published var currentStep: Step = .welcome
     @Published var isClaudeDetected: Bool = false
@@ -38,6 +58,11 @@ final class OnboardingViewModel: ObservableObject {
     @Published var isModelDownloading: Bool = false
     @Published var isModelReady: Bool = false
 
+    // MARK: - Voice Engine Selection
+    @Published var ttsProvider: String = UserDefaults.standard.string(forKey: "ttsProvider") ?? "kokoro" {
+        didSet { UserDefaults.standard.set(ttsProvider, forKey: "ttsProvider") }
+    }
+
     // MARK: - Language Selection State
     @Published var selectedLangCode: String = "a" {
         didSet { checkLangDeps() }
@@ -55,6 +80,15 @@ final class OnboardingViewModel: ObservableObject {
 
     var totalSteps: Int { Step.allCases.count }
     var progress: Double { Double(currentStep.rawValue) / Double(totalSteps - 1) }
+
+    /// Progress bar fill shown on the splash-aware shell:
+    /// 0 on welcome, 1.0 on done, fractional on counted steps.
+    var displayProgress: Double {
+        if currentStep == .welcome { return 0 }
+        if currentStep == .done { return 1 }
+        guard let n = currentStep.countedNumber else { return 0 }
+        return Double(n) / Double(Self.totalCountedSteps)
+    }
 
     private var pollTimer: Timer?
 

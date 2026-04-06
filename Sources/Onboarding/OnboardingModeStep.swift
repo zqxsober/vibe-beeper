@@ -4,40 +4,31 @@ struct OnboardingModeStep: View {
     @ObservedObject var viewModel: OnboardingViewModel
 
     private let presets: [PermissionPreset] = [.cautious, .relaxed, .trusted, .yolo]
+    private let columns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
 
     var body: some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 20) {
-                Spacer()
-
-                VStack(spacing: 8) {
-                    Text("How do you like to work?")
-                        .font(.title2)
-                        .fontWeight(.bold)
-
-                    Text("You can change this anytime from the menu bar.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
+        OnboardingShell(
+            stepNumber: 4,
+            totalSteps: OnboardingViewModel.totalCountedSteps,
+            title: "How much do you trust Claude?",
+            subtitle: "Change this anytime from the menu bar.",
+            primaryLabel: "Next",
+            primaryAction: { viewModel.goNext() },
+            skipLabel: nil,
+            skipAction: nil,
+            onBack: { viewModel.goBack() }
+        ) {
+            LazyVGrid(columns: columns, spacing: 10) {
+                ForEach(presets, id: \.self) { preset in
+                    PresetCard(
+                        preset: preset,
+                        isSelected: viewModel.selectedPreset == preset,
+                        onSelect: { viewModel.selectedPreset = preset }
+                    )
                 }
-
-                VStack(spacing: 8) {
-                    ForEach(presets, id: \.self) { preset in
-                        PresetCard(
-                            preset: preset,
-                            isSelected: viewModel.selectedPreset == preset,
-                            onSelect: { viewModel.selectedPreset = preset }
-                        )
-                    }
-                }
-                .padding(.horizontal, 48)
-
-                Spacer()
             }
-
-            OnboardingFooter(
-                primaryLabel: "Next",
-                primaryAction: { viewModel.goNext() }
-            )
+            .frame(maxWidth: 460)
+            .animation(.easeInOut(duration: 0.15), value: viewModel.selectedPreset)
         }
     }
 }
@@ -47,34 +38,56 @@ private struct PresetCard: View {
     let isSelected: Bool
     let onSelect: () -> Void
 
-    private var detailedDescription: String {
+    private var shortDescription: String {
         switch preset {
-        case .cautious: "CC-Beeper asks before every tool use. Full control, more interruptions."
-        case .relaxed: "Auto-approves reads (files, search). Asks before writes or shell commands."
-        case .trusted: "Auto-approves all file operations. Only asks before running shell commands."
-        case .yolo: "Claude runs freely with no permission prompts. Maximum speed, minimum friction."
+        case .cautious: "Ask me every time."
+        case .relaxed: "Reads fine. Ask for writes."
+        case .trusted: "Auto file ops. Ask for bash."
+        case .yolo: "Don't ask. Just do it."
+        }
+    }
+
+    private var accentColor: Color {
+        switch preset {
+        case .cautious: return ClaudeTheme.green
+        case .relaxed: return ClaudeTheme.stone
+        case .trusted: return ClaudeTheme.amber
+        case .yolo: return ClaudeTheme.crimson
         }
     }
 
     var body: some View {
-        Button { onSelect() } label: {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(preset.label)
-                    .fontWeight(.semibold)
-                Text(detailedDescription)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+        Button(action: onSelect) {
+            HStack(spacing: 12) {
+                Image(systemName: preset.badgeIcon)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(accentColor)
+                    .frame(width: 18)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(preset.label.uppercased())
+                        .font(ClaudeTheme.mono(11, weight: .semibold))
+                        .tracking(0.5)
+                        .foregroundStyle(ClaudeTheme.nearBlack)
+                    Text(shortDescription)
+                        .font(ClaudeTheme.sans(11))
+                        .foregroundStyle(ClaudeTheme.stone)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 0)
             }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(14)
             .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(.ultraThinMaterial)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(isSelected ? AppConstants.accent : .clear, lineWidth: 2)
-                    )
+                RoundedRectangle(cornerRadius: ClaudeTheme.radiusMedium, style: .continuous)
+                    .fill(isSelected ? Color(hex: "FBF7F4") : ClaudeTheme.ivory)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: ClaudeTheme.radiusMedium, style: .continuous)
+                    .strokeBorder(isSelected ? ClaudeTheme.terracotta : ClaudeTheme.borderCream, lineWidth: isSelected ? 1.5 : 1)
             )
         }
         .buttonStyle(.plain)

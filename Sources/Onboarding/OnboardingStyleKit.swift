@@ -1,0 +1,205 @@
+import SwiftUI
+
+// MARK: - Onboarding Style Kit
+//
+// Reusable UI primitives extracted from the launch video's visual vocabulary
+// (LaunchVideo.jsx). These give every onboarding step a consistent rhythm:
+//
+//   EYEBROW LABEL          (mono caps, stone, tracked)
+//   Editorial headline     (serif medium, nearBlack)
+//   Supporting caption.    (sans regular, stone)
+//
+// Primitives compose — drop them into any step without rewriting layout.
+
+// MARK: Eyebrow label
+
+/// Small uppercase mono label, letter-spaced, warm stone gray.
+/// Used as a section tag above a headline, e.g. "EIGHT STATES".
+struct OnboardingEyebrow: View {
+    let text: String
+
+    var body: some View {
+        Text(text.uppercased())
+            .font(ClaudeTheme.mono(10, weight: .medium))
+            .tracking(1.5)
+            .foregroundStyle(ClaudeTheme.stone)
+    }
+}
+
+// MARK: Headline
+
+/// Editorial serif headline, warm near-black. One or two lines max.
+struct OnboardingHeadline: View {
+    let text: String
+    var size: CGFloat = 22
+
+    var body: some View {
+        Text(text)
+            .font(ClaudeTheme.serif(size, weight: .medium))
+            .foregroundStyle(ClaudeTheme.nearBlack)
+            .multilineTextAlignment(.center)
+            .lineSpacing(4)
+    }
+}
+
+// MARK: Caption
+
+/// Sub-headline caption in warm stone gray. Short, supporting copy only.
+struct OnboardingCaption: View {
+    let text: String
+
+    var body: some View {
+        Text(text)
+            .font(ClaudeTheme.sans(13))
+            .foregroundStyle(ClaudeTheme.stone)
+            .multilineTextAlignment(.center)
+            .lineSpacing(3)
+    }
+}
+
+// MARK: Section header — composes the three above
+
+/// Label + headline + optional caption, centered stack with the video's spacing.
+struct OnboardingSectionHeader: View {
+    let eyebrow: String
+    let headline: String
+    var caption: String? = nil
+    var headlineSize: CGFloat = 22
+
+    var body: some View {
+        VStack(spacing: 10) {
+            OnboardingEyebrow(text: eyebrow)
+            OnboardingHeadline(text: headline, size: headlineSize)
+                .padding(.top, -2)
+            if let caption {
+                OnboardingCaption(text: caption)
+                    .padding(.top, 4)
+            }
+        }
+    }
+}
+
+// MARK: Pill button (primary)
+
+/// Terracotta primary CTA — matches the shape/feel of the video's action buttons.
+/// Press state darkens and scales slightly.
+struct OnboardingPillButton: View {
+    let title: String
+    let action: () -> Void
+    var minWidth: CGFloat = 180
+    var disabled: Bool = false
+
+    @State private var isPressed: Bool = false
+
+    private var fillColor: Color {
+        if disabled { return ClaudeTheme.warmSilver }
+        return isPressed ? ClaudeTheme.coral : ClaudeTheme.terracotta
+    }
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(ClaudeTheme.sans(14, weight: .semibold))
+                .foregroundStyle(ClaudeTheme.ivory)
+                .frame(minWidth: minWidth)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
+                .background(
+                    Capsule().fill(fillColor)
+                )
+                .scaleEffect(isPressed ? 0.97 : 1)
+        }
+        .buttonStyle(.plain)
+        .disabled(disabled)
+        .animation(.easeOut(duration: 0.15), value: isPressed)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in if !disabled { isPressed = true } }
+                .onEnded { _ in isPressed = false }
+        )
+    }
+}
+
+// MARK: Pill button (secondary / ghost)
+
+/// Ivory ghost button with warm hairline border — for secondary actions.
+struct OnboardingGhostButton: View {
+    let title: String
+    let action: () -> Void
+    var minWidth: CGFloat = 120
+
+    @State private var isPressed: Bool = false
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(ClaudeTheme.sans(14, weight: .medium))
+                .foregroundStyle(ClaudeTheme.nearBlack)
+                .frame(minWidth: minWidth)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(
+                    Capsule().fill(isPressed ? ClaudeTheme.borderCream : ClaudeTheme.ivory)
+                )
+                .overlay(
+                    Capsule().strokeBorder(ClaudeTheme.ringWarm, lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
+        .animation(.easeOut(duration: 0.15), value: isPressed)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isPressed = true }
+                .onEnded { _ in isPressed = false }
+        )
+    }
+}
+
+// MARK: Keycap (for hotkeys, shortcuts)
+
+/// Ivory keycap with warm ring — matches the video's hotkey row styling.
+struct OnboardingKeycap: View {
+    let text: String
+
+    var body: some View {
+        Text(text)
+            .font(ClaudeTheme.mono(13, weight: .semibold))
+            .foregroundStyle(ClaudeTheme.nearBlack)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: ClaudeTheme.radiusSmall, style: .continuous)
+                    .fill(ClaudeTheme.ivory)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: ClaudeTheme.radiusSmall, style: .continuous)
+                    .strokeBorder(ClaudeTheme.ringWarm, lineWidth: 1)
+            )
+    }
+}
+
+// MARK: - Preview
+
+#Preview("Style Kit") {
+    VStack(spacing: 40) {
+        OnboardingSectionHeader(
+            eyebrow: "Eight States",
+            headline: "At a glance, know exactly what Claude is up to.",
+            caption: "Never miss an update. Respond without breaking your flow."
+        )
+
+        HStack(spacing: 8) {
+            OnboardingKeycap(text: "⌘⇧A")
+            OnboardingKeycap(text: "⌘⇧D")
+            OnboardingKeycap(text: "⌘⇧M")
+        }
+
+        HStack(spacing: 12) {
+            OnboardingGhostButton(title: "Skip", action: {})
+            OnboardingPillButton(title: "Get Started", action: {})
+        }
+    }
+    .padding(48)
+    .frame(width: 600, height: 440)
+    .background(ClaudeTheme.parchment)
+}

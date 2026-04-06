@@ -105,7 +105,7 @@ struct CCBeeperApp: App {
             Divider()
 
             // Permission mode
-            Menu("Permission \u{2014} \(monitor.currentPreset.label)") {
+            Menu("Auto-accept · \(monitor.currentPreset.label)") {
                 ForEach(PermissionPreset.allCases, id: \.self) { preset in
                     Button {
                         monitor.currentPreset = preset
@@ -114,7 +114,7 @@ struct CCBeeperApp: App {
                             if monitor.currentPreset == preset {
                                 Image(systemName: "checkmark")
                             }
-                            Text("\(preset.label) \u{2014} \(preset.menuDescription)")
+                            Text("\(preset.label) · \(preset.menuDescription)")
                         }
                     }
                     .disabled(monitor.isSettingsMalformed)
@@ -126,7 +126,7 @@ struct CCBeeperApp: App {
             }
 
             // Widget size / visibility
-            Menu("Size \u{2014} \(monitor.widgetSize.label)") {
+            Menu("Size · \(monitor.widgetSize.label)") {
                 ForEach(WidgetSize.allCases, id: \.self) { size in
                     Button {
                         monitor.widgetSize = size
@@ -145,7 +145,7 @@ struct CCBeeperApp: App {
                             if monitor.widgetSize == size {
                                 Image(systemName: "checkmark")
                             }
-                            Text("\(size.label) \u{2014} \(size.menuDescription)")
+                            Text("\(size.label) · \(size.menuDescription)")
                         }
                     }
                 }
@@ -155,11 +155,11 @@ struct CCBeeperApp: App {
 
             // Keyboard shortcuts
             Menu("Keyboard Shortcuts") {
-                Button("⌥ \(monitor.hotkeyAccept)  Accept Permission") {}
-                Button("⌥ \(monitor.hotkeyDeny)  Deny Permission") {}
-                Button("⌥ \(monitor.hotkeyVoice)  Voice Record") {}
-                Button("⌥ \(monitor.hotkeyTerminal)  Go to Terminal") {}
-                Button("⌥ \(monitor.hotkeyMute)  Read Over / Stop") {}
+                Button("⌥ \(monitor.hotkeyAccept) · Accept Permission") {}
+                Button("⌥ \(monitor.hotkeyDeny) · Deny Permission") {}
+                Button("⌥ \(monitor.hotkeyVoice) · Dictation") {}
+                Button("⌥ \(monitor.hotkeyTerminal) · Go to Terminal") {}
+                Button("⌥ \(monitor.hotkeyMute) · Read Over / Stop") {}
             }
 
             // Settings

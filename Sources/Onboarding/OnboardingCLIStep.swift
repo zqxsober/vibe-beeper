@@ -4,67 +4,106 @@ struct OnboardingCLIStep: View {
     @ObservedObject var viewModel: OnboardingViewModel
 
     var body: some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 24) {
-                Spacer()
+        OnboardingShell(
+            stepNumber: 1,
+            totalSteps: OnboardingViewModel.totalCountedSteps,
+            title: "Add hooks to Claude Code?",
+            subtitle: "CC-Beeper reacts via 6 entries in ~/.claude/settings.json. Review or remove them anytime.",
+            primaryLabel: "Next",
+            primaryAction: handlePrimary,
+            skipLabel: "Skip",
+            skipAction: { viewModel.goNext() },
+            onBack: { viewModel.goBack() }
+        ) {
+            VStack(spacing: 14) {
+                SettingsJsonCard(status: cardStatus)
 
-                Image(systemName: "terminal.fill")
-                    .font(.system(size: 48))
-                    .foregroundStyle(.primary)
-
-                VStack(spacing: 8) {
-                    Text("Claude Code Setup")
-                        .font(.title2)
-                        .fontWeight(.bold)
-
-                    Text("CC-Beeper connects via hooks to react to Claude in real time.")
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
+                if !viewModel.isClaudeDetected {
+                    HStack(spacing: 4) {
+                        Text("Claude Code CLI not found.")
+                            .foregroundStyle(ClaudeTheme.stone)
+                        Link("Install it", destination: URL(string: "https://docs.anthropic.com/en/docs/claude-code/overview")!)
+                            .foregroundStyle(ClaudeTheme.terracotta)
+                    }
+                    .font(ClaudeTheme.sans(12))
                 }
-
-                VStack(spacing: 16) {
-                    SetupRow(
-                        icon: viewModel.isClaudeDetected ? "checkmark.circle.fill" : "exclamationmark.triangle.fill",
-                        iconColor: viewModel.isClaudeDetected ? .green : .orange,
-                        title: "Claude Code CLI",
-                        subtitle: viewModel.isClaudeDetected ? "Detected" : nil,
-                        link: viewModel.isClaudeDetected ? nil : ("Install Claude Code", URL(string: "https://docs.anthropic.com/en/docs/claude-code/overview")!)
-                    )
-
-                    SetupRow(
-                        icon: viewModel.isHooksInstalled ? "checkmark.circle.fill" : "circle",
-                        iconColor: viewModel.isHooksInstalled ? .green : .secondary,
-                        title: "Hooks",
-                        subtitle: viewModel.isHooksInstalled ? "Installed" : (viewModel.isClaudeDetected ? "Not installed" : "Requires Claude Code"),
-                        action: (!viewModel.isHooksInstalled && viewModel.isClaudeDetected) ? ("Install Hooks", { viewModel.installHooks() }) : nil
-                    )
-                }
-                .padding(.horizontal, 48)
 
                 if let error = viewModel.hookInstallError {
                     Text(error)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .padding(.horizontal, 48)
+                        .font(ClaudeTheme.sans(11))
+                        .foregroundStyle(ClaudeTheme.crimson)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: 400)
                 }
-
-                Spacer()
             }
+        }
+        .onAppear { viewModel.detectClaude() }
+    }
 
-            OnboardingFooter(
-                primaryLabel: "Next",
-                primaryAction: { viewModel.goNext() },
-                primaryDisabled: !viewModel.isClaudeDetected
-            )
+    private var cardStatus: SettingsJsonCard.Status {
+        if !viewModel.isClaudeDetected { return .noClaude }
+        return viewModel.isHooksInstalled ? .installed : .pending
+    }
+
+    private func handlePrimary() {
+        // If we can install, try it; only advance on success.
+        if viewModel.isClaudeDetected && !viewModel.isHooksInstalled {
+            viewModel.installHooks()
+            if viewModel.hookInstallError == nil {
+                viewModel.goNext()
+            }
+            return
         }
-        .onAppear {
-            viewModel.detectClaude()
-        }
+        viewModel.goNext()
     }
 }
 
-// MARK: - Reusable Components
+// MARK: - Settings.json card
+
+struct SettingsJsonCard: View {
+    enum Status { case pending, installed, noClaude }
+    let status: Status
+
+    var body: some View {
+        HStack(spacing: 20) {
+            Text("~/.claude/settings.json")
+                .font(ClaudeTheme.mono(13))
+                .foregroundStyle(ClaudeTheme.nearBlack)
+            Spacer(minLength: 16)
+            badge
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
+        .frame(minWidth: 340)
+        .claudeCard(radius: ClaudeTheme.radiusMedium)
+    }
+
+    @ViewBuilder private var badge: some View {
+        switch status {
+        case .pending:
+            badgePill(text: "+ 6 hooks", color: ClaudeTheme.green)
+        case .installed:
+            badgePill(text: "Installed", color: ClaudeTheme.green)
+        case .noClaude:
+            badgePill(text: "No Claude", color: ClaudeTheme.amber)
+        }
+    }
+
+    private func badgePill(text: String, color: Color) -> some View {
+        Text(text.uppercased())
+            .font(ClaudeTheme.mono(10, weight: .semibold))
+            .tracking(0.5)
+            .foregroundStyle(color)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(
+                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    .fill(color.opacity(0.12))
+            )
+    }
+}
+
+// MARK: - Legacy components (still used by remaining pre-migration step files)
 
 struct SetupRow: View {
     let icon: String
@@ -78,20 +117,22 @@ struct SetupRow: View {
         HStack(spacing: 14) {
             Image(systemName: icon)
                 .foregroundStyle(iconColor)
-                .font(.title2)
+                .font(.system(size: 20))
                 .frame(width: 28)
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .fontWeight(.medium)
+                    .font(ClaudeTheme.sans(13, weight: .medium))
+                    .foregroundStyle(ClaudeTheme.nearBlack)
                 if let subtitle {
                     Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(ClaudeTheme.sans(11))
+                        .foregroundStyle(ClaudeTheme.stone)
                 }
                 if let link {
                     Link(link.0, destination: link.1)
-                        .font(.caption)
+                        .font(ClaudeTheme.sans(11))
+                        .foregroundStyle(ClaudeTheme.terracotta)
                 }
             }
 
@@ -100,11 +141,12 @@ struct SetupRow: View {
             if let action {
                 Button(action.0) { action.1() }
                     .buttonStyle(.bordered)
+                    .tint(ClaudeTheme.terracotta)
                     .controlSize(.small)
             }
         }
-        .padding(12)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
+        .padding(14)
+        .claudeCard(radius: ClaudeTheme.radiusMedium)
     }
 }
 
@@ -114,6 +156,7 @@ struct OnboardingFooter: View {
     var primaryDisabled: Bool = false
     var showSkip: Bool = false
     var skipAction: (() -> Void)? = nil
+    var backAction: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 10) {
@@ -121,22 +164,50 @@ struct OnboardingFooter: View {
                 primaryAction()
             } label: {
                 Text(primaryLabel)
-                    .font(.title3.weight(.semibold))
+                    .font(ClaudeTheme.sans(14, weight: .semibold))
+                    .foregroundStyle(ClaudeTheme.ivory)
                     .frame(maxWidth: 240)
-                    .padding(.vertical, 6)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: ClaudeTheme.radiusMedium, style: .continuous)
+                            .fill(primaryDisabled ? ClaudeTheme.warmSilver : ClaudeTheme.terracotta)
+                    )
+                    .contentShape(Rectangle())
             }
-            .buttonStyle(.borderedProminent)
-            .tint(AppConstants.accent)
-            .controlSize(.large)
+            .buttonStyle(.plain)
             .disabled(primaryDisabled)
 
-            if showSkip, let skipAction {
-                Button("Skip") { skipAction() }
+            HStack(spacing: 18) {
+                if let backAction {
+                    Button {
+                        backAction()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("Back")
+                        }
+                        .font(ClaudeTheme.sans(11))
+                        .foregroundStyle(ClaudeTheme.stone)
+                        .contentShape(Rectangle())
+                    }
                     .buttonStyle(.plain)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                }
+
+                if showSkip, let skipAction {
+                    Button {
+                        skipAction()
+                    } label: {
+                        Text("Skip")
+                            .font(ClaudeTheme.sans(11))
+                            .foregroundStyle(ClaudeTheme.stone)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
             }
+            .frame(height: 18)
         }
-        .padding(.bottom, 32)
+        .padding(.bottom, 36)
     }
 }

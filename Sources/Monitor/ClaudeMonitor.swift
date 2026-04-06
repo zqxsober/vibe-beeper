@@ -65,7 +65,7 @@ final class ClaudeMonitor: ObservableObject {
 
     // MARK: - Published State
 
-    @Published var state: ClaudeState = .done
+    @Published var state: ClaudeState = .idle
     @Published var pendingPermission: PendingPermission?
     @Published var soundEnabled: Bool {
         didSet { UserDefaults.standard.set(soundEnabled, forKey: "soundEnabled") }
@@ -246,6 +246,7 @@ final class ClaudeMonitor: ObservableObject {
         if let v = UserDefaults.standard.string(forKey: "hotkeyChar_terminal") { hotkeyTerminal = v }
         if let v = UserDefaults.standard.string(forKey: "hotkeyChar_mute") { hotkeyMute = v }
         isActive = UserDefaults.standard.object(forKey: "isActive") as? Bool ?? true
+        idleStartTime = Date()
         voiceService.ttsService = ttsService
         wireVoiceStateBindings()
         preWarmWhisper()
@@ -284,6 +285,12 @@ final class ClaudeMonitor: ObservableObject {
             guard let self, self.pendingPermission == nil else { return }
             Task { @MainActor [weak self] in
                 guard let self else { return }
+                // No hook activity for the full interval — treat any lingering
+                // sessions as stale (SessionEnd hook was removed in v7.0, so
+                // sessions at .done/.error never get cleaned up otherwise).
+                self.sessionStates.removeAll()
+                self.sessionLastSeen.removeAll()
+                self.sessionCount = 0
                 self.state = .idle
                 self.idleStartTime = Date()
             }

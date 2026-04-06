@@ -8,33 +8,21 @@ struct OnboardingThemeStep: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 16) {
-                Spacer()
-
-                VStack(spacing: 4) {
-                    Text("Pick your Beeper")
-                        .font(.title2)
-                        .fontWeight(.bold)
-
-                    Text("Every dev gets their own Beeper. Pick yours.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
-
-                // Live beeper preview
-                Group {
-                    switch viewModel.selectedSize {
-                    case .large:
-                        LargeShellPreview(theme: selectedTheme)
-                    case .compact:
-                        CompactShellPreview(theme: selectedTheme)
-                    case .menuOnly:
-                        MenuOnlyPreview()
-                    }
-                }
-                .animation(.easeInOut(duration: 0.25), value: viewModel.selectedSize)
-                .animation(.easeInOut(duration: 0.2), value: viewModel.selectedThemeId)
+        OnboardingShell(
+            stepNumber: 2,
+            totalSteps: OnboardingViewModel.totalCountedSteps,
+            title: "Which color Beeper?",
+            subtitle: "Change this anytime in Settings.",
+            primaryLabel: "Next",
+            primaryAction: { viewModel.goNext() },
+            skipLabel: nil,
+            skipAction: nil,
+            onBack: { viewModel.goBack() }
+        ) {
+            VStack(spacing: 20) {
+                // Always show the large (button-equipped) beeper — colour is what this step is about.
+                LargeShellPreview(theme: selectedTheme)
+                    .animation(.easeInOut(duration: 0.2), value: viewModel.selectedThemeId)
 
                 // Color swatches
                 HStack(spacing: 10) {
@@ -45,51 +33,30 @@ struct OnboardingThemeStep: View {
                             ZStack {
                                 Circle()
                                     .fill(Color(hex: theme.dotColor))
-                                    .frame(width: 26, height: 26)
+                                    .frame(width: 24, height: 24)
                                 if theme.id == "white" {
                                     Circle()
                                         .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                                        .frame(width: 26, height: 26)
+                                        .frame(width: 24, height: 24)
                                 }
                                 if viewModel.selectedThemeId == theme.id {
-                                    Image(systemName: "checkmark")
-                                        .font(.system(size: 10, weight: .bold))
-                                        .foregroundStyle(theme.id == "white" ? .black : .white)
+                                    Circle()
+                                        .strokeBorder(ClaudeTheme.terracotta, lineWidth: 2)
+                                        .frame(width: 30, height: 30)
                                 }
                             }
+                            .frame(width: 32, height: 32)
                         }
                         .buttonStyle(.plain)
                     }
                 }
 
-                Text(selectedTheme.displayName)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Text(selectedTheme.displayName.uppercased())
+                    .font(ClaudeTheme.mono(10, weight: .semibold))
+                    .tracking(0.8)
+                    .foregroundStyle(ClaudeTheme.nearBlack)
                     .animation(.none, value: viewModel.selectedThemeId)
-
-                // Size toggle
-                VStack(spacing: 6) {
-                    Picker("Size", selection: $viewModel.selectedSize) {
-                        ForEach(WidgetSize.allCases, id: \.self) { size in
-                            Text(size.label).tag(size)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(maxWidth: 280)
-
-                    Text(viewModel.selectedSize.menuDescription)
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
-
-                Spacer()
             }
-            .padding(.horizontal, 48)
-
-            OnboardingFooter(
-                primaryLabel: "Next",
-                primaryAction: { viewModel.goNext() }
-            )
         }
     }
 }
@@ -117,7 +84,6 @@ private struct LargeShellPreview: View {
                     .frame(width: shellW, height: shellH)
             }
 
-            // LEDs
             HStack(spacing: 3) {
                 Circle().fill(AppConstants.ledGreen).frame(width: 4, height: 4)
                     .shadow(color: AppConstants.ledGreen.opacity(0.6), radius: 2)
@@ -125,11 +91,14 @@ private struct LargeShellPreview: View {
             }
             .offset(x: 226, y: 15)
 
-            // LCD with real pixel character
             OnboardingLCD(animFrame: animFrame)
                 .frame(width: lcdW, height: lcdH)
                 .clipped()
                 .offset(x: lcdX, y: lcdY)
+
+            // Button overlays (static, decorative)
+            OnboardingButtonRow()
+                .offset(x: 12, y: shellH - 54)
         }
         .frame(width: shellW, height: shellH)
         .onReceive(animTimer) { _ in animFrame += 1 }
@@ -143,12 +112,12 @@ private struct CompactShellPreview: View {
     @State private var animFrame = 0
     private let animTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
-    private let shellW: CGFloat = 180
-    private let shellH: CGFloat = 92
-    private let lcdX: CGFloat = 27
-    private let lcdY: CGFloat = 27
-    private let lcdW: CGFloat = 118
-    private let lcdH: CGFloat = 26
+    private let shellW: CGFloat = 160
+    private let shellH: CGFloat = 82
+    private let lcdX: CGFloat = 24
+    private let lcdY: CGFloat = 24
+    private let lcdW: CGFloat = 105
+    private let lcdH: CGFloat = 23
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -163,7 +132,7 @@ private struct CompactShellPreview: View {
                 Circle().fill(AppConstants.ledGreen).frame(width: 3, height: 3)
                 Circle().fill(AppConstants.ledOff).frame(width: 3, height: 3)
             }
-            .offset(x: 141, y: 17)
+            .offset(x: 125, y: 15)
 
             OnboardingLCD(animFrame: animFrame, compact: true)
                 .frame(width: lcdW, height: lcdH)
@@ -179,16 +148,16 @@ private struct CompactShellPreview: View {
 
 private struct MenuOnlyPreview: View {
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             Image(nsImage: BeeperIcon.image(state: .normal))
-                .frame(width: 36, height: 36)
-                .scaleEffect(2)
+                .frame(width: 32, height: 32)
+                .scaleEffect(1.8)
 
             Text("Lives in your menu bar")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+                .font(ClaudeTheme.sans(11))
+                .foregroundStyle(ClaudeTheme.stone)
         }
-        .frame(height: 120)
+        .frame(height: 102)
     }
 }
 
@@ -207,11 +176,11 @@ private struct OnboardingLCD: View {
 
             HStack(spacing: compact ? 4 : 6) {
                 PixelCharacterView(state: .idle, frame: animFrame, onColor: lcdOn)
-                    .frame(width: compact ? 24 : 28, height: compact ? 22 : 24)
+                    .frame(width: compact ? 22 : 26, height: compact ? 20 : 22)
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text("SNOOZING")
-                        .font(.system(size: compact ? 9 : 10, weight: .heavy, design: .monospaced))
+                        .font(.system(size: compact ? 8 : 9, weight: .heavy, design: .monospaced))
                         .foregroundColor(lcdOn)
                     Text("Idle")
                         .font(.system(size: compact ? 6 : 7, weight: .medium, design: .monospaced))
@@ -222,7 +191,6 @@ private struct OnboardingLCD: View {
             }
             .padding(.leading, compact ? 8 : 10)
 
-            // Pixel grid
             Canvas { context, size in
                 let lineColor = AppConstants.lcdGridLine.opacity(0.12)
                 let spacing: CGFloat = 2.0
@@ -238,6 +206,47 @@ private struct OnboardingLCD: View {
                 }
             }
             .allowsHitTesting(false)
+        }
+    }
+}
+
+// MARK: - Decorative button row
+//
+// Production constants: pill 122×68, button 78×68, HStack spacing -16/-24.
+// `productionScale` maps to fraction of production size:
+//   0.75 → Theme preview (270×120 shell)
+//   0.5  → Sizes cards  (183×80 shell)
+
+struct OnboardingButtonRow: View {
+    var productionScale: CGFloat = 0.75
+
+    private var pillW: CGFloat { 122 * productionScale }
+    private var pillH: CGFloat { 68 * productionScale }
+    private var btnW: CGFloat { 78 * productionScale }
+    private var btnH: CGFloat { 68 * productionScale }
+    private var outerSpacing: CGFloat { -16 * productionScale }
+    private var innerSpacing: CGFloat { -24 * productionScale }
+
+    var body: some View {
+        HStack(alignment: .center, spacing: outerSpacing) {
+            img("pill-normal.png", width: pillW, height: pillH)
+            HStack(spacing: innerSpacing) {
+                img("record-normal.png", width: btnW, height: btnH)
+                img("sound-normal.png", width: btnW, height: btnH)
+            }
+            img("terminal-normal.png", width: btnW, height: btnH)
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func img(_ name: String, width: CGFloat, height: CGFloat) -> some View {
+        Group {
+            if let nsImg = loadImage(name) {
+                Image(nsImage: nsImg)
+                    .resizable()
+                    .interpolation(.high)
+                    .frame(width: width, height: height)
+            }
         }
     }
 }

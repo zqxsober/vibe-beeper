@@ -57,12 +57,12 @@ enum BeeperIcon {
         return img
     }
 
-    // MARK: - Recording (circle with stop square inside)
+    // MARK: - Recording (red circle with stop square inside)
 
     private static func recordingIcon() -> NSImage {
         let size = NSSize(width: 18, height: 18)
         let img = NSImage(size: size, flipped: true) { _ in
-            NSColor.black.setFill()
+            NSColor.systemRed.setFill()
             // Outer circle
             NSBezierPath(ovalIn: NSRect(x: 1, y: 1, width: 16, height: 16)).fill()
             // Stop square punched out
@@ -72,16 +72,16 @@ enum BeeperIcon {
             NSBezierPath(roundedRect: sq, xRadius: 1.5, yRadius: 1.5).fill()
             return true
         }
-        img.isTemplate = true
+        img.isTemplate = false
         return img
     }
 
-    // MARK: - Speaking (speaker with 2 sound waves)
+    // MARK: - Speaking (green speaker with 2 sound waves)
 
     private static func speakingIcon() -> NSImage {
         let size = NSSize(width: 18, height: 18)
         let img = NSImage(size: size, flipped: true) { _ in
-            let color: NSColor = .black
+            let color: NSColor = .systemGreen
             color.setFill()
             color.setStroke()
 
@@ -112,7 +112,7 @@ enum BeeperIcon {
 
             return true
         }
-        img.isTemplate = true
+        img.isTemplate = false
         return img
     }
 }

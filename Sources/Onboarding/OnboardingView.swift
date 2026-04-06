@@ -4,20 +4,26 @@ import AppKit
 struct OnboardingView: View {
     @StateObject private var viewModel = OnboardingViewModel()
 
+    private var isDarkStep: Bool { viewModel.currentStep == .welcome }
+
     var body: some View {
         VStack(spacing: 0) {
-            // Progress bar
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(Color.white.opacity(0.1))
-                    Rectangle()
-                        .fill(AppConstants.accent)
-                        .frame(width: geo.size.width * viewModel.progress)
-                        .animation(.easeInOut(duration: 0.3), value: viewModel.progress)
+            // Progress bar — hidden on welcome splash
+            if viewModel.currentStep != .welcome {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .fill(ClaudeTheme.borderCream)
+                        Rectangle()
+                            .fill(ClaudeTheme.terracotta)
+                            .frame(width: geo.size.width * viewModel.displayProgress)
+                            .animation(.easeInOut(duration: 0.3), value: viewModel.displayProgress)
+                    }
                 }
+                .frame(height: 3)
+            } else {
+                Color.clear.frame(height: 3)
             }
-            .frame(height: 3)
 
             // Step content
             Group {
@@ -28,6 +34,8 @@ struct OnboardingView: View {
                     OnboardingCLIStep(viewModel: viewModel)
                 case .theme:
                     OnboardingThemeStep(viewModel: viewModel)
+                case .sizes:
+                    OnboardingSizesStep(viewModel: viewModel)
                 case .mode:
                     OnboardingModeStep(viewModel: viewModel)
                 case .permissions:
@@ -44,6 +52,9 @@ struct OnboardingView: View {
             .animation(.easeInOut(duration: 0.25), value: viewModel.currentStep)
         }
         .frame(width: 600, height: 520)
+        .background(isDarkStep ? ClaudeTheme.nearBlack : ClaudeTheme.parchment)
+        .foregroundStyle(isDarkStep ? ClaudeTheme.ivory : ClaudeTheme.nearBlack)
+        .animation(.easeInOut(duration: 0.25), value: isDarkStep)
         .onAppear {
             if UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") {
                 NSApp.windows.first(where: { $0.identifier?.rawValue == "onboarding" })?.orderOut(nil)
