@@ -10,8 +10,8 @@ struct OnboardingModeStep: View {
         OnboardingShell(
             stepNumber: 4,
             totalSteps: OnboardingViewModel.totalCountedSteps,
-            title: "How much do you trust Claude?",
-            subtitle: "Change this anytime from the menu bar.",
+            title: "How much should Claude do on its own?",
+            subtitle: "Controls when CC-Beeper asks you before acting. Easy to change later.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             skipLabel: nil,
@@ -41,7 +41,7 @@ private struct PresetCard: View {
     private var shortDescription: String {
         switch preset {
         case .cautious: "Ask me every time."
-        case .relaxed: "Reads fine. Ask for writes."
+        case .relaxed: "Reads are fine. Ask for writes."
         case .trusted: "Auto file ops. Ask for bash."
         case .yolo: "Don't ask. Just do it."
         }

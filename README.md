@@ -6,7 +6,7 @@
 
 Never miss a permission request, task completion, or error again — even when Claude Code is buried under 30 tabs.
 
-![CC-Beeper](assets/hero.gif)
+<img src="assets/hero.gif" width="320">
 
 </div>
 
@@ -106,8 +106,6 @@ Three modes depending on how much screen real estate you want to give it:
 - **Large** — full beeper with LCD + buttons (approve, deny, record, sound, terminal)
 - **Compact** — LCD only, interact via hotkeys
 - **Menu Only** — no widget on screen, just the menu bar icon
-
-<img src="assets/hero.gif" width="360"> <img src="assets/compact.png" width="200">
 
 The menu bar icon is always visible in all modes.
 

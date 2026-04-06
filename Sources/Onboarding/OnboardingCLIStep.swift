@@ -7,8 +7,8 @@ struct OnboardingCLIStep: View {
         OnboardingShell(
             stepNumber: 1,
             totalSteps: OnboardingViewModel.totalCountedSteps,
-            title: "Add hooks to Claude Code?",
-            subtitle: "CC-Beeper reacts via 6 entries in ~/.claude/settings.json. Review or remove them anytime.",
+            title: "Add hooks to Claude Code",
+            subtitle: "CC-Beeper needs 6 hook entries in ~/.claude/settings.json to work. Review or remove them anytime.",
             primaryLabel: "Next",
             primaryAction: handlePrimary,
             skipLabel: "Skip",

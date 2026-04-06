@@ -19,7 +19,7 @@ struct OnboardingSizesStep: View {
             stepNumber: 3,
             totalSteps: OnboardingViewModel.totalCountedSteps,
             title: "How visible should it be?",
-            subtitle: "Resize anytime from the menu bar.",
+            subtitle: "You can always change this from the menu bar.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             skipLabel: nil,
