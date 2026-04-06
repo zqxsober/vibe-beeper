@@ -26,7 +26,6 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
     private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
     private var lastTranscript: String = ""
     private var recordingStartTime: Date?
-    private var previousAppPID: pid_t? = nil
 
     // MARK: - Whisper State
 
@@ -94,9 +93,6 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         isRecording = true
         hasSubmitted = false
         recordingError = nil
-
-        // Capture previous app BEFORE focusing terminal
-        previousAppPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
 
         // Recreate AVAudioEngine each session — do not reuse (prevents headphone corruption)
         audioEngine = AVAudioEngine()
@@ -373,34 +369,9 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         }
     }
 
-    // MARK: - Voice Command Phrase Stripping
-
-    /// Strips any trailing "beeper <command>" phrase from the transcript.
-    /// Covers Whisper and SFSpeech variants of the trigger word.
-    private func stripVoiceCommand(_ text: String) -> String {
-        let lowered = text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        let triggers = ["beeper", "beep", "be", "people", "deeper", "keeper", "beaver", "bieber", "peter", "bleeper"]
-        let commands = ["stop", "record", "mute", "terminal", "allow", "deny", "accept", "stock", "stopped"]
-
-        // Try to match "<trigger> <command>" at the end
-        for trigger in triggers {
-            for command in commands {
-                let suffix = "\(trigger) \(command)"
-                if lowered.hasSuffix(suffix) {
-                    let trimmed = String(text.dropLast(suffix.count))
-                        .trimmingCharacters(in: .whitespacesAndNewlines)
-                    log("Stripped voice command suffix '\(suffix)' from transcript")
-                    return trimmed
-                }
-            }
-        }
-        return text
-    }
-
     // MARK: - Inject text + Enter (Whisper and SFSpeech paths)
 
     private func injectAndSubmit(_ text: String) {
-        let text = stripVoiceCommand(text)
         guard !text.isEmpty else { return }
 
         // Use FocusService for terminal/IDE focus + injection safety (IDE-04, FRAG-01)
@@ -452,15 +423,4 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         log("injected + submitted: '\(text)'")
     }
 
-    // MARK: - Refocus Previous App
-
-    private func refocusPreviousApp() {
-        guard let pid = previousAppPID else { return }
-        usleep(200_000) // brief pause after Enter
-        if let app = NSRunningApplication(processIdentifier: pid) {
-            app.activate()
-            log("refocused previous app (pid \(pid))")
-        }
-        previousAppPID = nil
-    }
 }
