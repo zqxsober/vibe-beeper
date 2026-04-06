@@ -8,6 +8,22 @@ struct SettingsVoiceSection: View {
     @State private var downloadError: String?
 
     var body: some View {
+        Section("Voice Commands") {
+            Toggle(isOn: Binding(
+                get: { monitor.voiceCommandService.enabled },
+                set: { monitor.voiceCommandService.enabled = $0 }
+            )) {
+                Label("Double Clap Dictation", systemImage: "hands.sparkles.fill")
+            }
+
+            if monitor.voiceCommandService.enabled {
+                Text("Double clap to start dictating, double clap again to stop and send. Microphone is always on while this is enabled.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 2)
+            }
+        }
+
         Section("Speech Recognition") {
             HStack {
                 Label("STT Engine", systemImage: "waveform.and.mic")

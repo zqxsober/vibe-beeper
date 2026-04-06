@@ -373,9 +373,34 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         }
     }
 
+    // MARK: - Voice Command Phrase Stripping
+
+    /// Strips any trailing "beeper <command>" phrase from the transcript.
+    /// Covers Whisper and SFSpeech variants of the trigger word.
+    private func stripVoiceCommand(_ text: String) -> String {
+        let lowered = text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let triggers = ["beeper", "beep", "be", "people", "deeper", "keeper", "beaver", "bieber", "peter", "bleeper"]
+        let commands = ["stop", "record", "mute", "terminal", "allow", "deny", "accept", "stock", "stopped"]
+
+        // Try to match "<trigger> <command>" at the end
+        for trigger in triggers {
+            for command in commands {
+                let suffix = "\(trigger) \(command)"
+                if lowered.hasSuffix(suffix) {
+                    let trimmed = String(text.dropLast(suffix.count))
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+                    log("Stripped voice command suffix '\(suffix)' from transcript")
+                    return trimmed
+                }
+            }
+        }
+        return text
+    }
+
     // MARK: - Inject text + Enter (Whisper and SFSpeech paths)
 
     private func injectAndSubmit(_ text: String) {
+        let text = stripVoiceCommand(text)
         guard !text.isEmpty else { return }
 
         // Use FocusService for terminal/IDE focus + injection safety (IDE-04, FRAG-01)
@@ -425,8 +450,6 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         enterUp.post(tap: .cghidEventTap)
 
         log("injected + submitted: '\(text)'")
-
-        refocusPreviousApp()
     }
 
     // MARK: - Refocus Previous App

@@ -131,6 +131,7 @@ final class ClaudeMonitor: ObservableObject {
 
     let voiceService = VoiceService()
     let ttsService = TTSService()
+    let voiceCommandService = VoiceCommandService()
 
     @Published var voiceOver: Bool = false {
         didSet { UserDefaults.standard.set(voiceOver, forKey: "voiceOver") }
@@ -249,6 +250,7 @@ final class ClaudeMonitor: ObservableObject {
         idleStartTime = Date()
         voiceService.ttsService = ttsService
         wireVoiceStateBindings()
+        wireVoiceCommands()
         preWarmWhisper()
         launchKokoro()
     }
@@ -308,6 +310,15 @@ final class ClaudeMonitor: ObservableObject {
             try? fm.createDirectory(atPath: Self.ipcDir, withIntermediateDirectories: true)
         }
         try? fm.setAttributes([.posixPermissions: 0o700], ofItemAtPath: Self.ipcDir)
+    }
+
+    private func wireVoiceCommands() {
+        voiceCommandService.onDoubleClap = { [weak self] in
+            self?.voiceService.toggle()
+        }
+        if voiceCommandService.enabled {
+            voiceCommandService.startListening()
+        }
     }
 
     private func wireVoiceStateBindings() {
