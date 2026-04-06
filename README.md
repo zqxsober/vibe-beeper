@@ -44,15 +44,15 @@ If you use Claude Code, you know the friction: you kick off a task, switch to so
 
 CC-Beeper's screen shows 8 distinct states, each with its own animation, subtitle pool, and priority level:
 
-| State | Preview |
-|-------|---------|
-| **SNOOZING** | ![Snoozing](assets/states/snoozing.png) |
-| **WORKING** | ![Working](assets/states/working.png) |
-| **DONE!** | ![Done](assets/states/done.png) |
-| **ERROR** | ![Error](assets/states/error.png) |
-| **ALLOW?** | ![Allow](assets/states/allow.png) |
-| **LISTENING** | ![Listening](assets/states/listening.png) |
-| **RECAP** | ![Recap](assets/states/recap.png) |
+| State | | What's happening |
+|-------|-------|-----------------|
+| **SNOOZING** | <img src="assets/states/snoozing.png" width="200"> | No Claude Code session active for 60s. The character sleeps. |
+| **WORKING** | <img src="assets/states/working.png" width="200"> | Claude is running a tool. Shows what it's doing: *Busy with bash*, *Tinkering with write*... |
+| **DONE!** | <img src="assets/states/done.png" width="200"> | Task completed successfully. Blinks 10x, then fades to idle after 3 min. |
+| **ERROR** | <img src="assets/states/error.png" width="200"> | Task failed. Glitch entrance followed by a face meltdown animation. |
+| **ALLOW?** | <img src="assets/states/allow.png" width="200"> | Claude needs a permission you haven't auto-approved. Press ⌥A to approve, ⌥D to deny. |
+| **LISTENING** | <img src="assets/states/listening.png" width="200"> | Voice recording active — you're dictating a prompt via microphone. |
+| **RECAP** | <img src="assets/states/recap.png" width="200"> | TTS is reading Claude's last response aloud. |
 
 Every state transition triggers a bounce — the character hops 4px up and snaps back in 0.25s. Subtitles are randomly picked from each pool on every change.
 
@@ -99,36 +99,23 @@ Have Claude read its responses aloud when a task finishes.
 - **9 languages**, 39 voices (20 female + 19 male): English US, English UK, Spanish, French, Hindi, Italian, Japanese, Portuguese, Chinese
 - A single language preference drives both the STT hint and TTS voice selection
 
-### Pixel-Art Characters
-
-<!-- Character sprite sheet placeholder -->
-<!-- ![Pixel art characters](assets/sprites.png) -->
-
-- 14x12 pixel sprites rendered at 2.5x scale (35x30 display)
-- 4 animation frames per state, advancing every 0.45s
-- Each LCD state has a unique animation: sleep bubbles, typing hands, hat toss, face meltdown, bouncing alarm, hand wave, wobbling antenna, talking mouth
-- **YOLO mode** replaces all animations with a single static rabbit sprite — long ears, whisker mouth, round face
-- Error state opens with a 0.5s glitch effect (pseudo-random pixel noise) before the meltdown begins
-
 ### Widget Sizes
 
-| Size | Shell | LCD | Buttons | Total Window |
-|------|-------|-----|---------|-------------|
-| **Large** | 360x160 | 286x45 | Accept/Deny pill, Record, Sound, Terminal | 440x240 |
-| **Compact** | 220x113 | 175x45 | None (hotkeys only) | 300x193 |
-| **Menu Only** | Hidden | Hidden | None | Menu bar icon only |
+Three modes depending on how much screen real estate you want to give it:
 
-The menu bar icon is always visible in all modes. In compact mode, the permission badge shows icon-only (no label text).
+- **Large** — full beeper with LCD + buttons (approve, deny, record, sound, terminal)
+- **Compact** — LCD only, interact via hotkeys
+- **Menu Only** — no widget on screen, just the menu bar icon
+
+<img src="assets/hero.gif" width="360"> <img src="assets/compact.png" width="200">
+
+The menu bar icon is always visible in all modes.
 
 ### Themes
 
-- **10 shell colors:** Black, Blue, Green, Mint, Orange, Pink, Purple, Red, White, Yellow
-- Each has large + small PNG variants
-- **Dark mode support:** LCD background shifts from light green (#98D65A) to dark (#1E2012), text from deep green to muted olive
-- 2 LED indicators (top-right): green for steady state, amber pulses for working/attention
+10 shell colors, each with a dark mode LCD variant.
 
-<!-- Theme grid screenshot placeholder -->
-<!-- ![Themes](assets/themes.png) -->
+![Shell colors](assets/shell-colors.png)
 
 ### Global Hotkeys
 
@@ -193,6 +180,20 @@ CC-Beeper has 8 settings tabs:
 | **Permissions** | 4 preset radio buttons |
 | **Setup** | Reinstall hooks, reopen onboarding |
 | **About** | Version, credits, links |
+
+---
+
+## Privacy
+
+CC-Beeper is fully local. Nothing leaves your machine.
+
+- **No network calls** — CC-Beeper never contacts any external server. All communication happens over `127.0.0.1` between Claude Code's hooks and CC-Beeper's local HTTP server.
+- **No telemetry, no analytics, no crash reporting** — zero outbound connections.
+- **On-device speech** — WhisperKit (STT) and Kokoro (TTS) both run locally. Your voice data is never uploaded anywhere.
+- **No accounts** — no sign-up, no login, no tokens stored.
+- **Hooks are transparent** — the 6 entries added to `~/.claude/settings.json` are plain `curl` commands to `localhost`. Inspect or remove them anytime.
+- **Port file only** — the only file CC-Beeper writes outside the app sandbox is `~/.claude/cc-beeper/port` (a single integer), so other tools know where to reach it.
+- **Permissions are minimal** — Accessibility (for global hotkeys), Microphone (for dictation), Speech Recognition (fallback STT). None are required; the app works without them.
 
 ---
 
