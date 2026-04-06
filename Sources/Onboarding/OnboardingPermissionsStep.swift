@@ -8,7 +8,7 @@ struct OnboardingPermissionsStep: View {
             stepNumber: 5,
             totalSteps: OnboardingViewModel.totalCountedSteps,
             title: "Grant these permissions?",
-            subtitle: "None are required. Grant them whenever you're ready.",
+            subtitle: "Not required now, but they unlock hotkeys, dictation, and voice. You can enable them later in Settings.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             primaryDisabled: !viewModel.allPermissionsGranted,

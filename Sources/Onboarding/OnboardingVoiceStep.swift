@@ -5,22 +5,12 @@ struct OnboardingVoiceStep: View {
 
     private var isKokoroSelected: Bool { viewModel.ttsProvider == "kokoro" }
 
-    private var sortedLangCodes: [(code: String, name: String)] {
-        KokoroVoiceCatalog.languageNames
-            .map { (code: $0.key, name: $0.value) }
-            .sorted { a, b in
-                if a.code == "a" { return true }
-                if b.code == "a" { return false }
-                return a.name < b.name
-            }
-    }
-
     var body: some View {
         OnboardingShell(
             stepNumber: 6,
             totalSteps: OnboardingViewModel.totalCountedSteps,
             title: "Download the voice engine?",
-            subtitle: "Kokoro runs on-device (~930 MB). Skip to use Apple Speech instead.",
+            subtitle: "Kokoro runs on-device (~930 MB). You can always download it later in Settings.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             primaryDisabled: isKokoroSelected && !viewModel.isModelReady,
@@ -54,14 +44,9 @@ struct OnboardingVoiceStep: View {
                 }
                 .buttonStyle(.plain)
 
-                // Language picker
-                if isKokoroSelected {
-                    LanguagePicker(viewModel: viewModel, sortedLangCodes: sortedLangCodes)
-                        .padding(.top, 4)
-
-                    if viewModel.needsLangDeps && !viewModel.langDepsReady {
-                        LangDepsCard(viewModel: viewModel)
-                    }
+                // Language dependencies (shown outside the card)
+                if isKokoroSelected && viewModel.needsLangDeps && !viewModel.langDepsReady {
+                    LangDepsCard(viewModel: viewModel)
                 }
             }
             .frame(maxWidth: 460)
@@ -111,63 +96,77 @@ private extension View {
 private struct KokoroCardContent: View {
     @ObservedObject var viewModel: OnboardingViewModel
 
+    private var sortedLangCodes: [(code: String, name: String)] {
+        KokoroVoiceCatalog.languageNames
+            .map { (code: $0.key, name: $0.value) }
+            .sorted { a, b in
+                if a.code == "a" { return true }
+                if b.code == "a" { return false }
+                return a.name < b.name
+            }
+    }
+
     var body: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(ClaudeTheme.parchment)
-                    .frame(width: 34, height: 34)
-                Image(systemName: "waveform")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(ClaudeTheme.terracotta)
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Kokoro · On-device")
-                    .font(ClaudeTheme.sans(13, weight: .semibold))
-                    .foregroundStyle(ClaudeTheme.nearBlack)
-                if viewModel.isModelDownloading {
-                    Text(viewModel.modelDownloadPhase)
-                        .font(ClaudeTheme.sans(11))
-                        .foregroundStyle(ClaudeTheme.stone)
-                        .lineLimit(1)
-                } else if viewModel.isModelReady {
-                    Text("~930 MB · Ready")
-                        .font(ClaudeTheme.sans(11))
-                        .foregroundStyle(ClaudeTheme.green)
-                } else {
-                    Text("~930 MB · No API keys · Best quality")
-                        .font(ClaudeTheme.sans(11))
-                        .foregroundStyle(ClaudeTheme.stone)
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(ClaudeTheme.parchment)
+                        .frame(width: 34, height: 34)
+                    Image(systemName: "waveform")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(ClaudeTheme.terracotta)
                 }
-            }
 
-            Spacer()
-
-            if viewModel.isModelReady {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(ClaudeTheme.green)
-            } else if viewModel.isModelDownloading {
-                Text("\(Int(viewModel.modelDownloadProgress * 100))%")
-                    .font(ClaudeTheme.mono(11, weight: .semibold))
-                    .foregroundStyle(ClaudeTheme.terracotta)
-            } else {
-                Button(action: { viewModel.downloadModels() }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "arrow.down")
-                            .font(.system(size: 10, weight: .semibold))
-                        Text("Download")
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Kokoro · On-device")
+                        .font(ClaudeTheme.sans(13, weight: .semibold))
+                        .foregroundStyle(ClaudeTheme.nearBlack)
+                    if viewModel.isModelDownloading {
+                        Text(viewModel.modelDownloadPhase)
+                            .font(ClaudeTheme.sans(11))
+                            .foregroundStyle(ClaudeTheme.stone)
+                            .lineLimit(1)
+                    } else if viewModel.isModelReady {
+                        Text("~930 MB · Ready")
+                            .font(ClaudeTheme.sans(11))
+                            .foregroundStyle(ClaudeTheme.green)
+                    } else {
+                        Text("~930 MB · No API keys · Best quality")
+                            .font(ClaudeTheme.sans(11))
+                            .foregroundStyle(ClaudeTheme.stone)
                     }
-                    .font(ClaudeTheme.sans(12, weight: .semibold))
-                    .foregroundStyle(ClaudeTheme.nearBlack)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Capsule().fill(ClaudeTheme.ivory))
-                    .overlay(Capsule().strokeBorder(ClaudeTheme.ringWarm, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+
+                Spacer()
+
+                if viewModel.isModelReady {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(ClaudeTheme.green)
+                } else if viewModel.isModelDownloading {
+                    Text("\(Int(viewModel.modelDownloadProgress * 100))%")
+                        .font(ClaudeTheme.mono(11, weight: .semibold))
+                        .foregroundStyle(ClaudeTheme.terracotta)
+                } else {
+                    Button(action: { viewModel.downloadModels() }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.down")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("Download")
+                        }
+                        .font(ClaudeTheme.sans(12, weight: .semibold))
+                        .foregroundStyle(ClaudeTheme.nearBlack)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Capsule().fill(ClaudeTheme.ivory))
+                        .overlay(Capsule().strokeBorder(ClaudeTheme.ringWarm, lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                }
             }
+
+            LanguagePicker(viewModel: viewModel, sortedLangCodes: sortedLangCodes)
         }
         .overlay(alignment: .bottom) {
             if viewModel.isModelDownloading {
@@ -191,7 +190,7 @@ private struct LanguagePicker: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Text("Kokoro language")
+            Text("Select language")
                 .font(ClaudeTheme.sans(12))
                 .foregroundStyle(ClaudeTheme.stone)
             Spacer()

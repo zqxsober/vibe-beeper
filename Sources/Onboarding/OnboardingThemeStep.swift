@@ -11,8 +11,8 @@ struct OnboardingThemeStep: View {
         OnboardingShell(
             stepNumber: 2,
             totalSteps: OnboardingViewModel.totalCountedSteps,
-            title: "Which color Beeper?",
-            subtitle: "Change this anytime in Settings.",
+            title: "Pick your Beeper color",
+            subtitle: "Sets the vibe. Easy to swap later.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             skipLabel: nil,
