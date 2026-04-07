@@ -2,9 +2,9 @@
 
 # CC-Beeper
 
-**A retro pager companion for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) on macOS.**
+**A floating macOS pager for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).**
 
-Never miss a permission request, task completion, or error again — even when Claude Code is buried under 30 tabs.
+*Stop babysitting your terminal. Start shipping.*
 
 <img src="assets/hero.gif" width="320">
 
@@ -14,93 +14,78 @@ Never miss a permission request, task completion, or error again — even when C
   <img src="https://img.shields.io/badge/%EF%A3%BF_DOWNLOAD_FOR_MAC-DMG-black?style=for-the-badge&labelColor=555555" alt="Download for Mac">
 </a>
 
+<br>
+
+![macOS 26+](https://img.shields.io/badge/macOS-26+-black?style=flat-square)
+![License: GPL-3.0](https://img.shields.io/github/license/vecartier/cc-beeper?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/vecartier/cc-beeper?style=flat-square)
+
 </div>
 
 ---
 
-CC-Beeper is a tiny macOS widget that sits on your desktop and stays connected to Claude Code via local HTTP hooks. It shows what Claude is doing on a retro pixel-art LCD, plays sounds when it needs attention, and lets you approve or deny permissions with a hotkey — no terminal switching required.
+## Why
 
-Think of it as a pager for your AI coding assistant.
+You kick off a task in Claude Code. Then life happens. Claude finishes, or hits an error, or needs a permission — but your terminal is buried under three windows.
+
+CC-Beeper fixes that. It's a small widget that sits on your desktop, shows what Claude is doing, and lets you respond without switching apps. Never miss an update. Respond without breaking your flow.
+
+---
+
+## See It in Action
 
 https://github.com/user-attachments/assets/d65f557b-1b5e-41f9-b9fe-9826897f9140
 
 ---
 
-## LCD States
+## Features
 
-The screen shows 8 states, each with its own pixel-art animation and rotating subtitle pool. States follow a strict priority order so higher-urgency events always surface first.
+### Real-Time States
 
-| State | | What's happening |
-|-------|-------|-----------------|
-| **SNOOZING** | <img src="assets/states/snoozing.png" width="200"> | No active session for 60s. The character sleeps. |
-| **WORKING** | <img src="assets/states/working.png" width="200"> | Claude is running a tool — shows what it's doing: *Busy with bash*, *Tinkering with write*... |
-| **DONE!** | <img src="assets/states/done.png" width="200"> | Task completed. Blinks, then fades to idle after 3 min. |
-| **ERROR** | <img src="assets/states/error.png" width="200"> | Task failed. Glitch entrance followed by a pixel meltdown. |
-| **ALLOW?** | <img src="assets/states/allow.png" width="200"> | Permission needed. Press ⌥A to approve, ⌥D to deny. |
-| **INPUT?** | <img src="assets/states/input.png" width="200"> | Claude asked a question and is waiting for your response. |
-| **LISTENING** | <img src="assets/states/listening.png" width="200"> | Voice recording active — you're dictating a prompt. |
-| **RECAP** | <img src="assets/states/recap.png" width="200"> | TTS is reading Claude's last response aloud. |
+At a glance, know exactly what Claude is up to. CC-Beeper tracks 8 states, each with its own pixel-art animation. Higher-urgency events always take priority.
 
-Priority: Error > Allow? > Input? > Listening > Recap > Working > Done > Snoozing.
+| State | | What it means |
+|-------|-------|--------------|
+| **SNOOZING** | <img src="assets/states/snoozing.png" width="200"> | No active session. Claude is idle. |
+| **WORKING** | <img src="assets/states/working.png" width="200"> | Claude is running a tool — *Busy with bash*, *Tinkering with write*... |
+| **DONE!** | <img src="assets/states/done.png" width="200"> | Task completed successfully. |
+| **ERROR** | <img src="assets/states/error.png" width="200"> | Something went wrong. |
+| **ALLOW?** | <img src="assets/states/allow.png" width="200"> | Claude needs permission. Approve (⌥A) or deny (⌥D). |
+| **INPUT?** | <img src="assets/states/input.png" width="200"> | Claude asked a question. Waiting for your response. |
+| **LISTENING** | <img src="assets/states/listening.png" width="200"> | Recording your voice for dictation. |
+| **RECAP** | <img src="assets/states/recap.png" width="200"> | Reading Claude's last response aloud. |
 
----
+### Auto-Accept Modes
 
-## Permission Presets
+When Claude Code needs to use a tool, CC-Beeper can auto-approve it or ask you first. Four presets let you dial the automation while keeping control. Switchable anytime from the menu bar.
 
-Four modes that control how much CC-Beeper auto-approves on your behalf. Switchable from the menu bar.
+| Mode | What happens |
+|------|-------------|
+| **Cautious** | Ask me every time. Nothing runs without your approval. |
+| **Relaxed** | Reads are fine. Asks before writes and commands. |
+| **Trusted** | File operations are fine. Asks before shell commands. |
+| **YOLO** | Don't ask. Just do it. Auto-approves everything — including file writes, deletes, and shell commands. |
 
-| Preset | Behavior |
-|--------|----------|
-| **Strict** | Nothing auto-approved. Every tool needs manual approval. |
-| **Relaxed** | Auto-approves reads (Read, Glob, Grep). Asks for everything else. |
-| **Trusted** | Auto-approves file operations (Read, Glob, Grep, Write, Edit). Asks for bash. |
-| **YOLO** | Auto-approves everything. The LCD character swaps to a rabbit. |
+### Voice
 
----
+#### Dictation
 
-## Voice
+Prompt Claude, or answer its questions, just by talking. Toggle with **⌥R** from anywhere, or **double clap** to go fully hands-free.
 
-### Dictation (STT)
+- **WhisperKit** — on-device, 99 languages, no cloud, no API key
+- **Apple Speech** — built-in fallback, no download needed
+- Works with Terminal.app, iTerm2, Warp, Alacritty, Kitty, and WezTerm
 
-Dictate prompts into Claude Code without touching the keyboard. Toggle with **⌥R** from anywhere, or **double clap** to go fully hands-free — clap twice to start recording, twice again to stop and send.
+#### Read Aloud
 
-- **WhisperKit** — on-device transcription, 99 languages, small (~2 GB) or medium (~5 GB) model
-- **Apple SFSpeech** fallback when Whisper isn't available
-- Injects text into the focused terminal via keyboard simulation (Terminal.app, iTerm2, Warp, Alacritty, Kitty, WezTerm)
+Claude finished? Hear the summary out loud.
 
-### Read Over (TTS)
+- **Kokoro** — on-device, 54 voices across 9 languages
+- **Apple Speech** — built-in fallback
 
-Have Claude read its responses aloud when a task finishes.
+### Global Hotkeys
 
-- **Kokoro** — on-device, 54 voices across 9 languages (English US/UK, Spanish, French, Hindi, Italian, Japanese, Portuguese, Chinese)
-- **Apple AVSpeechSynthesizer** fallback
-- A single language preference drives both STT and TTS
-
----
-
-## Widget Sizes
-
-Three modes depending on how much screen space you want to give it:
-
-- **Large** — full beeper with LCD + buttons (approve, deny, record, sound, terminal)
-- **Compact** — LCD only, interact via hotkeys
-- **Menu Only** — no widget on screen, just the menu bar icon
-
-The menu bar icon is always visible in all modes.
-
----
-
-## Themes
-
-10 shell colors, each with a dark mode LCD variant.
-
-![Shell colors](assets/shell-colors.png)
-
----
-
-## Global Hotkeys
-
-Work from any app, in any keyboard layout (AZERTY, QWERTZ, Dvorak). All remappable in Settings.
+Use them from any app, in any keyboard layout (AZERTY, QWERTZ, Dvorak). All remappable in Settings.
 
 | Hotkey | Action |
 |--------|--------|
@@ -108,65 +93,39 @@ Work from any app, in any keyboard layout (AZERTY, QWERTZ, Dvorak). All remappab
 | **⌥D** | Deny pending permission |
 | **⌥R** | Toggle voice recording |
 | **⌥T** | Focus the active terminal |
-| **⌥M** | Stop TTS / replay summary |
+| **⌥M** | Stop TTS / replay last response |
 
----
+### Themes, Sizes & Sound
 
-## Sound & Haptics
+- **10 shell colors**, each with a dark mode LCD variant
+- **3 widget sizes** — Large (buttons + LCD), Compact (LCD only), or Menu Only (icon in the menu bar)
+- **Sound & haptics** — ping on permission requests, chime on task completion, vibration until resolved
 
-- **Ping** on permission and input requests
-- **Pop** chime on task completion
-- **Vibration** on done (3s) and on permission/input requests (repeats every 15s until resolved)
-- Click the beeper to cancel vibration
+![Shell colors](assets/shell-colors.png)
 
 ---
 
 ## Getting Started
 
-### Requirements
+**Requirements:** macOS 26+ · [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
 
-- macOS 26 or later
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed
-
-### Install
-
-1. Download the latest release from [Releases](https://github.com/vecartier/cc-beeper/releases)
+1. Download the [latest release](https://github.com/vecartier/cc-beeper/releases)
 2. Move `CC-Beeper.app` to `/Applications`
-3. Launch — the onboarding wizard walks you through everything
-
-### Onboarding
-
-7 steps: hook installation, theme picker, widget size, permission preset, macOS permissions (Accessibility, Microphone, Speech Recognition), voice engine download (Kokoro + WhisperKit), and hotkey configuration.
+3. Launch — the onboarding wizard handles hooks, theme, permissions, voice engines, and hotkeys
 
 Everything is optional and can be changed later in Settings.
 
 ---
 
-## Settings
-
-| Tab | What's inside |
-|-----|--------------|
-| **Theme** | 10 shell colors + dark mode toggle |
-| **Dictation** | Whisper model size (small/medium), download |
-| **Read Over** | Auto-speak toggle, Kokoro/Apple picker, language & voice |
-| **Feedback** | Sound + vibration toggles |
-| **Hotkeys** | 5 remappable hotkey fields |
-| **Permissions** | 4 preset radio buttons |
-| **Setup** | Reinstall hooks, reopen onboarding |
-| **About** | Version, credits, links |
-
----
-
 ## Privacy
 
-CC-Beeper is fully local. Nothing leaves your machine.
+> **All local. No API keys. Nothing leaves your Mac.**
 
-- **No network calls** — all communication happens over `127.0.0.1` between Claude Code's hooks and CC-Beeper's local HTTP server
-- **No telemetry, no analytics, no crash reporting** — zero outbound connections
-- **On-device speech** — WhisperKit and Kokoro both run locally. Your voice data is never uploaded
-- **No accounts** — no sign-up, no login, no tokens
-- **Hooks are transparent** — 7 entries in `~/.claude/settings.json`, all plain `curl` commands to `localhost`. Inspect or remove them anytime
-- **Permissions are minimal** — Accessibility (hotkeys), Microphone (dictation), Speech Recognition (fallback STT). None are required
+- All communication happens over `127.0.0.1` — plain `curl` hooks to a local HTTP server
+- No telemetry, no analytics, no crash reporting — zero outbound connections
+- WhisperKit and Kokoro run on-device. Your voice is never uploaded
+- No accounts, no sign-up, no tokens
+- Hooks are transparent — inspect or remove them from `~/.claude/settings.json` anytime
 
 ---
 
@@ -204,21 +163,37 @@ The menu contains: session count, state label, Sleep/Wake toggle, permission pre
 
 </details>
 
+<details>
+<summary><strong>Settings</strong></summary>
+
+| Tab | What's inside |
+|-----|--------------|
+| **Theme** | 10 shell colors + dark mode toggle |
+| **Dictation** | Whisper model size (small/medium), download |
+| **Read Over** | Auto-speak toggle, Kokoro/Apple picker, language & voice |
+| **Feedback** | Sound + vibration toggles |
+| **Hotkeys** | 5 remappable hotkey fields |
+| **Permissions** | 4 preset radio buttons |
+| **Setup** | Reinstall hooks, reopen onboarding |
+| **About** | Version, credits, links |
+
+</details>
+
 ---
 
 ## Disclaimer
 
-> CC-Beeper lets you approve or deny Claude Code tool requests directly from the widget. **You are responsible for reviewing what you approve.**
->
-> **YOLO mode** automatically approves every permission request without prompting — including file modifications, shell commands, and network requests. **Use at your own risk.**
->
-> The authors are not liable for any damage, data loss, or unintended consequences.
+CC-Beeper was designed and fully vibe-coded with [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Use it at your own risk.
+
+Auto-accept modes approve Claude Code tool requests on your behalf — including file modifications, shell commands, and network requests. **YOLO mode approves everything without prompting.** You are responsible for reviewing what you approve.
+
+The authors are not liable for any damage, data loss, or unintended consequences.
 
 ---
 
 ## Contributing
 
-Contributions, ideas, and bug reports are welcome.
+CC-Beeper is fully vibe-coded — feature suggestions and code improvements are welcome.
 
 1. Fork the repo
 2. Create a feature branch (`git checkout -b feature/your-idea`)
@@ -235,8 +210,10 @@ GPL-3.0 — see [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-**Built by [Victor Cartier](https://github.com/vecartier)**
+**Designed & vibe-coded by [Victor Cartier](https://github.com/vecartier) with [Claude Code](https://docs.anthropic.com/en/docs/claude-code).**
 
-If CC-Beeper saves you from one missed permission prompt, give it a star.
+Free · Open Source · Native macOS
+
+If CC-Beeper saves you from one missed permission prompt, give it a ⭐
 
 </div>
