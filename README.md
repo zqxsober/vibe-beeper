@@ -37,7 +37,7 @@ The screen shows 8 states, each with its own pixel-art animation and rotating su
 | **DONE!** | <img src="assets/states/done.png" width="200"> | Task completed. Blinks, then fades to idle after 3 min. |
 | **ERROR** | <img src="assets/states/error.png" width="200"> | Task failed. Glitch entrance followed by a pixel meltdown. |
 | **ALLOW?** | <img src="assets/states/allow.png" width="200"> | Permission needed. Press ⌥A to approve, ⌥D to deny. |
-| **INPUT?** | | Claude asked a question and is waiting for your response. |
+| **INPUT?** | <img src="assets/states/input.png" width="200"> | Claude asked a question and is waiting for your response. |
 | **LISTENING** | <img src="assets/states/listening.png" width="200"> | Voice recording active — you're dictating a prompt. |
 | **RECAP** | <img src="assets/states/recap.png" width="200"> | TTS is reading Claude's last response aloud. |
 
