@@ -268,7 +268,10 @@ final class ClaudeMonitor: ObservableObject {
         idleStartTime = Date()
         preWarmWhisper()
         launchKokoro()
-        checkPermissions()
+        // Delay permission check so SwiftUI view is observing before we set the value
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            self?.checkPermissions()
+        }
     }
 
     // MARK: - Permission Health Check

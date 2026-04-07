@@ -47,6 +47,10 @@ struct CCBeeperApp: App {
                         for window in NSApp.windows where window.identifier?.rawValue == "onboarding" {
                             window.orderOut(nil)
                         }
+                        // Show permission alert if any are missing on launch
+                        if !monitor.missingPermissions.isEmpty {
+                            openWindow(id: "permissions-alert")
+                        }
                     }
                 }
             }
@@ -60,19 +64,10 @@ struct CCBeeperApp: App {
                     Self.showMainWindow()
                 }
             }
-            .alert("Permissions needed", isPresented: .init(
-                get: { hasCompletedOnboarding && !monitor.missingPermissions.isEmpty },
-                set: { if !$0 { monitor.missingPermissions = [] } }
-            )) {
-                Button("Open System Settings") {
-                    NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy")!)
-                    monitor.missingPermissions = []
+            .onChange(of: monitor.missingPermissions) { _, missing in
+                if hasCompletedOnboarding && !missing.isEmpty {
+                    openWindow(id: "permissions-alert")
                 }
-                Button("Later", role: .cancel) {
-                    monitor.missingPermissions = []
-                }
-            } message: {
-                Text("CC-Beeper needs \(monitor.missingPermissions.joined(separator: ", ")) to work properly. Grant them in System Settings > Privacy & Security.")
             }
         }
         .windowStyle(.hiddenTitleBar)
@@ -86,6 +81,14 @@ struct CCBeeperApp: App {
         .windowResizability(.contentSize)
         .defaultPosition(.center)
         .defaultSize(width: 600, height: 520)
+
+        Window("Permissions", id: "permissions-alert") {
+            PermissionAlertView()
+                .environmentObject(monitor)
+        }
+        .windowStyle(.titleBar)
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
 
         Window("Settings", id: "settings") {
             SettingsView()
@@ -196,6 +199,14 @@ struct CCBeeperApp: App {
                 Button("⌥ \(monitor.hotkeyVoice) · Dictation") {}
                 Button("⌥ \(monitor.hotkeyTerminal) · Go to Terminal") {}
                 Button("⌥ \(monitor.hotkeyMute) · Read Over / Stop") {}
+            }
+
+            // Permissions (only when some are missing)
+            if !monitor.missingPermissions.isEmpty {
+                Button("Fix Permissions...") {
+                    NSApp.activate(ignoringOtherApps: true)
+                    openWindow(id: "permissions-alert")
+                }
             }
 
             // Settings
