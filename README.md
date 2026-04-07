@@ -161,9 +161,9 @@ On launch, CC-Beeper pings ports 19222-19230 via HTTP to detect if another insta
 <details>
 <summary><strong>Menu bar</strong></summary>
 
-The menu bar icon reflects the current state: normal (outline), attention (orange), YOLO (purple), recording (circle+stop), speaking (speaker+waves), or hidden (dimmed).
+The menu bar icon reflects the current state: normal (outline), attention (orange), YOLO (purple), recording (red circle), speaking (green speaker), or hidden (dimmed).
 
-The menu contains: session count, state label, Sleep/Wake toggle, permission preset picker, size picker, hotkey list, Settings, and Quit.
+The menu contains: session count, state label, Mute/Unmute, Sleep/Wake, Clap Dictation toggle, Fix Permissions (when needed), auto-accept preset picker, size picker, hotkey reference, Settings, and Quit.
 
 </details>
 
@@ -173,7 +173,7 @@ The menu contains: session count, state label, Sleep/Wake toggle, permission pre
 | Tab | What's inside |
 |-----|--------------|
 | **Theme** | 10 shell colors + dark mode toggle |
-| **Dictation** | Whisper model size (small/medium), download |
+| **Dictation** | Double Clap Dictation toggle, Whisper model size (small/medium), download |
 | **Read Over** | Auto-speak toggle, Kokoro/Apple picker, language & voice |
 | **Feedback** | Sound + vibration toggles |
 | **Hotkeys** | 5 remappable hotkey fields |
