@@ -40,8 +40,10 @@ struct OnboardingView: View {
                     OnboardingModeStep(viewModel: viewModel)
                 case .permissions:
                     OnboardingPermissionsStep(viewModel: viewModel)
-                case .voice:
-                    OnboardingVoiceStep(viewModel: viewModel)
+                case .stt:
+                    OnboardingSTTStep(viewModel: viewModel)
+                case .tts:
+                    OnboardingTTSStep(viewModel: viewModel)
                 case .hotkeys:
                     OnboardingHotkeysStep(viewModel: viewModel)
                 case .done:

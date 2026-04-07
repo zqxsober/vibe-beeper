@@ -13,9 +13,10 @@ final class OnboardingViewModel: ObservableObject {
         case sizes = 3
         case mode = 4
         case permissions = 5
-        case voice = 6
-        case hotkeys = 7
-        case done = 8
+        case stt = 6
+        case tts = 7
+        case hotkeys = 8
+        case done = 9
 
         /// 1-based counter position (nil for splash screens: welcome, done).
         var countedNumber: Int? {
@@ -26,8 +27,9 @@ final class OnboardingViewModel: ObservableObject {
             case .sizes: return 3
             case .mode: return 4
             case .permissions: return 5
-            case .voice: return 6
-            case .hotkeys: return 7
+            case .stt: return 6
+            case .tts: return 7
+            case .hotkeys: return 8
             }
         }
 
@@ -35,7 +37,7 @@ final class OnboardingViewModel: ObservableObject {
     }
 
     /// Total number of counted steps (splashes excluded).
-    static let totalCountedSteps: Int = 7
+    static let totalCountedSteps: Int = 8
 
     @Published var currentStep: Step = .welcome
     @Published var isClaudeDetected: Bool = false
@@ -58,7 +60,14 @@ final class OnboardingViewModel: ObservableObject {
     @Published var isModelDownloading: Bool = false
     @Published var isModelReady: Bool = false
 
+    // Separate STT/TTS download state
+    @Published var isSttDownloading: Bool = false
+    @Published var isSttReady: Bool = WhisperService.modelsDownloaded
+    @Published var isTtsDownloading: Bool = false
+    @Published var isTtsReady: Bool = PocketTTSService.modelsDownloaded
+
     // MARK: - Voice Engine Selection
+    @Published var sttProvider: String = "whisper"  // "whisper" or "apple"
     @Published var ttsProvider: String = UserDefaults.standard.string(forKey: "ttsProvider") ?? "kokoro" {
         didSet { UserDefaults.standard.set(ttsProvider, forKey: "ttsProvider") }
     }
@@ -178,6 +187,34 @@ final class OnboardingViewModel: ObservableObject {
                 self.isModelReady = true
                 self.isModelDownloading = false
                 self.modelDownloadPhase = "Ready"
+            }
+        }
+    }
+
+    func downloadWhisper() {
+        guard !isSttDownloading else { return }
+        isSttDownloading = true
+        Task {
+            do {
+                try await WhisperService.shared.downloadModel(size: .selected) { _, _ in }
+            } catch {}
+            await MainActor.run {
+                self.isSttReady = true
+                self.isSttDownloading = false
+            }
+        }
+    }
+
+    func downloadKokoro() {
+        guard !isTtsDownloading else { return }
+        isTtsDownloading = true
+        Task {
+            do {
+                try await PocketTTSService.shared.downloadModels { _, _ in }
+            } catch {}
+            await MainActor.run {
+                self.isTtsReady = true
+                self.isTtsDownloading = false
             }
         }
     }

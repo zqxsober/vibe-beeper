@@ -203,3 +203,29 @@ struct OnboardingKeycap: View {
     .frame(width: 600, height: 440)
     .background(ClaudeTheme.parchment)
 }
+
+// MARK: - Onboarding card style (selectable cards for engine pickers)
+
+private struct OnboardingCardStyleModifier: ViewModifier {
+    let isSelected: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: ClaudeTheme.radiusMedium, style: .continuous)
+                    .fill(isSelected ? Color(hex: "FBF7F4") : ClaudeTheme.ivory)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: ClaudeTheme.radiusMedium, style: .continuous)
+                    .strokeBorder(isSelected ? ClaudeTheme.terracotta : ClaudeTheme.borderCream, lineWidth: isSelected ? 1.5 : 1)
+            )
+    }
+}
+
+extension View {
+    func onboardingCardStyle(isSelected: Bool) -> some View {
+        modifier(OnboardingCardStyleModifier(isSelected: isSelected))
+    }
+}

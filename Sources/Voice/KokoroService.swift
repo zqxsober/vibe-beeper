@@ -40,6 +40,11 @@ actor PocketTTSService {
     ///
     /// - Parameter onProgress: Called on arbitrary thread with (fraction 0..1, label string).
     func downloadModels(onProgress: @escaping @Sendable (Double, String) -> Void) async throws {
+        // Download with progress reporting
+        _ = try await PocketTtsResourceDownloader.ensureModels { progress in
+            onProgress(progress.fractionCompleted, "\(progress.phase)")
+        }
+        // Now initialize (models already on disk, no download)
         let m = PocketTtsManager(defaultVoice: "alba")
         try await m.initialize()
         self.manager = m

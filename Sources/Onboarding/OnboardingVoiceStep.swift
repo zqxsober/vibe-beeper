@@ -212,7 +212,7 @@ private struct LanguagePicker: View {
 
 // MARK: - Language dependencies
 
-private struct LangDepsCard: View {
+struct LangDepsCard: View {
     @ObservedObject var viewModel: OnboardingViewModel
 
     var body: some View {
