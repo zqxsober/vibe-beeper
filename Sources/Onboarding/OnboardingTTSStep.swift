@@ -41,12 +41,10 @@ struct OnboardingTTSStep: View {
                                     .foregroundStyle(ClaudeTheme.nearBlack)
                                 if viewModel.isTtsDownloading {
                                     HStack(spacing: 6) {
-                                        Image(systemName: "arrow.down.circle")
-                                            .font(.system(size: 11, weight: .semibold))
-                                            .foregroundStyle(ClaudeTheme.terracotta)
-                                            .rotationEffect(.degrees(viewModel.isTtsDownloading ? 360 : 0))
-                                            .animation(.linear(duration: 1.5).repeatForever(autoreverses: false), value: viewModel.isTtsDownloading)
-                                        Text("Downloading...")
+                                        ProgressView()
+                                            .controlSize(.small)
+                                            .colorScheme(.dark)
+                                        Text("Downloading (this may take a moment)...")
                                             .font(ClaudeTheme.sans(11))
                                             .foregroundStyle(ClaudeTheme.terracotta)
                                     }

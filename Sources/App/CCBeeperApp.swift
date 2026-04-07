@@ -136,9 +136,11 @@ struct CCBeeperApp: App {
                 }
             }
 
-            // Double Clap Dictation
-            Button(monitor.voiceCommandService.enabled ? "Clap Dictation Off" : "Clap Dictation On") {
-                monitor.voiceCommandService.enabled.toggle()
+            // Double Clap Dictation (only visible when enabled in Settings)
+            if monitor.clapDictationEnabled {
+                Button("Clap Dictation Off") {
+                    monitor.clapDictationEnabled = false
+                }
             }
 
             Divider()
@@ -199,14 +201,6 @@ struct CCBeeperApp: App {
                 Button("⌥ \(monitor.hotkeyVoice) · Dictation") {}
                 Button("⌥ \(monitor.hotkeyTerminal) · Go to Terminal") {}
                 Button("⌥ \(monitor.hotkeyMute) · Read Over / Stop") {}
-            }
-
-            // Permissions (only when some are missing)
-            if !monitor.missingPermissions.isEmpty {
-                Button("Fix Permissions...") {
-                    NSApp.activate(ignoringOtherApps: true)
-                    openWindow(id: "permissions-alert")
-                }
             }
 
             // Settings

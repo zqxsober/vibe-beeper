@@ -135,6 +135,10 @@ final class ClaudeMonitor: ObservableObject {
     let ttsService = TTSService()
     let voiceCommandService = VoiceCommandService()
 
+    @Published var clapDictationEnabled: Bool = UserDefaults.standard.bool(forKey: "voiceCommandsEnabled") {
+        didSet { voiceCommandService.enabled = clapDictationEnabled }
+    }
+
     @Published var voiceOver: Bool = false {
         didSet { UserDefaults.standard.set(voiceOver, forKey: "voiceOver") }
     }
@@ -269,7 +273,7 @@ final class ClaudeMonitor: ObservableObject {
         preWarmWhisper()
         launchKokoro()
         // Delay permission check so SwiftUI view is observing before we set the value
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             self?.checkPermissions()
         }
     }
