@@ -59,7 +59,7 @@ When Claude Code needs to use a tool, CC-Beeper can auto-approve it or ask you f
 
 | Mode | What happens |
 |------|-------------|
-| **Cautious** | Ask me every time. Nothing runs without your approval. |
+| **Strict** | Ask me every time. Nothing runs without your approval. |
 | **Relaxed** | Reads are fine. Asks before writes and commands. |
 | **Trusted** | File operations are fine. Asks before shell commands. |
 | **YOLO** | Don't ask. Just do it. Auto-approves everything — including file writes, deletes, and shell commands. |
