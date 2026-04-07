@@ -20,13 +20,15 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
     /// Set by ClaudeMonitor after both services are created. Used to cut TTS before recording.
     var ttsService: TTSService?
 
+    /// Called on each audio buffer during recording — used by clap detector.
+    var onAudioBuffer: ((AVAudioPCMBuffer) -> Void)?
+
     private var audioEngine = AVAudioEngine()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
     private var lastTranscript: String = ""
     private var recordingStartTime: Date?
-    private var previousAppPID: pid_t? = nil
 
     // MARK: - Whisper State
 
@@ -95,9 +97,6 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         hasSubmitted = false
         recordingError = nil
 
-        // Capture previous app BEFORE focusing terminal
-        previousAppPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
-
         // Recreate AVAudioEngine each session — do not reuse (prevents headphone corruption)
         audioEngine = AVAudioEngine()
         let inputNode = audioEngine.inputNode
@@ -163,6 +162,7 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
 
         inputNode.installTap(onBus: 0, bufferSize: 4096, format: nil) { [weak self] buffer, _ in
             guard let self else { return }
+            self.onAudioBuffer?(buffer)
 
             // Convert to 16kHz mono float32
             let frameCount = AVAudioFrameCount(
@@ -425,19 +425,6 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         enterUp.post(tap: .cghidEventTap)
 
         log("injected + submitted: '\(text)'")
-
-        refocusPreviousApp()
     }
 
-    // MARK: - Refocus Previous App
-
-    private func refocusPreviousApp() {
-        guard let pid = previousAppPID else { return }
-        usleep(200_000) // brief pause after Enter
-        if let app = NSRunningApplication(processIdentifier: pid) {
-            app.activate()
-            log("refocused previous app (pid \(pid))")
-        }
-        previousAppPID = nil
-    }
 }
