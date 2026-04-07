@@ -147,3 +147,42 @@ struct OnboardingTTSStep: View {
         }
     }
 }
+
+// MARK: - Language dependencies
+
+struct LangDepsCard: View {
+    @ObservedObject var viewModel: OnboardingViewModel
+
+    var body: some View {
+        VStack(spacing: 8) {
+            if viewModel.depsInstaller.isInstalling {
+                HStack {
+                    ProgressView().scaleEffect(0.7)
+                    Text(viewModel.depsInstaller.installProgress)
+                        .font(ClaudeTheme.sans(11))
+                        .foregroundStyle(ClaudeTheme.stone)
+                        .lineLimit(1)
+                }
+            } else {
+                let langName = KokoroVoiceCatalog.languageNames[viewModel.selectedLangCode] ?? "This language"
+                let sizeHint = viewModel.selectedLangCode == "j" ? " (~500 MB)" : " (~45 MB)"
+                Text("\(langName) needs extra dependencies\(sizeHint).")
+                    .font(ClaudeTheme.sans(11))
+                    .foregroundStyle(ClaudeTheme.stone)
+
+                Button("Install") { viewModel.installLangDeps() }
+                    .buttonStyle(.bordered)
+                    .tint(ClaudeTheme.terracotta)
+                    .controlSize(.small)
+
+                if let error = viewModel.depsInstaller.installError {
+                    Text(error)
+                        .font(ClaudeTheme.sans(11))
+                        .foregroundStyle(ClaudeTheme.crimson)
+                }
+            }
+        }
+        .padding(12)
+        .claudeCard(radius: ClaudeTheme.radiusMedium)
+    }
+}

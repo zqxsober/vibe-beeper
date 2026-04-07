@@ -13,6 +13,13 @@ AppIcon.icns
 .claude/
 .planning/
 
+# Dev tooling
+*.html
+picked-sprites.json
+build-*.js
+gen-*.js
+*-alts.js
+
 # Backups
 *.bak
 *.old
