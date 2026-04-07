@@ -10,8 +10,8 @@ struct OnboardingModeStep: View {
         OnboardingShell(
             stepNumber: 4,
             totalSteps: OnboardingViewModel.totalCountedSteps,
-            title: "How much should Claude do on its own?",
-            subtitle: "Controls when CC-Beeper asks you before acting. Easy to change later.",
+            title: "Auto-accept permissions",
+            subtitle: "When Claude Code needs to use a tool, CC-Beeper can auto-approve or ask you first. Change anytime in the menu bar.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             skipLabel: nil,
@@ -40,10 +40,10 @@ private struct PresetCard: View {
 
     private var shortDescription: String {
         switch preset {
-        case .cautious: "Ask me every time."
-        case .relaxed: "Reads are fine. Ask for writes."
-        case .trusted: "Auto file ops. Ask for bash."
-        case .yolo: "Don't ask. Just do it."
+        case .cautious: "Approve every tool call."
+        case .relaxed: "Auto-approve reads only."
+        case .trusted: "Auto-approve file ops."
+        case .yolo: "Auto-approve everything."
         }
     }
 

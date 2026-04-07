@@ -166,6 +166,9 @@ private struct KokoroCardContent: View {
                 }
             }
 
+            Divider()
+                .opacity(0.3)
+
             LanguagePicker(viewModel: viewModel, sortedLangCodes: sortedLangCodes)
         }
         .overlay(alignment: .bottom) {
