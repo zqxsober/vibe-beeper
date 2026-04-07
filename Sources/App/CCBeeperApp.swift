@@ -102,6 +102,11 @@ struct CCBeeperApp: App {
                 }
             }
 
+            // Double Clap Dictation
+            Button(monitor.voiceCommandService.enabled ? "Clap Dictation Off" : "Clap Dictation On") {
+                monitor.voiceCommandService.enabled.toggle()
+            }
+
             Divider()
 
             // Permission mode

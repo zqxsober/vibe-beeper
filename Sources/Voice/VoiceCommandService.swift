@@ -26,7 +26,7 @@ final class VoiceCommandService: ObservableObject {
 
     // Clap detection
     private var lastClapTime: Date = .distantPast
-    private static let clapThreshold: Float = 0.08
+    private static let clapThreshold: Float = 0.2
     private static let clapInterval: TimeInterval = 0.5
     private static let clapCooldown: TimeInterval = 1.0
     private var lastDoubleClapTime: Date = .distantPast
