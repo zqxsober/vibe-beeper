@@ -20,6 +20,9 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
     /// Set by ClaudeMonitor after both services are created. Used to cut TTS before recording.
     var ttsService: TTSService?
 
+    /// Called on each audio buffer during recording — used by clap detector.
+    var onAudioBuffer: ((AVAudioPCMBuffer) -> Void)?
+
     private var audioEngine = AVAudioEngine()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -159,6 +162,7 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
 
         inputNode.installTap(onBus: 0, bufferSize: 4096, format: nil) { [weak self] buffer, _ in
             guard let self else { return }
+            self.onAudioBuffer?(buffer)
 
             // Convert to 16kHz mono float32
             let frameCount = AVAudioFrameCount(

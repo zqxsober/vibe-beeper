@@ -83,7 +83,7 @@ final class VoiceCommandService: ObservableObject {
 
     // MARK: - Clap Detection
 
-    private nonisolated func detectClap(buffer: AVAudioPCMBuffer) {
+    nonisolated func detectClap(buffer: AVAudioPCMBuffer) {
         guard let channelData = buffer.floatChannelData?[0] else { return }
         let frameCount = Int(buffer.frameLength)
 

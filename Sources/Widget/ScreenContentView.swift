@@ -118,7 +118,7 @@ struct ScreenContentView: View {
             .allowsHitTesting(false)
         }
         .onReceive(animTimer) { _ in
-            if isWindowVisible { animFrame += 1 }
+            if isWindowVisible || monitor.state == .listening || monitor.state == .speaking { animFrame += 1 }
             // Flash on/off — short blink off, longer on
             if flashCount > 0 {
                 if !flashVisible {
