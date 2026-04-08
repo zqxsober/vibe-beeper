@@ -173,7 +173,7 @@ Replace the current IPC pipeline (Python script → writes JSONL file → kqueue
 - Eliminates three moving parts (Python runtime, JSONL file, file watcher).
 - Lower latency — no filesystem round-trip.
 - Cleaner error handling — HTTP status codes vs file parse failures.
-- Aligns with Anthropic's preferred direction for hook communication.
+- Aligns with the preferred direction for hook communication.
 
 ### Architecture
 
