@@ -88,19 +88,27 @@ struct OnboardingPillButton: View {
     let action: () -> Void
     var minWidth: CGFloat = 180
     var disabled: Bool = false
+    var isDark: Bool = false
 
     @State private var isPressed: Bool = false
 
     private var fillColor: Color {
         if disabled { return OnboardingTheme.warmSilver }
-        return isPressed ? OnboardingTheme.coral : OnboardingTheme.terracotta
+        if isDark {
+            return isPressed ? Color(white: 0.85) : .white
+        }
+        return isPressed ? Color(white: 0.15) : .black
+    }
+
+    private var textColor: Color {
+        isDark ? .black : .white
     }
 
     var body: some View {
         Button(action: action) {
             Text(title)
                 .font(OnboardingTheme.sans(14, weight: .semibold))
-                .foregroundStyle(OnboardingTheme.ivory)
+                .foregroundStyle(textColor)
                 .frame(minWidth: minWidth)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)

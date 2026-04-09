@@ -105,6 +105,13 @@ struct CCBeeperApp: App {
                 Text("Setup in progress...")
                     .foregroundColor(.secondary)
                 Divider()
+                Button("Resume Setup") {
+                    for window in NSApp.windows where window.identifier?.rawValue == "onboarding" {
+                        window.makeKeyAndOrderFront(nil)
+                    }
+                    NSApp.activate(ignoringOtherApps: true)
+                }
+                Divider()
                 Button("Quit CC-Beeper") { NSApp.terminate(nil) }
                     .keyboardShortcut("q")
             } else {
@@ -262,6 +269,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        registerBundledFonts()
 
         // Port-based instance detection (replaces PID check per D-11)
         if let port = HTTPHookServer.readPort() {
@@ -300,5 +308,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             CCBeeperApp.showMainWindow()
         }
         return false
+    }
+
+    private func registerBundledFonts() {
+        let fontNames = ["Silkscreen-Regular.ttf", "Silkscreen-Bold.ttf"]
+        for name in fontNames {
+            guard let url = Bundle.main.url(forResource: name, withExtension: nil)
+                    ?? Bundle.main.resourceURL?.appendingPathComponent(name) else { continue }
+            CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
+        }
     }
 }

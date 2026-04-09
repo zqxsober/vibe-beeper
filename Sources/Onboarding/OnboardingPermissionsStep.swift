@@ -7,7 +7,7 @@ struct OnboardingPermissionsStep: View {
         OnboardingShell(
             stepNumber: 5,
             totalSteps: OnboardingViewModel.totalCountedSteps,
-            title: "Grant these permissions?",
+            title: "Grant access to these?",
             subtitle: "Not required now, but they unlock hotkeys, dictation, and voice. You can enable them later in Settings.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },

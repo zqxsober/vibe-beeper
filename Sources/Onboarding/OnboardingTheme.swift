@@ -47,11 +47,16 @@ enum OnboardingTheme {
     /// Error crimson (warm toned).
     static let crimson = Color(hex: "B53333")
 
-    // MARK: Fonts — editorial serif/sans split
+    // MARK: Fonts — serif titles, Silkscreen logo, system sans body
 
     /// Serif display font for headlines (uses Apple's New York).
     static func serif(_ size: CGFloat, weight: Font.Weight = .medium) -> Font {
         .system(size: size, weight: weight, design: .serif)
+    }
+
+    /// Silkscreen pixel font — only for the app name / logo.
+    static func logo(_ size: CGFloat, bold: Bool = false) -> Font {
+        .custom(bold ? "Silkscreen-Bold" : "Silkscreen", size: size)
     }
 
     /// Sans body font (system default).

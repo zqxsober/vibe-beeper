@@ -174,7 +174,7 @@ struct OnboardingSplashShell<LeadView: View>: View {
 
                 Text(title)
                     .font(titleIsHero
-                          ? OnboardingTheme.serif(44, weight: .bold)
+                          ? OnboardingTheme.logo(44)
                           : OnboardingTheme.serif(24, weight: .medium))
                     .foregroundStyle(headlineColor)
                     .multilineTextAlignment(.center)
@@ -194,7 +194,7 @@ struct OnboardingSplashShell<LeadView: View>: View {
 
             Spacer(minLength: 24)
 
-            OnboardingPillButton(title: primaryLabel, action: primaryAction)
+            OnboardingPillButton(title: primaryLabel, action: primaryAction, isDark: isDark)
                 .padding(.bottom, 56)
         }
     }

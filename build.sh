@@ -27,6 +27,9 @@ cp Sources/shells/beeper-*.png "$RESOURCES_DIR/" 2>/dev/null
 # Copy button image assets
 cp Sources/buttons/*.png "$RESOURCES_DIR/" 2>/dev/null
 
+# Copy font assets
+cp Sources/fonts/*.ttf "$RESOURCES_DIR/" 2>/dev/null
+
 # Copy cover image for onboarding
 cp docs/cover.png "$RESOURCES_DIR/cover.png" 2>/dev/null
 
@@ -76,6 +79,8 @@ cat > CC-Beeper.app/Contents/Info.plist << 'PLIST'
     <string>AppIcon</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>ATSApplicationFontsPath</key>
+    <string>.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>CC-Beeper needs microphone access to record your voice for transcription.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
