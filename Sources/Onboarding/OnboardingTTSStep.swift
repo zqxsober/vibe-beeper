@@ -40,13 +40,15 @@ struct OnboardingTTSStep: View {
                                     .font(OnboardingTheme.sans(13, weight: .semibold))
                                     .foregroundStyle(OnboardingTheme.nearBlack)
                                 if viewModel.isTtsDownloading {
-                                    HStack(spacing: 6) {
-                                        ProgressView()
-                                            .controlSize(.small)
-                                            .colorScheme(.dark)
-                                        Text("Downloading (this may take a moment)...")
+                                    HStack(spacing: 8) {
+                                        ProgressView(value: viewModel.ttsDownloadFraction)
+                                            .progressViewStyle(.linear)
+                                            .tint(OnboardingTheme.terracotta)
+                                            .frame(width: 120)
+                                        Text("Downloading \(Int(viewModel.ttsDownloadFraction * 100))%...")
                                             .font(OnboardingTheme.sans(11))
                                             .foregroundStyle(OnboardingTheme.terracotta)
+                                            .monospacedDigit()
                                     }
                                 } else if viewModel.isTtsReady {
                                     Text("~650 MB · Ready")

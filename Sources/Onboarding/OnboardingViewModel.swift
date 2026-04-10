@@ -66,6 +66,7 @@ final class OnboardingViewModel: ObservableObject {
     @Published var isTtsDownloading: Bool = false
     @Published var isTtsReady: Bool = KokoroService.modelsDownloaded
     @Published var ttsDownloadError: String? = nil
+    @Published var ttsDownloadFraction: Double = 0
 
     // MARK: - Voice Engine Selection
     @Published var sttProvider: String = "whisper"  // "whisper" or "apple"
@@ -202,10 +203,15 @@ final class OnboardingViewModel: ObservableObject {
         guard !isTtsDownloading else { return }
         isTtsDownloading = true
         ttsDownloadError = nil
+        ttsDownloadFraction = 0
         Task {
             var success = false
             do {
-                try await KokoroService.shared.downloadModels { _, _ in }
+                try await KokoroService.shared.downloadModels { [weak self] fraction, _ in
+                    Task { @MainActor in
+                        self?.ttsDownloadFraction = fraction
+                    }
+                }
                 success = true
             } catch {
                 await MainActor.run {
@@ -215,6 +221,7 @@ final class OnboardingViewModel: ObservableObject {
             await MainActor.run {
                 self.isTtsReady = success && KokoroService.modelsDownloaded
                 self.isTtsDownloading = false
+                if success { self.ttsDownloadFraction = 1 }
             }
         }
     }
