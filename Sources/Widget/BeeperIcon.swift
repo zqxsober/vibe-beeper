@@ -57,62 +57,21 @@ enum BeeperIcon {
         return img
     }
 
-    // MARK: - Recording (red circle with stop square inside)
+    // MARK: - Recording (SF Symbol: stop.circle.fill, template for menu bar)
 
     private static func recordingIcon() -> NSImage {
-        let size = NSSize(width: 18, height: 18)
-        let img = NSImage(size: size, flipped: true) { _ in
-            NSColor.systemRed.setFill()
-            // Outer circle
-            NSBezierPath(ovalIn: NSRect(x: 1, y: 1, width: 16, height: 16)).fill()
-            // Stop square punched out
-            NSGraphicsContext.current?.compositingOperation = .copy
-            NSColor.clear.setFill()
-            let sq = NSRect(x: 5.5, y: 5.5, width: 7, height: 7)
-            NSBezierPath(roundedRect: sq, xRadius: 1.5, yRadius: 1.5).fill()
-            return true
-        }
-        img.isTemplate = false
+        let img = NSImage(systemSymbolName: "stop.circle.fill", accessibilityDescription: "Recording")
+            ?? NSImage(size: NSSize(width: 18, height: 18))
+        img.isTemplate = true
         return img
     }
 
-    // MARK: - Speaking (green speaker with 2 sound waves)
+    // MARK: - Speaking (SF Symbol: speaker.wave.2.fill, template for menu bar)
 
     private static func speakingIcon() -> NSImage {
-        let size = NSSize(width: 18, height: 18)
-        let img = NSImage(size: size, flipped: true) { _ in
-            let color: NSColor = .systemGreen
-            color.setFill()
-            color.setStroke()
-
-            // Speaker cone (left side)
-            let cone = NSBezierPath()
-            cone.move(to: NSPoint(x: 1, y: 6.5))
-            cone.line(to: NSPoint(x: 4, y: 6.5))
-            cone.line(to: NSPoint(x: 8, y: 3))
-            cone.line(to: NSPoint(x: 8, y: 15))
-            cone.line(to: NSPoint(x: 4, y: 11.5))
-            cone.line(to: NSPoint(x: 1, y: 11.5))
-            cone.close()
-            cone.fill()
-
-            // Sound wave 1 (small arc)
-            let wave1 = NSBezierPath()
-            wave1.appendArc(withCenter: NSPoint(x: 9, y: 9), radius: 3,
-                            startAngle: -40, endAngle: 40, clockwise: false)
-            wave1.lineWidth = 1.5
-            wave1.stroke()
-
-            // Sound wave 2 (large arc)
-            let wave2 = NSBezierPath()
-            wave2.appendArc(withCenter: NSPoint(x: 9, y: 9), radius: 5.5,
-                            startAngle: -40, endAngle: 40, clockwise: false)
-            wave2.lineWidth = 1.5
-            wave2.stroke()
-
-            return true
-        }
-        img.isTemplate = false
+        let img = NSImage(systemSymbolName: "speaker.wave.2.fill", accessibilityDescription: "Speaking")
+            ?? NSImage(size: NSSize(width: 18, height: 18))
+        img.isTemplate = true
         return img
     }
 }

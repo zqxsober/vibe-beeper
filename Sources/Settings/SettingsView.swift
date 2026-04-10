@@ -4,7 +4,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
     case theme = "Theme"
     case voice = "Dictation"
     case voiceOver = "Read Over"
-    case feedback = "Feedback"
+    case feedback = "Effects"
     case hotkeys = "Hotkeys"
     case permissions = "Permissions"
     case setup = "Setup"
