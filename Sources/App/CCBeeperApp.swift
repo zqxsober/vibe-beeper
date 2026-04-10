@@ -56,6 +56,13 @@ struct CCBeeperApp: App {
             }
             .onChange(of: hasCompletedOnboarding) { _, completed in
                 if completed {
+                    // Onboarding writes all its choices (theme, size, preset,
+                    // hotkeys, kokoro voice/lang) directly to UserDefaults,
+                    // which bypasses the live @Published didSet observers on
+                    // these singletons. Re-read so the running state matches
+                    // what the user just picked.
+                    monitor.reloadFromDefaults()
+                    themeManager.reloadFromDefaults()
                     monitor.startServices()
                     let size = monitor.widgetSize == .compact
                         ? NSSize(width: 300, height: 193)

@@ -39,6 +39,15 @@ final class ThemeManager: ObservableObject {
         currentThemeId = UserDefaults.standard.string(forKey: "themeId") ?? "black"
     }
 
+    /// Re-read the active theme from UserDefaults and assign it so observers
+    /// update. Called after onboarding finishes, since onboarding writes to
+    /// UserDefaults directly instead of through this singleton.
+    func reloadFromDefaults() {
+        if let stored = UserDefaults.standard.string(forKey: "themeId"), stored != currentThemeId {
+            currentThemeId = stored
+        }
+    }
+
     var shellImageName: String { theme.shellImage }
     var smallShellImageName: String { "beeper-small-\(currentThemeId).png" }
 

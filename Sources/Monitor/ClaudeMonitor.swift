@@ -252,6 +252,22 @@ final class ClaudeMonitor: ObservableObject {
         }
     }
 
+    /// Re-read every onboarding-written preference from UserDefaults into the
+    /// live @Published properties, so their didSet side effects (global hotkey
+    /// registration, Kokoro voice binding, etc.) fire with the freshly chosen
+    /// values. Called after the onboarding flow finishes.
+    func reloadFromDefaults() {
+        widgetSize = WidgetSize(rawValue: UserDefaults.standard.string(forKey: "widgetSize") ?? "") ?? .large
+        currentPreset = PermissionPresetWriter.readCurrentPreset()
+        kokoroLangCode = UserDefaults.standard.string(forKey: "kokoroLangCode") ?? "b"
+        kokoroVoice = UserDefaults.standard.string(forKey: "kokoroVoice") ?? "bm_daniel"
+        if let v = UserDefaults.standard.string(forKey: "hotkeyChar_accept") { hotkeyAccept = v }
+        if let v = UserDefaults.standard.string(forKey: "hotkeyChar_deny") { hotkeyDeny = v }
+        if let v = UserDefaults.standard.string(forKey: "hotkeyChar_voice") { hotkeyVoice = v }
+        if let v = UserDefaults.standard.string(forKey: "hotkeyChar_terminal") { hotkeyTerminal = v }
+        if let v = UserDefaults.standard.string(forKey: "hotkeyChar_mute") { hotkeyMute = v }
+    }
+
     /// Start all background services — called after onboarding completes or on launch if already set up.
     func startServices() {
         guard !servicesStarted else { return }
