@@ -11,9 +11,14 @@ HOOKS_DIR = os.path.expanduser("~/.claude/hooks")
 IPC_DIR = os.path.expanduser("~/.claude/cc-beeper")
 HOOK_SCRIPT = os.path.join(HOOKS_DIR, "cc-beeper-hook.py")
 
+# Match legacy Python-script hooks AND the current HTTP-curl hooks.
+# The HTTP hook marker mirrors HookInstaller.swift (`hookMarker = "cc-beeper/port"`).
+HOOK_MATCH_FRAGMENTS = ("cc-beeper-hook.py", "cc-beeper/port")
+
 HOOK_EVENTS = [
     "PreToolUse", "PostToolUse", "PermissionRequest",
-    "Notification", "Stop", "SessionStart", "SessionEnd",
+    "Notification", "Stop", "StopFailure", "UserPromptSubmit",
+    "SessionStart", "SessionEnd",
 ]
 
 
@@ -43,15 +48,25 @@ def main():
         hooks = settings.get("hooks", {})
         changed = False
 
+        def is_ccbeeper_hook(h):
+            cmd = h.get("command", "")
+            return any(frag in cmd for frag in HOOK_MATCH_FRAGMENTS)
+
         for event in HOOK_EVENTS:
             existing = hooks.get(event, [])
-            filtered = [
-                rule for rule in existing
-                if not any(
-                    "cc-beeper-hook.py" in h.get("command", "")
-                    for h in rule.get("hooks", [])
-                )
-            ]
+            filtered = []
+            for rule in existing:
+                rule_hooks = rule.get("hooks", [])
+                remaining = [h for h in rule_hooks if not is_ccbeeper_hook(h)]
+                if not remaining:
+                    # Whole rule was a cc-beeper hook — drop it.
+                    continue
+                if len(remaining) != len(rule_hooks):
+                    new_rule = dict(rule)
+                    new_rule["hooks"] = remaining
+                    filtered.append(new_rule)
+                else:
+                    filtered.append(rule)
             if len(filtered) != len(existing):
                 changed = True
                 if filtered:

@@ -49,7 +49,7 @@ struct OnboardingTTSStep: View {
                                             .foregroundStyle(OnboardingTheme.terracotta)
                                     }
                                 } else if viewModel.isTtsReady {
-                                    Text("~2 MB · Ready")
+                                    Text("~650 MB · Ready")
                                         .font(OnboardingTheme.sans(11))
                                         .foregroundStyle(OnboardingTheme.green)
                                 } else if let err = viewModel.ttsDownloadError {
@@ -58,7 +58,7 @@ struct OnboardingTTSStep: View {
                                         .foregroundStyle(OnboardingTheme.terracotta)
                                         .lineLimit(2)
                                 } else {
-                                    Text("~2 MB · 9 languages · Natural voices")
+                                    Text("~650 MB · 9 languages · Natural voices")
                                         .font(OnboardingTheme.sans(11))
                                         .foregroundStyle(OnboardingTheme.stone)
                                 }

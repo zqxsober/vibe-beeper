@@ -13,6 +13,11 @@ final class TTSService: ObservableObject, @unchecked Sendable {
     private var audioPlayer: AVAudioPlayer?
     private var playerDelegate: TTSPlaybackDelegate?
 
+    // Preview playback — isolated from the main speech pipeline so the
+    // menu bar icon and LCD widget stay idle during voice auditioning.
+    private var previewPlayer: AVAudioPlayer?
+    private var previewDelegate: TTSPlaybackDelegate?
+
     // Kokoro state
     private var kokoroAvailable: Bool = false
     private var currentVoice: String = "bm_daniel"
@@ -49,7 +54,45 @@ final class TTSService: ObservableObject, @unchecked Sendable {
         synthesizer.stopSpeaking(at: .immediate)
         audioPlayer?.stop()
         audioPlayer = nil
+        previewPlayer?.stop()
+        previewPlayer = nil
         isSpeaking = false
+    }
+
+    /// Preview a Kokoro voice from Settings. Runs on an isolated audio player
+    /// and deliberately does NOT touch `isSpeaking`, so the menu bar icon and
+    /// LCD widget stay idle while auditioning voices.
+    func previewKokoroVoice(text: String, voice: String) {
+        guard !text.isEmpty else { return }
+        log("Kokoro: preview(\(voice)): \(text.prefix(80))")
+        previewPlayer?.stop()
+        previewPlayer = nil
+        Task { [weak self] in
+            do {
+                let data = try await KokoroService.shared.synthesize(text: text, voice: voice)
+                await MainActor.run {
+                    guard let self else { return }
+                    do {
+                        let player = try AVAudioPlayer(data: data, fileTypeHint: "wav")
+                        self.previewDelegate = TTSPlaybackDelegate { [weak self] in
+                            DispatchQueue.main.async {
+                                self?.previewPlayer = nil
+                                self?.log("Kokoro: preview finished")
+                            }
+                        }
+                        player.delegate = self.previewDelegate
+                        self.previewPlayer = player
+                        player.play()
+                    } catch {
+                        self.log("Kokoro: preview playback error — \(error.localizedDescription)")
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    self?.log("Kokoro: preview synthesis failed — \(error.localizedDescription)")
+                }
+            }
+        }
     }
 
     // MARK: - Kokoro Lifecycle

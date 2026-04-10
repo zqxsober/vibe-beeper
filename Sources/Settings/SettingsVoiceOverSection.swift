@@ -54,13 +54,10 @@ struct SettingsVoiceOverSection: View {
 
                     Button {
                         let label = currentVoices.first(where: { $0.id == monitor.kokoroVoice })?.label ?? "this voice"
-                        monitor.ttsService.stopSpeaking()
-                        Task {
-                            await monitor.ttsService.speakSummary(
-                                "Hi, I'm \(label). This is how I sound.",
-                                provider: "kokoro"
-                            )
-                        }
+                        monitor.ttsService.previewKokoroVoice(
+                            text: "Hi, I'm \(label). This is how I sound.",
+                            voice: monitor.kokoroVoice
+                        )
                     } label: {
                         Image(systemName: "play.circle")
                     }
