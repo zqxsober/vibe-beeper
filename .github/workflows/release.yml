@@ -16,38 +16,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install create-dmg
-        run: brew install create-dmg
+      - name: Build
+        run: swift build -c release
 
-      - name: Build DMG
-        env:
-          SIGNING_IDENTITY: "-"
-        run: ./scripts/create-dmg.sh
-
-      # To enable notarization, add these repository secrets:
-      #   APPLE_ID     — your Apple ID email (developer@example.com)
-      #   APP_PASSWORD — app-specific password from appleid.apple.com
-      #   TEAM_ID      — your Apple Developer Team ID (10-char alphanumeric)
-      #
-      # Then uncomment the step below and commit.
-      #
-      # - name: Notarize DMG
-      #   env:
-      #     APPLE_ID: ${{ secrets.APPLE_ID }}
-      #     APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
-      #     TEAM_ID: ${{ secrets.TEAM_ID }}
-      #   run: |
-      #     xcrun notarytool submit CC-Beeper.dmg \
-      #       --apple-id "$APPLE_ID" \
-      #       --password "$APP_PASSWORD" \
-      #       --team-id "$TEAM_ID" \
-      #       --wait
-      #     xcrun stapler staple CC-Beeper.dmg
-
-      - name: Create or update GitHub Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: CC-Beeper.dmg
           generate_release_notes: true
           draft: false
           prerelease: false

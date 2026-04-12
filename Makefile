@@ -1,4 +1,4 @@
-.PHONY: build install uninstall clean dmg update autoupdate no-autoupdate
+.PHONY: build install uninstall clean dmg release update autoupdate no-autoupdate
 
 build:
 	@./build.sh
@@ -20,6 +20,24 @@ clean:
 
 dmg:
 	@./scripts/create-dmg.sh
+
+release:
+	@VERSION=$$(grep 'CFBundleShortVersionString' build.sh -A1 | grep '<string>' | sed 's/.*<string>//;s/<.*//' ) && \
+	echo "==> Building + notarizing v$$VERSION..." && \
+	SIGNING_IDENTITY='Developer ID Application: VICTOR EMMANUEL CARTIER (BMT85YWFD9)' \
+	NOTARY_PROFILE='CC-Beeper' ./scripts/create-dmg.sh && \
+	echo "==> Tagging v$$VERSION..." && \
+	git tag -f "v$$VERSION" HEAD && \
+	git push origin main && \
+	git push origin "v$$VERSION" --force && \
+	echo "==> Waiting for CI..." && \
+	sleep 5 && \
+	gh run watch $$(gh run list --repo vecartier/cc-beeper --limit 1 --json databaseId --jq '.[0].databaseId') --repo vecartier/cc-beeper --exit-status && \
+	echo "==> Uploading notarized DMG..." && \
+	gh release upload "v$$VERSION" CC-Beeper.dmg --repo vecartier/cc-beeper --clobber && \
+	echo "==> Updating Homebrew tap..." && \
+	./scripts/update-homebrew-tap.sh "$$VERSION" && \
+	echo "==> Done. v$$VERSION released."
 
 update:
 	@./scripts/update.sh
