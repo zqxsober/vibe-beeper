@@ -56,6 +56,12 @@ extension ClaudeMonitor {
         ]
         let hasMore = httpServer.sendPermissionResponse(response, for: permission.id)
 
+        // Always clear the session's approveQuestion state so updateAggregateState
+        // doesn't immediately restore it. If Claude Code is alive, the next hook
+        // event will re-add the session with the correct state.
+        sessionStates.removeValue(forKey: permission.id)
+        sessionLastSeen.removeValue(forKey: permission.id)
+
         pendingPermission = nil
         awaitingUserAction = false
 

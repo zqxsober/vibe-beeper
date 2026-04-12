@@ -334,9 +334,15 @@ final class ClaudeMonitor: ObservableObject {
     func startIdleTimer(interval: TimeInterval) {
         idleWork?.cancel()
         let work = DispatchWorkItem { [weak self] in
-            guard let self, self.pendingPermission == nil else { return }
             Task { @MainActor [weak self] in
                 guard let self else { return }
+                // Clear stale permission state if the underlying HTTP connection is gone
+                // (Claude Code was killed without sending a Stop hook).
+                if self.pendingPermission != nil && self.httpServer.pendingPermissionConnections.isEmpty {
+                    self.awaitingUserAction = false
+                    self.pendingPermission = nil
+                }
+                guard self.pendingPermission == nil else { return }
                 // No hook activity for the full interval — treat any lingering
                 // sessions as stale (SessionEnd hook was removed in v7.0, so
                 // sessions at .done/.error never get cleaned up otherwise).

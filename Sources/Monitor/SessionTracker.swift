@@ -41,6 +41,8 @@ extension ClaudeMonitor {
                     state = .approveQuestion
                     playAlert()
                 }
+                // Watchdog: if Claude Code dies without sending Stop, reset after 5 min
+                startIdleTimer(interval: 300)
             }
             return
         }
@@ -53,6 +55,8 @@ extension ClaudeMonitor {
             awaitingUserAction = true
             updateAggregateState()
             playAlert()
+            // Watchdog: if Claude Code dies without sending Stop, reset after 5 min
+            startIdleTimer(interval: 300)
             return
         }
 
@@ -86,6 +90,9 @@ extension ClaudeMonitor {
                 ttsService.stopSpeaking()
             }
             updateAggregateState()
+            // Watchdog: if Claude Code dies mid-work without Stop, reset after 2 min.
+            // Each new tool event resets this (idleWork is cancelled at line 74).
+            startIdleTimer(interval: 120)
         case "stop":
             if !sid.isEmpty { sessionStates[sid] = .done }
             thinkingStartTime = nil
