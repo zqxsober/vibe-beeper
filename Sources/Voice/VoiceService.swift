@@ -155,7 +155,7 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         whisperAudioFrames.reserveCapacity(16_000 * 60)
 
         // Focus terminal ONCE at session start
-        FocusService.focusTerminalForInjection()
+        _ = FocusService.focusTerminalForInjection()
 
         // Show LCD feedback during recording
         lastTranscriptPreview = "Recording..."
@@ -306,6 +306,8 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
         guard isRecording else { return }
 
         if isWhisperSession {
+            // Guard against double-stop during transcription (engine already stopped)
+            guard audioEngine.isRunning else { return }
             // Whisper batch path — stop tap, then transcribe accumulated frames
             audioEngine.inputNode.removeTap(onBus: 0)
             audioEngine.stop()

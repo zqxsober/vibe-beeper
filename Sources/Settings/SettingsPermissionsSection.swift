@@ -7,7 +7,6 @@ struct SettingsPermissionsSection: View {
         PermissionRow(
             icon: "accessibility",
             label: "Accessibility",
-            hint: "Privacy & Security → Accessibility",
             isGranted: viewModel.isAccessibilityGranted,
             openSettings: { viewModel.openAccessibilitySettings() }
         )
@@ -15,7 +14,6 @@ struct SettingsPermissionsSection: View {
         PermissionRow(
             icon: "mic.fill",
             label: "Microphone",
-            hint: "Privacy & Security → Microphone",
             isGranted: viewModel.isMicGranted,
             openSettings: { viewModel.openMicrophoneSettings() }
         )
@@ -23,7 +21,6 @@ struct SettingsPermissionsSection: View {
         PermissionRow(
             icon: "waveform.circle.fill",
             label: "Speech Recognition",
-            hint: "Privacy & Security → Speech Recognition",
             isGranted: viewModel.isSpeechGranted,
             openSettings: { viewModel.openSpeechSettings() }
         )
@@ -33,39 +30,40 @@ struct SettingsPermissionsSection: View {
 private struct PermissionRow: View {
     let icon: String
     let label: String
-    var hint: String = ""
     let isGranted: Bool
     let openSettings: () -> Void
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                Label(label, systemImage: icon)
-                if !isGranted && !hint.isEmpty {
-                    Text(hint)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-            }
+            Label(label, systemImage: icon)
             Spacer()
-            if isGranted {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
-            } else {
-                Button {
-                    openSettings()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.red)
-                }
-                .buttonStyle(.plain)
-            }
-            Toggle("", isOn: Binding(
-                get: { isGranted },
-                set: { _ in if !isGranted { openSettings() } }
-            ))
-                .toggleStyle(.switch)
-                .labelsHidden()
+            PermissionBadge(
+                text: isGranted ? "Granted" : "Grant",
+                color: isGranted ? Color(hex: "5C8A4D") : Color(hex: "C96442"),
+                action: openSettings
+            )
         }
+    }
+}
+
+private struct PermissionBadge: View {
+    let text: String
+    let color: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(text.uppercased())
+                .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                .tracking(0.5)
+                .foregroundStyle(color)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        .fill(color.opacity(0.2))
+                )
+        }
+        .buttonStyle(.plain)
     }
 }

@@ -30,6 +30,9 @@ final class VoiceCommandService: ObservableObject {
     private static let clapInterval: TimeInterval = 0.5
     private static let clapCooldown: TimeInterval = 1.0
     private var lastDoubleClapTime: Date = .distantPast
+    /// Previous buffer RMS — used to require a quiet→loud transition (clap signature)
+    /// so sustained speech doesn't trigger false double-claps during recording.
+    nonisolated(unsafe) private var previousBufferRMS: Float = 0
 
     private static let logger = Logger(subsystem: "com.vecartier.cc-beeper", category: "clap")
 
@@ -70,6 +73,7 @@ final class VoiceCommandService: ObservableObject {
 
         audioEngine = engine
         isListening = true
+        previousBufferRMS = 0
         log("Clap detection started")
     }
 
@@ -94,7 +98,10 @@ final class VoiceCommandService: ObservableObject {
         }
         let rms = sqrt(sum / Float(frameCount))
 
-        guard rms > Self.clapThreshold else { return }
+        // Require quiet→loud transition: claps spike from silence, speech stays loud.
+        let wasQuiet = previousBufferRMS < Self.clapThreshold
+        previousBufferRMS = rms
+        guard rms > Self.clapThreshold, wasQuiet else { return }
 
         let now = Date()
         Task { @MainActor [weak self] in

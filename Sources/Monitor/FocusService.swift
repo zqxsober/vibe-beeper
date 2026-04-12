@@ -52,25 +52,10 @@ enum FocusService {
             return true
         }
 
-        // Wait for activation via notification (FRAG-01)
-        let semaphore = DispatchSemaphore(value: 0)
-        let observer = NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.didActivateApplicationNotification,
-            object: nil,
-            queue: nil
-        ) { notification in
-            if let activated = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
-               activated.processIdentifier == app.processIdentifier {
-                semaphore.signal()
-            }
-        }
+        // Activate and spin the run loop so the window server can process the switch.
+        // usleep blocks the thread and prevents activation; RunLoop.run lets it complete.
         app.activate()
-        let result = semaphore.wait(timeout: .now() + 0.5)
-        NSWorkspace.shared.notificationCenter.removeObserver(observer)
-
-        if result == .timedOut {
-            log("focus timed out for injection — proceeding: \(bid)")
-        }
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.2))
 
         // For IDEs, try to focus the integrated terminal panel (IDE-04)
         if category == .ide {
