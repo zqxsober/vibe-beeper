@@ -256,7 +256,11 @@ final class HTTPHookServer {
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 guard let data, !data.isEmpty else {
-                    if !isComplete { self.receive(on: connection) }
+                    if error != nil || isComplete {
+                        self.cleanupBrokenConnection(connection)
+                    } else {
+                        self.receive(on: connection)
+                    }
                     return
                 }
                 let key = ObjectIdentifier(connection)
@@ -266,6 +270,14 @@ final class HTTPHookServer {
                 self.processBuffer(for: connection)
             }
         }
+    }
+
+    /// Remove a broken/dropped connection from pending permissions and buffers.
+    private func cleanupBrokenConnection(_ connection: NWConnection) {
+        let key = ObjectIdentifier(connection)
+        connectionBuffers.removeValue(forKey: key)
+        pendingPermissionConnections.removeAll { $0.connection === connection }
+        connection.cancel()
     }
 
     private func processBuffer(for connection: NWConnection) {

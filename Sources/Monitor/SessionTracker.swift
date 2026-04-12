@@ -133,13 +133,20 @@ extension ClaudeMonitor {
             for (sid, lastSeen) in sessionLastSeen where lastSeen < cutoff {
                 sessionStates.removeValue(forKey: sid)
                 sessionLastSeen.removeValue(forKey: sid)
+                httpServer.cancelOrphanedPermission(for: sid)
             }
             lastPruneTime = Date()
         }
 
         if awaitingUserAction && pendingPermission != nil {
-            state = .approveQuestion
-            return
+            // If the underlying connection is gone, clear the stale permission state
+            if httpServer.pendingPermissionConnections.isEmpty {
+                awaitingUserAction = false
+                pendingPermission = nil
+            } else {
+                state = .approveQuestion
+                return
+            }
         }
 
         let values = Array(sessionStates.values)
