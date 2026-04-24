@@ -9,7 +9,7 @@ final class AppMoverTests: XCTestCase {
 
     /// App in /Applications — the skip guard should trigger.
     func testSkipsWhenPathStartsWithApplications() throws {
-        let path = "/Applications/CC-Beeper.app"
+        let path = "/Applications/vibe-beeper.app"
         // Replicates the guard at line 1 of moveToApplicationsIfNeeded()
         XCTAssertTrue(path.hasPrefix("/Applications/"),
                       "Path starting with /Applications/ should trigger early return")
@@ -17,28 +17,28 @@ final class AppMoverTests: XCTestCase {
 
     /// App in a nested /Applications subdirectory — still counts as installed.
     func testSkipsWhenPathIsInApplicationsSubdirectory() throws {
-        let path = "/Applications/Utilities/CC-Beeper.app"
+        let path = "/Applications/Utilities/vibe-beeper.app"
         XCTAssertTrue(path.hasPrefix("/Applications/"),
                       "Subdirectory of /Applications should also trigger early return")
     }
 
     /// App running from SPM build output — skip in dev environment.
     func testSkipsWhenPathContainsBuildDirectory() throws {
-        let path = "/Users/dev/cc-beeper/.build/debug/CC-Beeper.app"
+        let path = "/Users/dev/vibe-beeper/.build/debug/vibe-beeper.app"
         XCTAssertTrue(path.contains(".build/"),
                       "Path containing .build/ should trigger dev-build early return")
     }
 
     /// App running from App Translocation path — detected correctly.
     func testDetectsAppTranslocation() throws {
-        let path = "/private/var/folders/xyz/AppTranslocation/abc/CC-Beeper.app"
+        let path = "/private/var/folders/xyz/AppTranslocation/abc/vibe-beeper.app"
         XCTAssertTrue(path.contains("AppTranslocation"),
                       "Translocated path should be detected as App Translocation")
     }
 
     /// Path from Downloads folder — should NOT match any skip condition.
     func testDownloadsFolderPathRequiresUserAction() throws {
-        let path = "/Users/dev/Downloads/CC-Beeper.app"
+        let path = "/Users/dev/Downloads/vibe-beeper.app"
         XCTAssertFalse(path.hasPrefix("/Applications/"),
                        "Downloads path should not be skipped as /Applications")
         XCTAssertFalse(path.contains(".build/"),

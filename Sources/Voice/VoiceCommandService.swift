@@ -34,7 +34,7 @@ final class VoiceCommandService: ObservableObject {
     /// so sustained speech doesn't trigger false double-claps during recording.
     nonisolated(unsafe) private var previousBufferRMS: Float = 0
 
-    private static let logger = Logger(subsystem: "com.vecartier.cc-beeper", category: "clap")
+    private static let logger = Logger(subsystem: "com.zqxsober.vibe-beeper", category: "clap")
 
     private func log(_ msg: String) {
         Self.logger.info("\(msg, privacy: .public)")

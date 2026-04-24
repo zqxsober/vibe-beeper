@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sets up CC-Beeper hooks in Claude Code settings."""
+"""Sets up vibe-beeper hooks in Claude Code settings."""
 
 import json
 import os
@@ -46,10 +46,12 @@ def main():
 
     # Write app path so hook knows where to find the .app bundle
     # Prefer /Applications if installed there, otherwise use local build
-    if os.path.exists("/Applications/CC-Beeper.app"):
+    if os.path.exists("/Applications/vibe-beeper.app"):
+        app_path = "/Applications/vibe-beeper.app"
+    elif os.path.exists("/Applications/CC-Beeper.app"):
         app_path = "/Applications/CC-Beeper.app"
     else:
-        app_path = os.path.join(SCRIPT_DIR, "CC-Beeper.app")
+        app_path = os.path.join(SCRIPT_DIR, "vibe-beeper.app")
     with open(APP_PATH_FILE, "w") as f:
         f.write(app_path)
     print(f"  App path saved -> {APP_PATH_FILE}")
@@ -89,7 +91,7 @@ def main():
 
     print(f"  Hooks configured in {SETTINGS_PATH}")
     print()
-    print("  CC-Beeper is ready!")
+    print("  vibe-beeper is ready!")
     print("  The app auto-launches when you start a Claude Code session.")
     print(f"  You can also launch manually: open {app_path}")
 

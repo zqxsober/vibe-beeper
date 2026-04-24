@@ -40,11 +40,11 @@ actor WhisperService {
     // MARK: - Model Folder (per D-10)
 
     /// Returns the Application Support path for the given Whisper model size.
-    /// Models are stored in ~/Library/Application Support/CC-Beeper/whisper/{modelName}/
+    /// Models are stored in ~/Library/Application Support/vibe-beeper/whisper/{modelName}/
     /// Base directory for all Whisper models. WhisperKit creates a subfolder per model name inside.
     static var modelBaseFolder: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("CC-Beeper/whisper")
+            .appendingPathComponent("vibe-beeper/whisper")
     }
 
     static func modelFolder(for size: WhisperModelSize) -> URL {

@@ -11,7 +11,7 @@ struct CCBeeperApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     var body: some Scene {
-        Window("CC-Beeper", id: "main") {
+        Window("vibe-beeper", id: "main") {
             Group {
                 if monitor.widgetSize == .compact {
                     CompactView()
@@ -81,7 +81,7 @@ struct CCBeeperApp: App {
         .windowResizability(.contentSize)
         .defaultPosition(.topTrailing)
 
-        Window("Setup CC-Beeper", id: "onboarding") {
+        Window("Setup vibe-beeper", id: "onboarding") {
             OnboardingView()
         }
         .windowStyle(.titleBar)
@@ -119,7 +119,7 @@ struct CCBeeperApp: App {
                     NSApp.activate(ignoringOtherApps: true)
                 }
                 Divider()
-                Button("Quit CC-Beeper") { NSApp.terminate(nil) }
+                Button("Quit vibe-beeper") { NSApp.terminate(nil) }
                     .keyboardShortcut("q")
             } else {
             // Status
@@ -225,7 +225,7 @@ struct CCBeeperApp: App {
 
             Divider()
 
-            Button("Quit CC-Beeper") { NSApp.terminate(nil) }
+            Button("Quit vibe-beeper") { NSApp.terminate(nil) }
                 .keyboardShortcut("q")
             } // end if/else hasCompletedOnboarding
         } label: {
@@ -283,8 +283,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if HTTPHookServer.isPortResponding(port) {
                 // Another instance is running — show alert and quit
                 let alert = NSAlert()
-                alert.messageText = "CC-Beeper Already Running"
-                alert.informativeText = "Another CC-Beeper instance is already listening on port \(port)."
+                alert.messageText = "vibe-beeper Already Running"
+                alert.informativeText = "Another vibe-beeper instance is already listening on port \(port)."
                 alert.alertStyle = .warning
                 alert.addButton(withTitle: "Quit")
                 alert.runModal()

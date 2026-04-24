@@ -11,7 +11,7 @@ struct OnboardingModeStep: View {
             stepNumber: 4,
             totalSteps: OnboardingViewModel.totalCountedSteps,
             title: "Auto-accept permissions",
-            subtitle: "When Claude Code needs to use a tool, CC-Beeper can auto-approve or ask you first. Change anytime in the menu bar.",
+            subtitle: "When Claude Code needs to use a tool, vibe-beeper can auto-approve or ask you first. Change anytime in the menu bar.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             skipLabel: nil,

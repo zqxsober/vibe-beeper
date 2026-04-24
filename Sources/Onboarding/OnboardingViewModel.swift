@@ -41,8 +41,10 @@ final class OnboardingViewModel: ObservableObject {
 
     @Published var currentStep: Step = .welcome
     @Published var isClaudeDetected: Bool = false
-    @Published var isHooksInstalled: Bool = false
-    @Published var hookInstallError: String? = nil
+    @Published var isCodexDetected: Bool = false
+    @Published var isClaudeHooksInstalled: Bool = false
+    @Published var isCodexHooksInstalled: Bool = false
+    @Published var setupErrorMessage: String? = nil
     @Published var isAccessibilityGranted: Bool = false
     @Published var isMicGranted: Bool = false
     @Published var isSpeechGranted: Bool = false
@@ -228,21 +230,58 @@ final class OnboardingViewModel: ObservableObject {
 
     // MARK: - CLI Detection
 
-    func detectClaude() {
+    func detectProviders() {
         isClaudeDetected = ClaudeDetector.isInstalled
-        isHooksInstalled = HookInstaller.isInstalled
+        isCodexDetected = CodexDetector.isInstalled
+        isClaudeHooksInstalled = HookInstaller.isInstalled
+        isCodexHooksInstalled = CodexHookInstaller.isInstalled(
+            configContents: readCodexConfigContents() ?? "",
+            hooksContents: readCodexHooksContents() ?? ""
+        )
+    }
+
+    func detectClaude() {
+        detectProviders()
     }
 
     // MARK: - Hook Installation
 
-    func installHooks() {
-        hookInstallError = nil
+    func installClaudeHooks() {
+        setupErrorMessage = nil
         do {
             try HookInstaller.install()
-            isHooksInstalled = true
+            isClaudeHooksInstalled = true
         } catch {
-            hookInstallError = error.localizedDescription
+            setupErrorMessage = error.localizedDescription
         }
+    }
+
+    func installCodexHooks() {
+        setupErrorMessage = nil
+        do {
+            try CodexHookInstaller.install()
+            isCodexHooksInstalled = true
+        } catch {
+            setupErrorMessage = error.localizedDescription
+        }
+    }
+
+    func installHooks() {
+        installClaudeHooks()
+    }
+
+    private func readCodexConfigContents() -> String? {
+        guard let data = FileManager.default.contents(atPath: CodexHookInstaller.configPath) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
+    }
+
+    private func readCodexHooksContents() -> String? {
+        guard let data = FileManager.default.contents(atPath: CodexHookInstaller.hooksPath) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
     }
 
     // MARK: - Permission Polling

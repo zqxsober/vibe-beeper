@@ -6,7 +6,7 @@ struct OnboardingWelcomeStep: View {
     var body: some View {
         OnboardingSplashShell(
             eyebrow: "",
-            title: "CC-Beeper",
+            title: "vibe-beeper",
             subtitle: "A floating macOS pager for Claude Code.\nNever miss an update. Respond without breaking your flow.",
             titleIsHero: true,
             isDark: true,

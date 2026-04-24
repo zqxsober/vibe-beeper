@@ -24,7 +24,7 @@ struct PermissionAlertView: View {
         VStack(alignment: .leading, spacing: 0) {
             // Header
             VStack(alignment: .leading, spacing: 6) {
-                Text("CC-Beeper Permissions")
+                Text("vibe-beeper Permissions")
                     .font(.system(size: 22, weight: .bold))
                 Text("These permissions were granted during setup but may have been revoked — for example after an app update or system change. Some features won't work without them.")
                     .font(.system(size: 12))

@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "CC-Beeper",
+    name: "vibe-beeper",
     platforms: [.macOS(.v14)],
     dependencies: [
         .package(url: "https://github.com/FluidInference/FluidAudio.git", exact: "0.12.4"),
@@ -11,7 +11,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "CC-Beeper",
+            name: "vibe-beeper",
             dependencies: [
                 .product(name: "FluidAudio", package: "FluidAudio"),
                 .product(name: "HotKey", package: "HotKey"),

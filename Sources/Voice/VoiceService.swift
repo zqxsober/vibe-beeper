@@ -48,7 +48,7 @@ final class VoiceService: ObservableObject, @unchecked Sendable {
 
     // MARK: - Logging
 
-    private static let logger = Logger(subsystem: "com.vecartier.cc-beeper", category: "voice")
+    private static let logger = Logger(subsystem: "com.zqxsober.vibe-beeper", category: "voice")
 
     private func log(_ msg: String) {
         Self.logger.info("\(msg, privacy: .public)")

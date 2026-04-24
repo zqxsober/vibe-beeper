@@ -10,7 +10,7 @@ struct OnboardingSTTStep: View {
             stepNumber: 6,
             totalSteps: OnboardingViewModel.totalCountedSteps,
             title: "Speech recognition",
-            subtitle: "How CC-Beeper transcribes your voice when you dictate. WhisperKit runs fully on-device with better accuracy.",
+            subtitle: "How vibe-beeper transcribes your voice when you dictate. WhisperKit runs fully on-device with better accuracy.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             primaryDisabled: useWhisper && viewModel.isSttDownloading,

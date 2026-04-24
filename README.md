@@ -1,8 +1,8 @@
 <div align="center">
 
-# CC-Beeper
+# vibe-beeper
 
-**A floating macOS pager for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).**
+**A floating macOS pager for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and Codex.**
 
 *Stop babysitting your terminal. Start shipping.*
 
@@ -10,17 +10,19 @@
 
 <br><br>
 
-<a href="https://github.com/vecartier/cc-beeper/releases/latest/download/CC-Beeper.dmg">
+<a href="https://github.com/zqxsober/vibe-beeper/releases/latest/download/vibe-beeper.dmg">
   <img src="https://img.shields.io/badge/%EF%A3%BF_DOWNLOAD_FOR_MAC-DMG-black?style=for-the-badge&labelColor=555555" alt="Download for Mac">
 </a>
 
 <br><br>
 
-[![Release](https://img.shields.io/github/v/release/vecartier/cc-beeper?style=flat-square)](https://github.com/vecartier/cc-beeper/releases/latest)
-[![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue?style=flat-square)](https://github.com/vecartier/cc-beeper)
-[![Swift](https://img.shields.io/badge/Swift-6-orange?style=flat-square)](https://github.com/vecartier/cc-beeper)
+[![Release](https://img.shields.io/github/v/release/zqxsober/vibe-beeper?style=flat-square)](https://github.com/zqxsober/vibe-beeper/releases/latest)
+[![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue?style=flat-square)](https://github.com/zqxsober/vibe-beeper)
+[![Swift](https://img.shields.io/badge/Swift-6-orange?style=flat-square)](https://github.com/zqxsober/vibe-beeper)
 [![License](https://img.shields.io/badge/license-GPL--3.0-green?style=flat-square)](LICENSE)
 [![Homebrew](https://img.shields.io/badge/homebrew-tap-brown?style=flat-square)](https://github.com/vecartier/homebrew-tap)
+
+[中文说明](README.zh-CN.md)
 
 </div>
 
@@ -30,7 +32,7 @@
 
 You kick off a task in Claude Code. Then life happens. Claude finishes, or hits an error, or needs a permission — but your terminal is buried under three windows.
 
-CC-Beeper fixes that. It's a small widget that sits on your desktop, shows what Claude is doing, and lets you respond without switching apps. Never miss an update. Respond without breaking your flow.
+vibe-beeper fixes that. It's a small widget that sits on your desktop, shows what Claude Code or Codex is doing, and lets you respond without switching apps. Never miss an update. Respond without breaking your flow.
 
 ---
 
@@ -45,7 +47,7 @@ https://github.com/user-attachments/assets/9df11591-ec91-4ddb-8cbe-a6c4b2a41c9a
 
 ### Real-Time States
 
-At a glance, know exactly what Claude is up to. CC-Beeper tracks 8 states, each with its own pixel-art animation. Higher-urgency events always take priority.
+At a glance, know exactly what your agent is up to. vibe-beeper tracks 8 states, each with its own pixel-art animation. Higher-urgency events always take priority.
 
 | State | | What it means |
 |-------|-------|--------------|
@@ -62,7 +64,7 @@ At a glance, know exactly what Claude is up to. CC-Beeper tracks 8 states, each 
 
 ### Auto-Accept Modes
 
-When Claude Code needs to use a tool, CC-Beeper can auto-approve it or ask you first. Four presets let you dial the automation while keeping control. Switchable anytime from the menu bar.
+When Claude Code needs to use a tool, vibe-beeper can auto-approve it or ask you first. Four presets let you dial the automation while keeping control. Switchable anytime from the menu bar.
 
 | Mode | What happens |
 |------|-------------|
@@ -120,8 +122,8 @@ Use them from any app, in any keyboard layout (AZERTY, QWERTZ, Dvorak). All rema
 
 **Requirements:** macOS 14 Sonoma+ · [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
 
-1. Download the [latest release](https://github.com/vecartier/cc-beeper/releases)
-2. Move `CC-Beeper.app` to `/Applications`
+1. Download the [latest release](https://github.com/zqxsober/vibe-beeper/releases)
+2. Move `vibe-beeper.app` to `/Applications`
 3. Launch — the onboarding wizard handles hooks, theme, permissions, voice engines, and hotkeys
 
 Everything is optional and can be changed later in Settings.
@@ -145,7 +147,7 @@ Everything is optional and can be changed later in Settings.
 <details>
 <summary><strong>How the hooks work</strong></summary>
 
-CC-Beeper binds to a local port (19222-19230) on launch and registers 7 hook scripts in `~/.claude/settings.json`: UserPromptSubmit, PreToolUse, PostToolUse, Stop, StopFailure (all async), plus Notification and PermissionRequest (blocking — CC-Beeper holds the TCP connection open until the user responds).
+vibe-beeper binds to a local port (19222-19230) on launch and registers 7 hook scripts in `~/.claude/settings.json`: UserPromptSubmit, PreToolUse, PostToolUse, Stop, StopFailure (all async), plus Notification and PermissionRequest (blocking — vibe-beeper holds the TCP connection open until the user responds).
 
 Hooks are identified by `cc-beeper/port` in the command string for safe update/removal without touching user hooks.
 
@@ -154,14 +156,14 @@ Hooks are identified by `cc-beeper/port` in the command string for safe update/r
 <details>
 <summary><strong>Session management</strong></summary>
 
-CC-Beeper tracks multiple concurrent Claude Code sessions. The displayed state resolves by priority across all active sessions. Sessions auto-prune after 2 hours of inactivity.
+vibe-beeper tracks multiple concurrent Claude Code and Codex sessions. The displayed state resolves by priority across all active sessions. Sessions auto-prune after 2 hours of inactivity.
 
 </details>
 
 <details>
 <summary><strong>Instance detection</strong></summary>
 
-On launch, CC-Beeper pings ports 19222-19230 via HTTP to detect if another instance is already running, preventing conflicts.
+On launch, vibe-beeper pings ports 19222-19230 via HTTP to detect if another instance is already running, preventing conflicts.
 
 </details>
 
@@ -194,9 +196,9 @@ The menu contains: session count, state label, Mute/Unmute, Sleep/Wake, Clap Dic
 
 ## Disclaimer
 
-**CC-Beeper is an independent, community-built project. It is not affiliated with, endorsed by, or sponsored by Anthropic.**
+**vibe-beeper is an independent, community-built project. It is not affiliated with, endorsed by, or sponsored by Anthropic or OpenAI.**
 
-CC-Beeper was designed and fully vibe-coded with [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Use it at your own risk.
+vibe-beeper is a community fork of CC-Beeper with Codex support work in progress. Use it at your own risk.
 
 Auto-accept modes approve Claude Code tool requests on your behalf — including file modifications, shell commands, and network requests. **YOLO mode approves everything without prompting.** You are responsible for reviewing what you approve.
 
@@ -227,6 +229,6 @@ GPL-3.0 — see [LICENSE](LICENSE) for details.
 
 Free · Open Source · Native macOS
 
-If CC-Beeper saves you from one missed permission prompt, give it a ⭐
+If vibe-beeper saves you from one missed permission prompt, give it a star.
 
 </div>

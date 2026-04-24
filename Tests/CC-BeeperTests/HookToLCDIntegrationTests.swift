@@ -27,6 +27,24 @@ private class TestMonitor {
         }
     }
 
+    func applyAgentEvent(_ event: TestAgentEvent) {
+        switch event {
+        case let .toolStarted(sessionId, _),
+             let .toolFinished(sessionId, _):
+            applySessionState(sid: sessionId, state: .working)
+        case let .runCompleted(sessionId, _):
+            applySessionState(sid: sessionId, state: .done)
+        case let .runFailed(sessionId, message):
+            errorDetail = message ?? "Unknown error"
+            applySessionState(sid: sessionId, state: .error)
+        case let .approvalRequested(sessionId, _, _):
+            pendingPermission = sessionId
+            awaitingUserAction = true
+            sessionStates[sessionId] = .approveQuestion
+            state = .approveQuestion
+        }
+    }
+
     /// Simulate receiving an HTTP hook payload and processing it through the full pipeline.
     func receiveHookPayload(_ payload: [String: Any]) {
         guard let hookEventName = payload["hook_event_name"] as? String else { return }
@@ -92,6 +110,39 @@ private class TestMonitor {
         // OR if current state is done/idle (always overridable),
         // OR if the highest comes from session state (authoritative source)
         state = highest
+    }
+}
+
+private enum TestAgentEvent: Equatable {
+    case toolStarted(sessionId: String, tool: String?)
+    case toolFinished(sessionId: String, tool: String?)
+    case runCompleted(sessionId: String, summary: String?)
+    case runFailed(sessionId: String, message: String?)
+    case approvalRequested(sessionId: String, tool: String, summary: String)
+}
+
+private func translateCodexHookPayload(_ payload: [String: Any]) -> TestAgentEvent? {
+    guard let hookEventName = payload["hook_event_name"] as? String else { return nil }
+    let sessionId = payload["session_id"] as? String ?? ""
+    let tool = payload["tool_name"] as? String
+
+    switch hookEventName {
+    case "UserPromptSubmit", "PreToolUse":
+        return .toolStarted(sessionId: sessionId, tool: tool)
+    case "PostToolUse":
+        return .toolFinished(sessionId: sessionId, tool: tool)
+    case "Stop":
+        return .runCompleted(sessionId: sessionId, summary: payload["last_assistant_message"] as? String)
+    case "StopFailure":
+        return .runFailed(sessionId: sessionId, message: payload["message"] as? String)
+    case "PermissionRequest":
+        return .approvalRequested(
+            sessionId: sessionId,
+            tool: tool ?? "",
+            summary: payload["message"] as? String ?? payload["description"] as? String ?? ""
+        )
+    default:
+        return nil
     }
 }
 
@@ -231,5 +282,53 @@ final class HookToLCDIntegrationXCTests: XCTestCase {
         ])
         XCTAssertEqual(monitor.state, .approveQuestion)
         XCTAssertNotNil(monitor.pendingPermission)
+    }
+
+    // MARK: - Codex MVP Event Translation
+
+    func testCodexPreToolUsePayloadMapsToWorkingState() {
+        let payload: [String: Any] = [
+            "hook_event_name": "PreToolUse",
+            "session_id": "codex-session",
+            "tool_name": "Bash",
+        ]
+
+        let monitor = TestMonitor()
+        guard let event = translateCodexHookPayload(payload) else {
+            XCTFail("Expected Codex PreToolUse payload to translate")
+            return
+        }
+
+        monitor.applyAgentEvent(event)
+        XCTAssertEqual(event, .toolStarted(sessionId: "codex-session", tool: "Bash"))
+        XCTAssertEqual(monitor.state, .working)
+        XCTAssertEqual(monitor.sessionStates["codex-session"], .working)
+    }
+
+    func testCodexPermissionRequestPayloadMapsToApproveState() {
+        let payload: [String: Any] = [
+            "hook_event_name": "PermissionRequest",
+            "session_id": "codex-session",
+            "tool_name": "Bash",
+            "message": "Codex wants to run a command",
+        ]
+
+        let monitor = TestMonitor()
+        guard let event = translateCodexHookPayload(payload) else {
+            XCTFail("Expected Codex PermissionRequest payload to translate")
+            return
+        }
+
+        monitor.applyAgentEvent(event)
+        XCTAssertEqual(
+            event,
+            .approvalRequested(
+                sessionId: "codex-session",
+                tool: "Bash",
+                summary: "Codex wants to run a command"
+            )
+        )
+        XCTAssertEqual(monitor.state, .approveQuestion)
+        XCTAssertEqual(monitor.pendingPermission, "codex-session")
     }
 }

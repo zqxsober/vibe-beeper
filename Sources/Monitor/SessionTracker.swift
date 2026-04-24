@@ -5,6 +5,91 @@ import Foundation
 
 extension ClaudeMonitor {
 
+    func applyAgentEvent(_ event: AgentEvent) {
+        switch event {
+        case let .toolStarted(sessionId, provider, tool),
+             let .toolFinished(sessionId, provider, tool):
+            idleWork?.cancel()
+            doneDebounceWork?.cancel()
+            if let tool { currentTool = tool }
+            if sessionStore.state(for: sessionId, provider: provider) != .working {
+                thinkingStartTime = Date()
+            }
+            if !sessionId.isEmpty {
+                sessionStore.setState(sessionId: sessionId, provider: provider, state: .working)
+            }
+            if ttsService.isSpeaking {
+                ttsService.stopSpeaking()
+            }
+            updateAggregateState()
+            startIdleTimer(interval: 120)
+
+        case let .runCompleted(sessionId, provider, summary):
+            if !sessionId.isEmpty {
+                sessionStore.setState(sessionId: sessionId, provider: provider, state: .done)
+            }
+            if let summary, !summary.isEmpty {
+                lastSummary = summary
+            }
+            thinkingStartTime = nil
+            currentTool = nil
+            updateAggregateState()
+            if state == .done {
+                startIdleTimer(interval: 180)
+            }
+
+        case let .runFailed(sessionId, provider, message):
+            if !sessionId.isEmpty {
+                sessionStore.setState(sessionId: sessionId, provider: provider, state: .error)
+            }
+            if let message, !message.isEmpty {
+                errorDetail = String(message.prefix(30))
+            }
+            thinkingStartTime = nil
+            currentTool = nil
+            updateAggregateState()
+            if state == .error {
+                startIdleTimer(interval: 30)
+            }
+
+        case let .approvalRequested(sessionId, provider, tool, summary):
+            idleWork?.cancel()
+            setupGlobalHotkeys()
+            if !sessionId.isEmpty {
+                sessionStore.setState(sessionId: sessionId, provider: provider, state: .approveQuestion)
+            }
+            pendingPermission = PendingPermission(
+                sessionId: sessionId,
+                provider: provider,
+                tool: tool,
+                summary: summary.isEmpty ? tool.lowercased() : summary
+            )
+            awaitingUserAction = true
+            thinkingStartTime = Date()
+            state = .approveQuestion
+            sessionCount = sessionStore.sessionCount()
+            playAlert()
+            startIdleTimer(interval: 300)
+
+        case let .inputRequested(sessionId, provider, message):
+            idleWork?.cancel()
+            inputMessage = String(message.prefix(30))
+            if !sessionId.isEmpty {
+                sessionStore.setState(sessionId: sessionId, provider: provider, state: .needsInput)
+            }
+            awaitingUserAction = true
+            updateAggregateState()
+            playAlert()
+            startIdleTimer(interval: 300)
+
+        case let .authStatus(_, success):
+            authFlashMessage = success ? "AUTH OK" : "AUTH FAIL"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { [weak self] in
+                self?.authFlashMessage = nil
+            }
+        }
+    }
+
     func processEvent(_ json: String) {
         guard let data = json.data(using: .utf8),
               let event = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -15,7 +100,7 @@ extension ClaudeMonitor {
         let sid = event["sid"] as? String ?? ""
 
         if !sid.isEmpty {
-            sessionLastSeen[sid] = Date()
+            sessionStore.touch(sessionId: sid, provider: .claude)
         }
 
         // Permission — trigger approveQuestion
@@ -26,16 +111,26 @@ extension ClaudeMonitor {
             setupGlobalHotkeys()
 
             if currentPreset == .yolo {
-                pendingPermission = PendingPermission(id: sid, tool: tool, summary: summary)
+                pendingPermission = PendingPermission(
+                    sessionId: sid,
+                    provider: .claude,
+                    tool: tool,
+                    summary: summary
+                )
                 Task { @MainActor [weak self] in
                     try? await Task.sleep(nanoseconds: 300_000_000)
                     self?.respondToPermission(allow: true)
                 }
             } else {
-                if !sid.isEmpty { sessionStates[sid] = .approveQuestion }
-                sessionCount = sessionStates.count
+                if !sid.isEmpty { sessionStore.setState(sessionId: sid, provider: .claude, state: .approveQuestion) }
+                sessionCount = sessionStore.sessionCount()
                 if pendingPermission == nil {
-                    pendingPermission = PendingPermission(id: sid, tool: tool, summary: summary)
+                    pendingPermission = PendingPermission(
+                        sessionId: sid,
+                        provider: .claude,
+                        tool: tool,
+                        summary: summary
+                    )
                     awaitingUserAction = true
                     thinkingStartTime = Date()
                     state = .approveQuestion
@@ -51,7 +146,7 @@ extension ClaudeMonitor {
         // Needs input
         if type == "notification" && event["type"] as? String == "needs_input" {
             idleWork?.cancel()
-            if !sid.isEmpty { sessionStates[sid] = .needsInput }
+            if !sid.isEmpty { sessionStore.setState(sessionId: sid, provider: .claude, state: .needsInput) }
             awaitingUserAction = true
             updateAggregateState()
             playAlert()
@@ -62,17 +157,8 @@ extension ClaudeMonitor {
 
         // Orphan cleanup — session moved on
         if awaitingUserAction && (type == "pre_tool" || type == "post_tool" || type == "stop" || type == "stop_failure") {
-            httpServer.cancelOrphanedPermission(for: sid)
-            if httpServer.pendingPermissionConnections.isEmpty {
-                awaitingUserAction = false
-                pendingPermission = nil
-                state = .idle
-            } else {
-                if let next = httpServer.pendingPermissionConnections.first {
-                    pendingPermission = PendingPermission(id: next.sessionId, tool: "", summary: "Pending permission")
-                    state = .approveQuestion
-                }
-            }
+            httpServer.cancelOrphanedPermission(for: sid, provider: .claude)
+            promoteNextPendingPermissionOrResolveState()
         }
 
         idleWork?.cancel()
@@ -82,10 +168,10 @@ extension ClaudeMonitor {
             doneDebounceWork?.cancel()  // Cancel pending DONE transition (DONE-DEBOUNCE)
             let tool = event["tool"] as? String
             if let tool { currentTool = tool }
-            if sessionStates[sid] != .working {
+            if sessionStore.state(for: sid, provider: .claude) != .working {
                 thinkingStartTime = Date()
             }
-            if !sid.isEmpty { sessionStates[sid] = .working }
+            if !sid.isEmpty { sessionStore.setState(sessionId: sid, provider: .claude, state: .working) }
             if ttsService.isSpeaking {
                 ttsService.stopSpeaking()
             }
@@ -94,7 +180,7 @@ extension ClaudeMonitor {
             // Each new tool event resets this (idleWork is cancelled at line 74).
             startIdleTimer(interval: 120)
         case "stop":
-            if !sid.isEmpty { sessionStates[sid] = .done }
+            if !sid.isEmpty { sessionStore.setState(sessionId: sid, provider: .claude, state: .done) }
             thinkingStartTime = nil
             currentTool = nil
             // Debounce DONE: wait before showing DONE to avoid false flashes from
@@ -114,17 +200,17 @@ extension ClaudeMonitor {
             doneDebounceWork = work
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0, execute: work)
         case "stop_failure":
-            if !sid.isEmpty { sessionStates[sid] = .error }
+            if !sid.isEmpty { sessionStore.setState(sessionId: sid, provider: .claude, state: .error) }
             thinkingStartTime = nil
             currentTool = nil
             updateAggregateState()
             // Auto-recover from error after 30s so the widget doesn't stay stuck (AUDIT-FIX).
             if state == .error { startIdleTimer(interval: 30) }
         case "session_start":
-            if !sid.isEmpty { sessionStates[sid] = .working }
+            if !sid.isEmpty { sessionStore.setState(sessionId: sid, provider: .claude, state: .working) }
             updateAggregateState()
         case "session_end":
-            if !sid.isEmpty { sessionStates.removeValue(forKey: sid) }
+            if !sid.isEmpty { sessionStore.removeSession(sid, provider: .claude) }
             lastPruneTime = .distantPast
             updateAggregateState()
         default:
@@ -137,17 +223,17 @@ extension ClaudeMonitor {
         // Prune sessions not seen for 2 hours
         if Date().timeIntervalSince(lastPruneTime) > 30 {
             let cutoff = Date().addingTimeInterval(-7200)
-            for (sid, lastSeen) in sessionLastSeen where lastSeen < cutoff {
-                sessionStates.removeValue(forKey: sid)
-                sessionLastSeen.removeValue(forKey: sid)
-                httpServer.cancelOrphanedPermission(for: sid)
+            let staleSessionIds = sessionStore.pruneSessions(olderThan: cutoff)
+            for sid in staleSessionIds {
+                httpServer.cancelOrphanedPermission(for: sid, provider: .claude)
+                httpServer.cancelOrphanedPermission(for: sid, provider: .codex)
             }
             lastPruneTime = Date()
         }
 
         if awaitingUserAction && pendingPermission != nil {
             // If the underlying connection is gone, clear the stale permission state
-            if httpServer.pendingPermissionConnections.isEmpty {
+            if httpServer.pendingDeferredConnections.isEmpty {
                 awaitingUserAction = false
                 pendingPermission = nil
             } else {
@@ -156,8 +242,9 @@ extension ClaudeMonitor {
             }
         }
 
-        let values = Array(sessionStates.values)
-        if values.isEmpty {
+        let values = sessionStore.aggregateState()
+        let count = sessionStore.sessionCount()
+        if count == 0 {
             sessionCount = 0
             if state != .listening && state != .speaking {
                 let oldState = state
@@ -169,11 +256,10 @@ extension ClaudeMonitor {
             return
         }
 
-        let highest = values.max(by: { $0.priority < $1.priority }) ?? .idle
         // Always update aggregate state unless voice is active (local, not session-driven)
         if state != .listening && state != .speaking {
             let oldState = state
-            state = highest
+            state = values
             if state == .idle && oldState != .idle {
                 idleStartTime = Date()
             }
@@ -181,6 +267,6 @@ extension ClaudeMonitor {
                 idleStartTime = nil
             }
         }
-        sessionCount = sessionStates.count
+        sessionCount = count
     }
 }

@@ -23,6 +23,9 @@ struct CompactView: View {
                 .interpolation(.high)
                 .frame(width: shellW, height: shellH)
 
+            BrandBadgeView(compact: true)
+                .offset(x: 18, y: 15)
+
             // LED indicators — top right of bezel
             HStack(spacing: 3) {
                 Circle()
@@ -48,7 +51,7 @@ struct CompactView: View {
         .padding(40)
         .background(Color.clear)
         .contextMenu {
-            Button("Quit CC-Beeper") { NSApplication.shared.terminate(nil) }
+            Button("Quit vibe-beeper") { NSApplication.shared.terminate(nil) }
         }
         .onReceive(ledTimer) { _ in
             if monitor.state.needsAttention || monitor.state == .working {

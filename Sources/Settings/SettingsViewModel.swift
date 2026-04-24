@@ -9,15 +9,47 @@ final class SettingsViewModel: ObservableObject {
     @Published var isAccessibilityGranted: Bool = false
     @Published var isMicGranted: Bool = false
     @Published var isSpeechGranted: Bool = false
+    @Published var isClaudeDetected: Bool = false
+    @Published var isCodexDetected: Bool = false
+    @Published var isClaudeHooksInstalled: Bool = false
+    @Published var isCodexHooksInstalled: Bool = false
+    @Published var setupErrorMessage: String? = nil
 
     private var pollTimer: Timer?
 
     func startPolling() {
         refreshPermissionStatus()
+        detectProviders()
         pollTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 self?.refreshPermissionStatus()
             }
+        }
+    }
+
+    func detectProviders() {
+        isClaudeDetected = ClaudeDetector.isInstalled
+        isCodexDetected = CodexDetector.isInstalled
+        isClaudeHooksInstalled = HookInstaller.isInstalled
+        isCodexHooksInstalled = CodexHookInstaller.isInstalled(
+            configContents: readCodexConfigContents() ?? "",
+            hooksContents: readCodexHooksContents() ?? ""
+        )
+    }
+
+    func installMissingIntegrations() {
+        setupErrorMessage = nil
+
+        do {
+            if isClaudeDetected && !isClaudeHooksInstalled {
+                try HookInstaller.install()
+            }
+            if isCodexDetected && !isCodexHooksInstalled {
+                try CodexHookInstaller.install()
+            }
+            detectProviders()
+        } catch {
+            setupErrorMessage = error.localizedDescription
         }
     }
 
@@ -30,6 +62,20 @@ final class SettingsViewModel: ObservableObject {
         isAccessibilityGranted = AXIsProcessTrusted()
         isMicGranted = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
         isSpeechGranted = SFSpeechRecognizer.authorizationStatus() == .authorized
+    }
+
+    private func readCodexConfigContents() -> String? {
+        guard let data = FileManager.default.contents(atPath: CodexHookInstaller.configPath) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
+    }
+
+    private func readCodexHooksContents() -> String? {
+        guard let data = FileManager.default.contents(atPath: CodexHookInstaller.hooksPath) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
     }
 
     // MARK: - Permission Requests + Deep Links

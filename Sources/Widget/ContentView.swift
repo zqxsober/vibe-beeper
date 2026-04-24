@@ -28,6 +28,9 @@ struct ContentView: View {
                 .interpolation(.high)
                 .frame(width: shellW, height: shellH)
 
+            BrandBadgeView(compact: false)
+                .offset(x: 27, y: 17)
+
             // LED indicators — top right of bezel
             HStack(spacing: 4) {
                 Circle()
@@ -90,7 +93,7 @@ struct ContentView: View {
             }
         }
         .contextMenu {
-            Button("Quit CC-Beeper") { NSApplication.shared.terminate(nil) }
+            Button("Quit vibe-beeper") { NSApplication.shared.terminate(nil) }
         }
         .onReceive(monitor.$state) { newState in
             handleStateChange(newState)

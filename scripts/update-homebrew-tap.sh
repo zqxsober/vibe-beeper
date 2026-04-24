@@ -1,5 +1,5 @@
 #!/bin/bash
-# update-homebrew-tap.sh — Update the Homebrew tap formula after a new CC-Beeper release.
+# update-homebrew-tap.sh — Update the Homebrew tap formula after a new vibe-beeper release.
 #
 # Usage: ./scripts/update-homebrew-tap.sh [version]
 #
@@ -8,7 +8,7 @@
 
 set -euo pipefail
 
-REPO="vecartier/cc-beeper"
+REPO="zqxsober/vibe-beeper"
 TAP_REPO="vecartier/homebrew-tap"
 CASK_PATH="Casks/cc-beeper.rb"
 
@@ -18,14 +18,14 @@ if [ -z "$VERSION" ]; then
     echo "Latest release: v$VERSION"
 fi
 
-DMG_URL="https://github.com/$REPO/releases/download/v${VERSION}/CC-Beeper.dmg"
-echo "Downloading CC-Beeper.dmg for v$VERSION..."
+DMG_URL="https://github.com/$REPO/releases/download/v${VERSION}/vibe-beeper.dmg"
+echo "Downloading vibe-beeper.dmg for v$VERSION..."
 
 TMPDIR=$(mktemp -d)
 trap "rm -rf $TMPDIR" EXIT
 
-curl -fsSL "$DMG_URL" -o "$TMPDIR/CC-Beeper.dmg"
-SHA=$(shasum -a 256 "$TMPDIR/CC-Beeper.dmg" | awk '{print $1}')
+curl -fsSL "$DMG_URL" -o "$TMPDIR/vibe-beeper.dmg"
+SHA=$(shasum -a 256 "$TMPDIR/vibe-beeper.dmg" | awk '{print $1}')
 echo "SHA256: $SHA"
 
 echo "Updating Homebrew tap..."
@@ -36,7 +36,7 @@ sed -i '' "s/version \".*\"/version \"$VERSION\"/" "$CASK_PATH"
 sed -i '' "s/sha256 \".*\"/sha256 \"$SHA\"/" "$CASK_PATH"
 
 git add "$CASK_PATH"
-git commit -m "Update cc-beeper to v$VERSION"
+git commit -m "Update vibe-beeper to v$VERSION"
 git push origin main
 
 echo "Done. Homebrew tap updated to v$VERSION."

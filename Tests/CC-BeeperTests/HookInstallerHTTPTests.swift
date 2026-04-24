@@ -16,7 +16,7 @@ final class HookInstallerHTTPTests: XCTestCase {
     // Replicate event configs from HookInstaller (must stay in sync)
     private let asyncConfigs: [(String, Int, String?)] = [
         ("UserPromptSubmit", 5, nil),
-        ("PreToolUse",  5, "CC-Beeper monitoring\u{2026}"),
+        ("PreToolUse",  5, "vibe-beeper monitoring\u{2026}"),
         ("PostToolUse", 5, nil),
         ("Stop",        5, nil),
         ("StopFailure", 5, nil),

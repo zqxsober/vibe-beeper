@@ -15,7 +15,7 @@ struct AboutWindow: View {
 
             // Name & version
             VStack(spacing: 4) {
-                Text("CC-Beeper")
+                Text("vibe-beeper")
                     .font(.title)
                     .fontWeight(.bold)
 
@@ -25,7 +25,7 @@ struct AboutWindow: View {
             }
 
             // Tagline
-            Text("A desktop companion for Claude Code.")
+            Text("A desktop companion for Claude Code and Codex.")
                 .font(.body)
                 .foregroundStyle(.secondary)
 
@@ -34,15 +34,15 @@ struct AboutWindow: View {
 
             // Links
             VStack(spacing: 8) {
-                Link(destination: URL(string: "https://github.com/vecartier/cc-beeper")!) {
+                Link(destination: URL(string: "https://github.com/zqxsober/vibe-beeper")!) {
                     Label("GitHub", systemImage: "link")
                 }
 
-                Link(destination: URL(string: "https://github.com/vecartier/cc-beeper/releases")!) {
+                Link(destination: URL(string: "https://github.com/zqxsober/vibe-beeper/releases")!) {
                     Label("Releases", systemImage: "arrow.down.circle")
                 }
 
-                Link(destination: URL(string: "https://github.com/vecartier/cc-beeper/issues")!) {
+                Link(destination: URL(string: "https://github.com/zqxsober/vibe-beeper/issues")!) {
                     Label("Report an Issue", systemImage: "exclamationmark.bubble")
                 }
             }
@@ -51,7 +51,7 @@ struct AboutWindow: View {
             Spacer()
                 .frame(height: 4)
 
-            Text("\u{00A9} 2025 vecartier")
+            Text("\u{00A9} 2026 zqxsober")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
         }

@@ -33,44 +33,55 @@ func readPermissionMode() -> PermissionMode {
     return .cautious
 }
 
-struct PendingPermission: Equatable {
-    let id: String
-    let tool: String
-    let summary: String
-}
-
 // MARK: - Permission Controller (ARCH-03)
 
 extension ClaudeMonitor {
+
+    func promoteNextPendingPermissionOrResolveState() {
+        if let next = httpServer.pendingDeferredConnections.first {
+            pendingPermission = PendingPermission(
+                sessionId: next.id,
+                provider: next.provider,
+                tool: "",
+                summary: "Pending permission"
+            )
+            awaitingUserAction = true
+            state = .approveQuestion
+            return
+        }
+
+        pendingPermission = nil
+        awaitingUserAction = false
+        updateAggregateState()
+    }
 
     func respondToPermission(allow: Bool) {
         guard let permission = pendingPermission else { return }
         let decision: [String: Any] = allow
             ? ["behavior": "allow"]
-            : ["behavior": "deny", "message": "Denied via CC-Beeper"]
+            : ["behavior": "deny", "message": "Denied via vibe-beeper"]
         let response: [String: Any] = [
             "hookSpecificOutput": [
                 "hookEventName": "PermissionRequest",
                 "decision": decision
             ]
         ]
-        let hasMore = httpServer.sendPermissionResponse(response, for: permission.id)
+        let hasMore = httpServer.sendPermissionResponse(
+            response,
+            for: permission.provider,
+            sessionId: permission.sessionId
+        )
 
         // Always clear the session's approveQuestion state so updateAggregateState
         // doesn't immediately restore it. If Claude Code is alive, the next hook
         // event will re-add the session with the correct state.
-        sessionStates.removeValue(forKey: permission.id)
-        sessionLastSeen.removeValue(forKey: permission.id)
+        sessionStore.removeSession(permission.sessionId, provider: permission.provider)
 
         pendingPermission = nil
         awaitingUserAction = false
 
         if hasMore {
-            if let next = httpServer.pendingPermissionConnections.first {
-                pendingPermission = PendingPermission(id: next.sessionId, tool: "", summary: "Pending permission")
-                awaitingUserAction = true
-                state = .approveQuestion
-            }
+            promoteNextPendingPermissionOrResolveState()
         } else {
             // Let aggregate state resolve from all active sessions rather than
             // hardcoding — prevents hiding other working sessions (AUDIT-FIX).

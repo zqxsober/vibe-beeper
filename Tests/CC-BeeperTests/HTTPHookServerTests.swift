@@ -49,6 +49,19 @@ final class HTTPHookServerTests: XCTestCase {
         return response
     }
 
+    private func deferredResponseID(from result: [String: Any]) -> String? {
+        let shouldHold = result["_hold_connection"] as? Bool ?? false
+        guard shouldHold else { return nil }
+        return result["_transport_deferred_id"] as? String ?? ""
+    }
+
+    private func stripTransportMetadata(from result: [String: Any]) -> [String: Any] {
+        var cleaned = result
+        cleaned.removeValue(forKey: "_hold_connection")
+        cleaned.removeValue(forKey: "_transport_deferred_id")
+        return cleaned
+    }
+
     // MARK: - Tests
 
     /// Verify Content-Length extraction from HTTP header strings.
@@ -138,6 +151,41 @@ final class HTTPHookServerTests: XCTestCase {
         // Non-zero body count reflected in Content-Length
         let response200body = buildHTTPResponseString(statusCode: 200, bodyCount: 57)
         XCTAssertTrue(response200body.contains("Content-Length: 57\r\n"))
+    }
+
+    /// Verify deferred responses are controlled by transport metadata, not Claude-specific payload fields.
+    func testDeferredResponseUsesTransportMarkerOnly() throws {
+        let result: [String: Any] = [
+            "_hold_connection": true,
+            "_transport_deferred_id": "session-123"
+        ]
+
+        let payload: [String: Any] = [
+            "hook_event_name": "Notification",
+            "notification_type": "permission_prompt"
+        ]
+
+        XCTAssertEqual(payload["hook_event_name"] as? String, "Notification")
+        XCTAssertEqual(payload["notification_type"] as? String, "permission_prompt")
+        XCTAssertEqual(deferredResponseID(from: result), "session-123",
+                       "Deferred behavior should depend on transport metadata, not payload event names")
+    }
+
+    /// Verify transport-only metadata never leaks into the provider response body.
+    func testImmediateResponseStripsTransportMetadata() throws {
+        let response: [String: Any] = [
+            "_hold_connection": false,
+            "_transport_deferred_id": "session-123",
+            "hookSpecificOutput": [
+                "hookEventName": "PermissionRequest",
+                "decision": ["behavior": "allow"]
+            ]
+        ]
+
+        let cleaned = stripTransportMetadata(from: response)
+        XCTAssertNil(cleaned["_hold_connection"])
+        XCTAssertNil(cleaned["_transport_deferred_id"])
+        XCTAssertNotNil(cleaned["hookSpecificOutput"])
     }
 
     /// Verify that exactly 5 hook event names are registered (4 async + 1 async notification,

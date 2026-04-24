@@ -10,7 +10,7 @@ LOCAL=$(git rev-parse HEAD)
 REMOTE=$(git rev-parse origin/main)
 
 if [ "$LOCAL" = "$REMOTE" ]; then
-    echo "CC-Beeper is up to date."
+    echo "vibe-beeper is up to date."
     exit 0
 fi
 
@@ -20,14 +20,15 @@ git pull --quiet origin main
 ./build.sh
 
 # Stop running instance if any
-pkill -x CC-Beeper 2>/dev/null || true
+pkill -x vibe-beeper 2>/dev/null || true
 sleep 0.5
 
 # Install to /Applications
+rm -rf /Applications/vibe-beeper.app
 rm -rf /Applications/CC-Beeper.app
-cp -R CC-Beeper.app /Applications/
+cp -R vibe-beeper.app /Applications/
 
 # Relaunch
-open /Applications/CC-Beeper.app
+open /Applications/vibe-beeper.app
 
-echo "CC-Beeper updated and relaunched."
+echo "vibe-beeper updated and relaunched."

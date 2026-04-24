@@ -10,6 +10,11 @@ private enum DispatchResult: Equatable {
     case notification(type: String)
 }
 
+private enum ProviderRoute: Equatable {
+    case claude
+    case codex
+}
+
 /// Replicates the hookEventName → eventType routing from HookDispatcher.
 private func dispatchHookEvent(_ hookEventName: String, notificationType: String? = nil) -> DispatchResult {
     switch hookEventName {
@@ -41,6 +46,14 @@ private func dispatchHookEvent(_ hookEventName: String, notificationType: String
     default:
         return .ignored
     }
+}
+
+/// Replicates the provider auto-routing used by the shared local HTTP server.
+private func routeProvider(from payload: [String: Any]) -> ProviderRoute {
+    if payload["_vibe_beeper_provider"] as? String == "codex" {
+        return .codex
+    }
+    return .claude
 }
 
 final class HookDispatcherXCTests: XCTestCase {
@@ -75,6 +88,16 @@ final class HookDispatcherXCTests: XCTestCase {
 
     func testPermissionRequestIsBlocking() {
         XCTAssertEqual(dispatchHookEvent("PermissionRequest"), .blocking)
+    }
+
+    // MARK: - Provider routing
+
+    func testPayloadWithoutProviderDefaultsToClaude() {
+        XCTAssertEqual(routeProvider(from: ["hook_event_name": "PreToolUse"]), .claude)
+    }
+
+    func testPayloadWithCodexProviderRoutesToCodex() {
+        XCTAssertEqual(routeProvider(from: ["_vibe_beeper_provider": "codex", "hook_event_name": "PreToolUse"]), .codex)
     }
 
     // MARK: - Notification sub-routing

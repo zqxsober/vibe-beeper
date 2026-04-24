@@ -63,7 +63,7 @@ struct SettingsView: View {
                 case .permissions:
                     SettingsPermissionsSection(viewModel: viewModel)
                 case .setup:
-                    SettingsSetupSection()
+                    SettingsSetupSection(viewModel: viewModel)
                 case .about:
                     SettingsAboutSection()
                 }

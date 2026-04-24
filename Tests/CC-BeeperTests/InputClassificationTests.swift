@@ -4,21 +4,21 @@ import Foundation
 /// Tests for PermissionMode enum and input classification rules.
 ///
 /// Note: @testable import is not supported for .executableTarget in this project.
-/// These tests replicate the PermissionMode and ClaudeState types locally to verify
+/// These tests replicate the PermissionMode and AgentState types locally to verify
 /// enum contracts, exhaustive state matching, and priority-based selection.
-/// Production types live in Sources/Monitor/ClaudeMonitor.swift.
+/// Production state types live in Sources/Monitor/Core/AgentState.swift.
 
 // MARK: - Replicated Types for test verification
 
-/// Mirror of production PermissionMode — must stay in sync with Sources/Monitor/ClaudeMonitor.swift
+/// Mirror of production PermissionMode — must stay in sync with Sources/Monitor/PermissionController.swift
 private enum TestPermissionMode: Equatable {
     case cautious   // "default" or field missing
     case guided     // "plan"
     case bypass     // "bypass" (covers Guarded YOLO and Full YOLO)
 }
 
-/// Mirror of production ClaudeState priority — shared with LCDStateTests
-private enum TestClaudeState2: Equatable {
+/// Mirror of production AgentState priority.
+private enum TestAgentState2: Equatable {
     case idle
     case working
     case done
@@ -52,9 +52,9 @@ struct InputClassificationTests {
         XCTAssertNotEqual(cautious, guided)
     }
 
-    // INP-02 + INP-03: All 6 ClaudeState cases are exhaustively matchable
+    // INP-02 + INP-03: All 6 interaction states are exhaustively matchable
     func testExhaustiveMatch() {
-        let states: [TestClaudeState2] = [.idle, .working, .done, .error, .approveQuestion, .needsInput]
+        let states: [TestAgentState2] = [.idle, .working, .done, .error, .approveQuestion, .needsInput]
         var matched = 0
         for state in states {
             switch state {
@@ -72,22 +72,22 @@ struct InputClassificationTests {
 
     // Priority sorting: idle < done < working < needsInput < approveQuestion < error
     func testPrioritySorting() {
-        let states: [TestClaudeState2] = [.idle, .error, .working, .approveQuestion, .done, .needsInput]
+        let states: [TestAgentState2] = [.idle, .error, .working, .approveQuestion, .done, .needsInput]
         let sorted = states.sorted(by: { $0.priority < $1.priority })
         XCTAssertEqual(sorted, [.idle, .done, .working, .needsInput, .approveQuestion, .error])
     }
 
     // Priority max selection: highest priority wins
     func testMaxPrioritySelection() {
-        let sessionStates: [TestClaudeState2] = [.working, .done, .idle]
+        let sessionStates: [TestAgentState2] = [.working, .done, .idle]
         let highest = sessionStates.max(by: { $0.priority < $1.priority })
         XCTAssertEqual(highest, .working)
 
-        let withError: [TestClaudeState2] = [.working, .error, .approveQuestion]
+        let withError: [TestAgentState2] = [.working, .error, .approveQuestion]
         let highestWithError = withError.max(by: { $0.priority < $1.priority })
         XCTAssertEqual(highestWithError, .error)
 
-        let withNeedsInput: [TestClaudeState2] = [.working, .needsInput, .done]
+        let withNeedsInput: [TestAgentState2] = [.working, .needsInput, .done]
         let highestWithInput = withNeedsInput.max(by: { $0.priority < $1.priority })
         XCTAssertEqual(highestWithInput, .needsInput)
     }

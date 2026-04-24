@@ -64,7 +64,7 @@ final class HookInstallerTests: XCTestCase {
             "command": asyncCmd,
             "async": true,
             "timeout": 5,
-            "statusMessage": "CC-Beeper monitoring\u{2026}",
+            "statusMessage": "vibe-beeper monitoring\u{2026}",
         ]
         let rule: [String: Any] = ["matcher": "", "hooks": [hookEntry]]
         let settings: [String: Any] = ["hooks": ["PreToolUse": [rule]]]
@@ -101,7 +101,7 @@ final class HookInstallerTests: XCTestCase {
 
         // We verify this by replicating the event configs from HookInstaller
         let asyncConfigs: [(String, Int, String?)] = [
-            ("PreToolUse",  5, "CC-Beeper monitoring\u{2026}"),
+            ("PreToolUse",  5, "vibe-beeper monitoring\u{2026}"),
             ("PostToolUse", 5, nil),
             ("Stop",        5, nil),
             ("StopFailure", 5, nil),

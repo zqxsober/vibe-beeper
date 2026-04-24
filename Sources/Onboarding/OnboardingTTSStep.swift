@@ -20,7 +20,7 @@ struct OnboardingTTSStep: View {
             stepNumber: 7,
             totalSteps: OnboardingViewModel.totalCountedSteps,
             title: "Text-to-speech engine",
-            subtitle: "CC-Beeper can read Claude's responses aloud. Kokoro runs on-device with natural-sounding voices.",
+            subtitle: "vibe-beeper can read Agent responses aloud. Kokoro runs on-device with natural-sounding voices.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             primaryDisabled: useKokoro && !viewModel.isTtsReady,

@@ -32,7 +32,18 @@ struct ScreenContentView: View {
 
                 // Status: big title + scrolling detail
                 VStack(alignment: .leading, spacing: 1) {
-                    MarqueeText(text: titleText, font: .system(size: 13, weight: .heavy, design: .monospaced), color: themeManager.lcdOn)
+                    HStack(spacing: 2) {
+                        Text(titleText)
+                            .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                            .lineLimit(1)
+
+                        if shouldShowActivityDots {
+                            ActivityDotsView(frame: animFrame)
+                        }
+
+                        Spacer(minLength: 0)
+                    }
+                    .foregroundStyle(themeManager.lcdOn)
                         .frame(height: 16)
                         .opacity(titleOpacity)
 
@@ -254,11 +265,37 @@ struct ScreenContentView: View {
         }
     }
 
+    private var shouldShowActivityDots: Bool {
+        switch monitor.state {
+        case .working, .approveQuestion, .needsInput:
+            return true
+        default:
+            return false
+        }
+    }
+
     // MARK: - Animation
 
     private var titleOpacity: Double { flashVisible ? 1.0 : 0.0 }
 
     // MARK: - Tool Name (no longer used for subtitle — tool name shown raw now)
+}
+
+private struct ActivityDotsView: View {
+    let frame: Int
+    @EnvironmentObject private var themeManager: ThemeManager
+
+    var body: some View {
+        HStack(spacing: -1) {
+            ForEach(0..<3, id: \.self) { index in
+                Text(".")
+                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                    .foregroundStyle(themeManager.lcdOn.opacity(frame % 3 == index ? 1 : 0.22))
+            }
+        }
+        .fixedSize()
+        .animation(.easeInOut(duration: 0.18), value: frame)
+    }
 }
 
 // MARK: - Marquee Scrolling Text

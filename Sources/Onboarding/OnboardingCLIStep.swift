@@ -7,8 +7,8 @@ struct OnboardingCLIStep: View {
         OnboardingShell(
             stepNumber: 1,
             totalSteps: OnboardingViewModel.totalCountedSteps,
-            title: "Add hooks to Claude Code",
-            subtitle: "CC-Beeper needs 6 hook entries in ~/.claude/settings.json to work. Review or remove them anytime.",
+            title: "Connect supported CLIs",
+            subtitle: "vibe-beeper can connect to Claude Code and Codex. You can enable each CLI now or revisit setup later.",
             primaryLabel: "Next",
             primaryAction: handlePrimary,
             skipLabel: "Skip",
@@ -16,7 +16,17 @@ struct OnboardingCLIStep: View {
             onBack: { viewModel.goBack() }
         ) {
             VStack(spacing: 14) {
-                SettingsJsonCard(status: cardStatus)
+                ProviderConfigCard(
+                    title: ProviderKind.claude.displayName,
+                    path: "~/.claude/settings.json",
+                    status: claudeStatus
+                )
+
+                ProviderConfigCard(
+                    title: ProviderKind.codex.displayName,
+                    path: "~/.codex/hooks.json",
+                    status: codexStatus
+                )
 
                 if !viewModel.isClaudeDetected {
                     HStack(spacing: 4) {
@@ -28,7 +38,17 @@ struct OnboardingCLIStep: View {
                     .font(OnboardingTheme.sans(12))
                 }
 
-                if let error = viewModel.hookInstallError {
+                if !viewModel.isCodexDetected {
+                    HStack(spacing: 4) {
+                        Text("Codex CLI not found.")
+                            .foregroundStyle(OnboardingTheme.stone)
+                        Link("Install it", destination: URL(string: "https://developers.openai.com/codex")!)
+                            .foregroundStyle(OnboardingTheme.terracotta)
+                    }
+                    .font(OnboardingTheme.sans(12))
+                }
+
+                if let error = viewModel.setupErrorMessage {
                     Text(error)
                         .font(OnboardingTheme.sans(11))
                         .foregroundStyle(OnboardingTheme.crimson)
@@ -37,19 +57,31 @@ struct OnboardingCLIStep: View {
                 }
             }
         }
-        .onAppear { viewModel.detectClaude() }
+        .onAppear { viewModel.detectProviders() }
     }
 
-    private var cardStatus: SettingsJsonCard.Status {
-        if !viewModel.isClaudeDetected { return .noClaude }
-        return viewModel.isHooksInstalled ? .installed : .pending
+    private var claudeStatus: ProviderConfigCard.Status {
+        if !viewModel.isClaudeDetected { return .notFound }
+        return viewModel.isClaudeHooksInstalled ? .installed : .pending
+    }
+
+    private var codexStatus: ProviderConfigCard.Status {
+        if !viewModel.isCodexDetected { return .notFound }
+        return viewModel.isCodexHooksInstalled ? .installed : .pending
     }
 
     private func handlePrimary() {
         // If we can install, try it; only advance on success.
-        if viewModel.isClaudeDetected && !viewModel.isHooksInstalled {
-            viewModel.installHooks()
-            if viewModel.hookInstallError == nil {
+        if viewModel.isClaudeDetected && !viewModel.isClaudeHooksInstalled {
+            viewModel.installClaudeHooks()
+            if viewModel.setupErrorMessage == nil {
+                handlePrimary()
+            }
+            return
+        }
+        if viewModel.isCodexDetected && !viewModel.isCodexHooksInstalled {
+            viewModel.installCodexHooks()
+            if viewModel.setupErrorMessage == nil {
                 viewModel.goNext()
             }
             return
@@ -60,15 +92,22 @@ struct OnboardingCLIStep: View {
 
 // MARK: - Settings.json card
 
-struct SettingsJsonCard: View {
-    enum Status { case pending, installed, noClaude }
+struct ProviderConfigCard: View {
+    enum Status { case pending, installed, notFound }
+    let title: String
+    let path: String
     let status: Status
 
     var body: some View {
-        HStack(spacing: 20) {
-            Text("~/.claude/settings.json")
-                .font(OnboardingTheme.mono(13))
-                .foregroundStyle(OnboardingTheme.nearBlack)
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(OnboardingTheme.sans(13, weight: .semibold))
+                    .foregroundStyle(OnboardingTheme.nearBlack)
+                Text(path)
+                    .font(OnboardingTheme.mono(11))
+                    .foregroundStyle(OnboardingTheme.stone)
+            }
             Spacer(minLength: 16)
             badge
         }
@@ -81,11 +120,11 @@ struct SettingsJsonCard: View {
     @ViewBuilder private var badge: some View {
         switch status {
         case .pending:
-            badgePill(text: "+ 6 hooks", color: OnboardingTheme.green)
+            badgePill(text: "Pending", color: OnboardingTheme.amber)
         case .installed:
             badgePill(text: "Installed", color: OnboardingTheme.green)
-        case .noClaude:
-            badgePill(text: "No Claude", color: OnboardingTheme.amber)
+        case .notFound:
+            badgePill(text: "Not Found", color: OnboardingTheme.amber)
         }
     }
 
@@ -102,6 +141,8 @@ struct SettingsJsonCard: View {
             )
     }
 }
+
+typealias SettingsJsonCard = ProviderConfigCard
 
 // MARK: - Legacy components (still used by remaining pre-migration step files)
 

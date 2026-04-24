@@ -26,7 +26,7 @@ final class TTSService: ObservableObject, @unchecked Sendable {
 
     // MARK: - Logging
 
-    private static let logger = Logger(subsystem: "com.vecartier.cc-beeper", category: "tts")
+    private static let logger = Logger(subsystem: "com.zqxsober.vibe-beeper", category: "tts")
 
     func log(_ msg: String) {
         Self.logger.info("\(msg, privacy: .public)")

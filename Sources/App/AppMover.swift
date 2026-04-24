@@ -26,9 +26,9 @@ struct AppMover {
         //    manually copy the app instead.
         if currentPath.contains("AppTranslocation") {
             let alert = NSAlert()
-            alert.messageText = "Move CC-Beeper to Applications"
-            alert.informativeText = "macOS is running CC-Beeper from a temporary location. " +
-                "Please drag CC-Beeper to your Applications folder and reopen it."
+            alert.messageText = "Move vibe-beeper to Applications"
+            alert.informativeText = "macOS is running vibe-beeper from a temporary location. " +
+                "Please drag vibe-beeper to your Applications folder and reopen it."
             alert.addButton(withTitle: "OK")
             alert.runModal()
             return
@@ -36,8 +36,8 @@ struct AppMover {
 
         // 4. Prompt the user to copy the app to /Applications.
         let alert = NSAlert()
-        alert.messageText = "Move CC-Beeper to Applications?"
-        alert.informativeText = "CC-Beeper works best when installed in your Applications folder."
+        alert.messageText = "Move vibe-beeper to Applications?"
+        alert.informativeText = "vibe-beeper works best when installed in your Applications folder."
         alert.addButton(withTitle: "Move to Applications")
         alert.addButton(withTitle: "Don't Move")
         guard alert.runModal() == .alertFirstButtonReturn else { return }

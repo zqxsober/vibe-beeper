@@ -13,7 +13,7 @@ struct SettingsAboutSection: View {
                         .frame(width: 80, height: 80)
                 }
 
-                Text("CC-Beeper")
+                Text("vibe-beeper")
                     .font(.title2)
                     .fontWeight(.bold)
 
@@ -21,7 +21,7 @@ struct SettingsAboutSection: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
 
-                Text("A desktop companion for Claude Code.")
+                Text("A desktop companion for Claude Code and Codex.")
                     .font(.body)
                     .foregroundStyle(.secondary)
 
@@ -34,15 +34,15 @@ struct SettingsAboutSection: View {
         }
 
         Section {
-            Link(destination: URL(string: "https://github.com/vecartier/cc-beeper")!) {
+            Link(destination: URL(string: "https://github.com/zqxsober/vibe-beeper")!) {
                 Label("GitHub", systemImage: "link")
             }
 
-            Link(destination: URL(string: "https://github.com/vecartier/cc-beeper/releases")!) {
+            Link(destination: URL(string: "https://github.com/zqxsober/vibe-beeper/releases")!) {
                 Label("Releases", systemImage: "arrow.down.circle")
             }
 
-            Link(destination: URL(string: "https://github.com/vecartier/cc-beeper/issues")!) {
+            Link(destination: URL(string: "https://github.com/zqxsober/vibe-beeper/issues")!) {
                 Label("Report an Issue", systemImage: "exclamationmark.bubble")
             }
         }

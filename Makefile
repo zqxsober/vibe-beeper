@@ -7,15 +7,15 @@ install: build
 	@echo ""
 	@echo "Setting up Claude Code hooks..."
 	@python3 scripts/setup.py
-	@echo "Launching CC-Beeper..."
-	@open /Applications/CC-Beeper.app
+	@echo "Launching vibe-beeper..."
+	@open /Applications/vibe-beeper.app
 
 uninstall: no-autoupdate
-	@echo "Uninstalling CC-Beeper..."
+	@echo "Uninstalling vibe-beeper..."
 	@python3 scripts/uninstall.py
 
 clean:
-	@rm -rf .build CC-Beeper.app CC-Beeper.dmg
+	@rm -rf .build CC-Beeper.app CC-Beeper.dmg vibe-beeper.app vibe-beeper.dmg
 	@echo "Cleaned build artifacts"
 
 dmg:
@@ -25,16 +25,16 @@ release:
 	@VERSION=$$(grep 'CFBundleShortVersionString' build.sh -A1 | grep '<string>' | sed 's/.*<string>//;s/<.*//' ) && \
 	echo "==> Building + notarizing v$$VERSION..." && \
 	SIGNING_IDENTITY='Developer ID Application: VICTOR EMMANUEL CARTIER (BMT85YWFD9)' \
-	NOTARY_PROFILE='CC-Beeper' ./scripts/create-dmg.sh && \
+	NOTARY_PROFILE='vibe-beeper' ./scripts/create-dmg.sh && \
 	echo "==> Tagging v$$VERSION..." && \
 	git tag -f "v$$VERSION" HEAD && \
 	git push origin main && \
 	git push origin "v$$VERSION" --force && \
 	echo "==> Waiting for CI..." && \
 	sleep 5 && \
-	gh run watch $$(gh run list --repo vecartier/cc-beeper --limit 1 --json databaseId --jq '.[0].databaseId') --repo vecartier/cc-beeper --exit-status && \
+	gh run watch $$(gh run list --repo zqxsober/vibe-beeper --limit 1 --json databaseId --jq '.[0].databaseId') --repo zqxsober/vibe-beeper --exit-status && \
 	echo "==> Uploading notarized DMG..." && \
-	gh release upload "v$$VERSION" CC-Beeper.dmg --repo vecartier/cc-beeper --clobber && \
+	gh release upload "v$$VERSION" vibe-beeper.dmg --repo zqxsober/vibe-beeper --clobber && \
 	echo "==> Updating Homebrew tap..." && \
 	./scripts/update-homebrew-tap.sh "$$VERSION" && \
 	echo "==> Done. v$$VERSION released."

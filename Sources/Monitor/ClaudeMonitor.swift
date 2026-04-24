@@ -9,47 +9,6 @@ import Carbon.HIToolbox
 
 // MARK: - State
 
-enum ClaudeState: Equatable {
-    case idle
-    case working
-    case done
-    case error
-    case approveQuestion   // APPROVE?
-    case needsInput        // NEEDS INPUT
-    case listening         // Recording voice
-    case speaking          // TTS reading aloud
-
-    var label: String {
-        switch self {
-        case .idle: "ZZZ..."
-        case .working: "WORKING"
-        case .done: "DONE!"
-        case .error: "ERROR"
-        case .approveQuestion: "APPROVE?"
-        case .needsInput: "INPUT?"
-        case .listening: "LISTENING"
-        case .speaking: "SPEAKING"
-        }
-    }
-
-    /// State priority — higher number wins when resolving multiple concurrent sessions.
-    var priority: Int {
-        switch self {
-        case .error: return 7
-        case .approveQuestion: return 6
-        case .needsInput: return 5
-        case .listening: return 4
-        case .speaking: return 3
-        case .working: return 2
-        case .done: return 1
-        case .idle: return 0
-        }
-    }
-
-    var needsAttention: Bool { self == .approveQuestion }
-    var canGoToConvo: Bool { self == .done }
-}
-
 // MARK: - Monitor
 
 @MainActor
@@ -58,7 +17,6 @@ final class ClaudeMonitor: ObservableObject {
 
     /// Auto-approve response sent back to Claude Code for YOLO/allowed tools.
     static let autoApproveResponse: [String: Any] = [
-        "_send_immediately": true,
         "hookSpecificOutput": [
             "hookEventName": "PermissionRequest",
             "decision": ["behavior": "allow"]
@@ -67,7 +25,7 @@ final class ClaudeMonitor: ObservableObject {
 
     // MARK: - Published State
 
-    @Published var state: ClaudeState = .idle
+    @Published var state: AgentState = .idle
     @Published var pendingPermission: PendingPermission?
     @Published var soundEnabled: Bool {
         didSet { UserDefaults.standard.set(soundEnabled, forKey: "soundEnabled") }
@@ -116,8 +74,12 @@ final class ClaudeMonitor: ObservableObject {
                 ttsService.stopSpeaking()
                 httpServer.stop()
                 idleWork?.cancel()
+                doneDebounceWork?.cancel()
                 carbonHotKeys.removeAll()
                 if let m = localKeyMonitor { NSEvent.removeMonitor(m); localKeyMonitor = nil }
+                sessionStore.removeAll()
+                sessionCount = 0
+                lastPruneTime = .distantPast
                 state = .idle
                 idleStartTime = Date()
                 pendingPermission = nil
@@ -134,6 +96,8 @@ final class ClaudeMonitor: ObservableObject {
     let voiceService = VoiceService()
     let ttsService = TTSService()
     let voiceCommandService = VoiceCommandService()
+    let sessionStore = SessionStore()
+    let codexHooksProvider = CodexHooksProvider()
 
     @Published var clapDictationEnabled: Bool = UserDefaults.standard.bool(forKey: "voiceCommandsEnabled") {
         didSet { voiceCommandService.enabled = clapDictationEnabled }
@@ -186,9 +150,7 @@ final class ClaudeMonitor: ObservableObject {
     // MARK: - Internal State (accessed by extensions in separate files)
 
     var awaitingUserAction = false
-    var sessionStates: [String: ClaudeState] = [:]
-    var sessionLastSeen: [String: Date] = [:]
-    let httpServer = HTTPHookServer()
+    let httpServer = LocalHTTPHookServer()
     var idleWork: DispatchWorkItem?
     var doneDebounceWork: DispatchWorkItem?
     var lastPruneTime: Date = .distantPast
@@ -338,7 +300,7 @@ final class ClaudeMonitor: ObservableObject {
                 guard let self else { return }
                 // Clear stale permission state if the underlying HTTP connection is gone
                 // (Claude Code was killed without sending a Stop hook).
-                if self.pendingPermission != nil && self.httpServer.pendingPermissionConnections.isEmpty {
+                if self.pendingPermission != nil && self.httpServer.pendingDeferredConnections.isEmpty {
                     self.awaitingUserAction = false
                     self.pendingPermission = nil
                 }
@@ -346,8 +308,7 @@ final class ClaudeMonitor: ObservableObject {
                 // No hook activity for the full interval — treat any lingering
                 // sessions as stale (SessionEnd hook was removed in v7.0, so
                 // sessions at .done/.error never get cleaned up otherwise).
-                self.sessionStates.removeAll()
-                self.sessionLastSeen.removeAll()
+                self.sessionStore.removeAll()
                 self.sessionCount = 0
                 self.state = .idle
                 self.idleStartTime = Date()

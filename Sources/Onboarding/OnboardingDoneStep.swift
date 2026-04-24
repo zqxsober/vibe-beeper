@@ -13,7 +13,7 @@ struct OnboardingDoneStep: View {
             isDark: false,
             showBack: true,
             onBack: { viewModel.goBack() },
-            primaryLabel: "Launch CC-Beeper",
+            primaryLabel: "Launch vibe-beeper",
             primaryAction: handleLaunch
         ) {
             CheckDisc()
