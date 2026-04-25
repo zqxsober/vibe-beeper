@@ -48,7 +48,7 @@ struct OnboardingSizesStep: View {
                 SizeOption(isSelected: viewModel.selectedSize == .compact,
                            label: "Compact", desc: "LCD only",
                            onTap: { viewModel.selectedSize = .compact }) {
-                    if let img = loadSizeImage("beeper-small-\(themeId).png") {
+                    if let img = loadSizeImage("vibe-beeper-small-\(themeId).png") {
                         Image(nsImage: img)
                             .resizable()
                             .interpolation(.high)

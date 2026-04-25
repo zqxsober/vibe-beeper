@@ -2,11 +2,11 @@
 
 # vibe-beeper
 
-**A floating macOS pager for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and Codex.**
+**A floating macOS desktop pager for Claude Code and Codex.**
 
-*Stop babysitting your terminal. Start shipping.*
+*Stop babysitting your terminal. Never miss a completion, error, or permission prompt.*
 
-<img src="assets/hero.gif" width="320">
+<img src="assets/hero.gif" width="320" alt="vibe-beeper demo">
 
 <br><br>
 
@@ -20,7 +20,6 @@
 [![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue?style=flat-square)](https://github.com/zqxsober/vibe-beeper)
 [![Swift](https://img.shields.io/badge/Swift-6-orange?style=flat-square)](https://github.com/zqxsober/vibe-beeper)
 [![License](https://img.shields.io/badge/license-GPL--3.0-green?style=flat-square)](LICENSE)
-[![Homebrew](https://img.shields.io/badge/homebrew-tap-brown?style=flat-square)](https://github.com/vecartier/homebrew-tap)
 
 [中文说明](README.zh-CN.md)
 
@@ -28,207 +27,277 @@
 
 ---
 
-## Why I Made This
+## Why vibe-beeper exists
 
-You kick off a task in Claude Code. Then life happens. Claude finishes, or hits an error, or needs a permission — but your terminal is buried under three windows.
+You launch a task in Claude Code or Codex, switch back to real work, and a few minutes later your agent is either:
 
-vibe-beeper fixes that. It's a small widget that sits on your desktop, shows what Claude Code or Codex is doing, and lets you respond without switching apps. Never miss an update. Respond without breaking your flow.
+- done
+- waiting for approval
+- blocked on a question
+- buried under three terminal tabs you forgot to check
+
+vibe-beeper pulls those events onto the desktop. It gives you a persistent LCD-style widget, menu bar status, hotkeys, audio feedback, and optional voice interaction so you can respond without breaking flow.
 
 ---
 
-## See It in Action
+## Provider support
 
-https://github.com/user-attachments/assets/9df11591-ec91-4ddb-8cbe-a6c4b2a41c9a
+| Provider | Status | Notes |
+| --- | --- | --- |
+| Claude Code | Stable | Hooks, state sync, permission prompts, auto-approve presets, voice input, read-aloud |
+| Codex | Basic integration | Detection, config markers, event translation, UI state entry points; still evolving toward parity |
 
+If your main workflow is Claude Code, vibe-beeper is ready today. Codex support is usable, but should still be treated as an actively developing path.
 
 ---
 
 ## Features
 
-### Real-Time States
+### Desktop states at a glance
 
-At a glance, know exactly what your agent is up to. vibe-beeper tracks 8 states, each with its own pixel-art animation. Higher-urgency events always take priority.
+vibe-beeper tracks eight agent states and surfaces the highest-priority one across active sessions:
 
-| State | | What it means |
-|-------|-------|--------------|
-| **SNOOZING** | <img src="assets/states/snoozing.png" width="200"> | No active session. Claude is idle. |
-| **WORKING** | <img src="assets/states/working.png" width="200"> | Claude is running a tool — *Busy with bash*, *Tinkering with write*... |
-| **DONE!** | <img src="assets/states/done.png" width="200"> | Task completed successfully. |
-| **ERROR** | <img src="assets/states/error.png" width="200"> | Something went wrong. |
-| **ALLOW?** | <img src="assets/states/allow.png" width="200"> | Claude needs permission. Approve (⌥A) or deny (⌥D). |
-| **INPUT?** | <img src="assets/states/input.png" width="200"> | Claude asked a question. Waiting for your response. |
-| **LISTENING** | <img src="assets/states/listening.png" width="200"> | Recording your voice for dictation. |
-| **RECAP** | <img src="assets/states/recap.png" width="200"> | Reading Claude's last response aloud. |
+| State | Preview | Meaning |
+| --- | --- | --- |
+| **SNOOZING** | <img src="assets/states/snoozing.png" width="200"> | No active session |
+| **WORKING** | <img src="assets/states/working.png" width="200"> | Agent is currently running tools |
+| **DONE!** | <img src="assets/states/done.png" width="200"> | Task completed successfully |
+| **ERROR** | <img src="assets/states/error.png" width="200"> | The run failed |
+| **ALLOW?** | <img src="assets/states/allow.png" width="200"> | A permission request is waiting for you |
+| **INPUT?** | <img src="assets/states/input.png" width="200"> | The agent asked a question |
+| **LISTENING** | <img src="assets/states/listening.png" width="200"> | Voice dictation is recording |
+| **RECAP** | <img src="assets/states/recap.png" width="200"> | A response is being read aloud |
 
----
+### Auto-approve presets
 
-### Auto-Accept Modes
+Switch between approval modes depending on how much trust and speed you want:
 
-When Claude Code needs to use a tool, vibe-beeper can auto-approve it or ask you first. Four presets let you dial the automation while keeping control. Switchable anytime from the menu bar.
+| Mode | Behavior |
+| --- | --- |
+| **Strict** | Ask every time |
+| **Relaxed** | Allow reads automatically, ask before writes and commands |
+| **Trusted** | Allow file operations automatically, ask before shell commands |
+| **YOLO** | Approve everything automatically |
 
-| Mode | What happens |
-|------|-------------|
-| **Strict** | Ask me every time. Nothing runs without your approval. |
-| **Relaxed** | Reads are fine. Asks before writes and commands. |
-| **Trusted** | File operations are fine. Asks before shell commands. |
-| **YOLO** | Don't ask. Just do it. Auto-approves everything — including file writes, deletes, and shell commands. |
+`YOLO` is intentionally high-risk. It can approve file writes, deletes, commands, and network-related actions on your behalf.
 
----
+### Voice input and read-aloud
 
-### Voice
+- **WhisperKit** for on-device dictation
+- **Apple Speech** as fallback transcription
+- **Kokoro** for local TTS playback
+- **Apple Speech** as fallback read-aloud
+- Global record toggle with `⌥R`
+- Optional **double clap** activation for hands-free dictation
 
-#### Dictation
+### Widget sizes, themes, and feedback
 
-Prompt Claude, or answer its questions, just by talking. Toggle with **⌥R** from anywhere, or **double clap** to go fully hands-free.
-
-- **WhisperKit** — on-device, 99 languages, no cloud, no API key
-- **Apple Speech** — built-in fallback, no download needed
-- Works with Terminal.app, iTerm2, Warp, Alacritty, Kitty, and WezTerm
-
-#### Read Aloud
-
-Claude finished? Hear the summary out loud.
-
-- **Kokoro** — on-device, 54 voices across 9 languages
-- **Apple Speech** — built-in fallback
-
----
-
-### Global Hotkeys
-
-Use them from any app, in any keyboard layout (AZERTY, QWERTZ, Dvorak). All remappable in Settings.
-
-| Hotkey | Action |
-|--------|--------|
-| **⌥A** | Approve pending permission |
-| **⌥D** | Deny pending permission |
-| **⌥R** | Toggle voice recording |
-| **⌥T** | Focus the active terminal |
-| **⌥M** | Stop TTS / replay last response |
-
----
-
-### Themes, Sizes & Sound
-
-- **10 shell colors**
-- **3 widget sizes** — Large (buttons + LCD), Compact (LCD only), or Menu Only (icon in the menu bar)
-- **Sound & haptics** — ping on permission requests, chime on task completion, vibration until resolved
+- 10 shell colors
+- 3 display modes: **Large**, **Compact**, **Menu Only**
+- Sound alerts, completion chimes, vibration feedback
+- A menu bar companion that mirrors the current state
 
 ![Shell colors](assets/shell-colors.png)
 
 ---
 
-## Getting Started
+## Installation
 
-**Requirements:** macOS 14 Sonoma+ · [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
+### Requirements
 
-1. Download the [latest release](https://github.com/zqxsober/vibe-beeper/releases)
-2. Move `vibe-beeper.app` to `/Applications`
-3. Launch — the onboarding wizard handles hooks, theme, permissions, voice engines, and hotkeys
+- macOS 14 Sonoma or newer
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI for the full supported workflow
+- Codex CLI if you want to enable Codex integration
+- Xcode Command Line Tools / Swift 6 if you plan to build from source
 
-Everything is optional and can be changed later in Settings.
+### Option 1: Install from a release
+
+1. Download the latest [release](https://github.com/zqxsober/vibe-beeper/releases).
+2. Move `vibe-beeper.app` into `/Applications`.
+3. Launch the app.
+4. Complete onboarding to install hooks, choose theme/size, configure permissions, and optionally download voice models.
+
+This is the simplest path for most users.
+
+### Option 2: Build from source
+
+```bash
+git clone https://github.com/zqxsober/vibe-beeper.git
+cd vibe-beeper
+swift test
+SKIP_INSTALL=1 ./build.sh
+open vibe-beeper.app
+```
+
+Notes:
+
+- `SKIP_INSTALL=1 ./build.sh` builds a local `.app` bundle in the repo without touching `/Applications`.
+- Running `./build.sh` without `SKIP_INSTALL=1` will replace `/Applications/vibe-beeper.app`.
+- `make install` builds the app, runs the Claude hook setup helper, and opens the installed app.
+
+---
+
+## First launch checklist
+
+When vibe-beeper starts for the first time, the recommended flow is:
+
+1. Detect installed CLIs
+2. Install Claude Code hooks
+3. Install Codex hooks if Codex is present and you want it enabled
+4. Grant accessibility, microphone, and speech recognition permissions as needed
+5. Download optional local voice models for WhisperKit and Kokoro
+6. Pick a shell color, widget size, approval preset, and hotkeys
+7. Restart any Claude Code or Codex sessions that were already running before hooks were installed
+
+If something looks stale later, open **Settings → Setup** and reinstall hooks or reopen onboarding.
+
+---
+
+## Everyday usage
+
+### Responding to permissions
+
+- Use the on-screen buttons on the large widget
+- Or use global hotkeys:
+  - `⌥A` approve
+  - `⌥D` deny
+
+### Voice workflows
+
+- `⌥R` toggles dictation
+- `⌥M` stops or replays spoken output
+- Double clap can start dictation if enabled in settings
+
+### Jumping back to your terminal
+
+- `⌥T` focuses the active terminal window
+- The widget and menu bar are meant to reduce terminal tab babysitting, not replace your CLI
+
+### Menu bar behavior
+
+The menu bar companion exposes:
+
+- current state
+- mute / unmute
+- sleep / wake
+- clap dictation toggle
+- approval mode switching
+- widget size switching
+- settings and hook repair entry points
+
+---
+
+## Development commands
+
+Useful commands when working on the project locally:
+
+```bash
+swift test                     # run the Swift test suite
+SKIP_INSTALL=1 ./build.sh      # build a local app bundle only
+make install                   # build, configure Claude hooks, launch the app
+make uninstall                 # remove installed hooks and stop the app
+make dmg                       # build a DMG from the current source tree
+```
+
+Behavior notes:
+
+- `scripts/setup.py` installs Claude hooks into `~/.claude/settings.json`
+- Codex integration is managed through the app onboarding/settings flow
+- `scripts/uninstall.py` removes both Claude and Codex hook/config traces managed by vibe-beeper
+
+---
+
+## How it works
+
+### Local-only event transport
+
+vibe-beeper listens on `127.0.0.1` and receives hook payloads from local CLI integrations. No cloud relay is required.
+
+### Claude Code
+
+Claude hook configuration is written into:
+
+```text
+~/.claude/settings.json
+```
+
+The helper script and IPC metadata live under:
+
+```text
+~/.claude/hooks
+~/.claude/cc-beeper
+```
+
+### Codex
+
+Codex-related markers and hook metadata are managed in the user's local Codex configuration files:
+
+```text
+~/.codex/config.toml
+~/.codex/hooks.json
+```
+
+### Multi-session priority
+
+If several sessions are active at once, vibe-beeper shows the highest-priority state instead of the most recent one, so urgent prompts do not get hidden behind lower-priority completions.
 
 ---
 
 ## Privacy
 
-> **All local. No API keys. Nothing leaves your Mac.**
+> **Everything is designed to stay on your Mac.**
 
-- All communication happens over `127.0.0.1` — plain `curl` hooks to a local HTTP server
-- No telemetry, no analytics, no crash reporting — zero outbound connections
-- WhisperKit and Kokoro run on-device. Your voice is never uploaded
-- No accounts, no sign-up, no tokens
-- Hooks are transparent — inspect or remove them from `~/.claude/settings.json` anytime
+- No telemetry
+- No analytics
+- No sign-in
+- No mandatory cloud account
+- No API key required for the built-in local voice pipeline
+- WhisperKit and Kokoro run on-device
 
----
-
-## Technical Details
-
-<details>
-<summary><strong>How the hooks work</strong></summary>
-
-vibe-beeper binds to a local port (19222-19230) on launch and registers 7 hook scripts in `~/.claude/settings.json`: UserPromptSubmit, PreToolUse, PostToolUse, Stop, StopFailure (all async), plus Notification and PermissionRequest (blocking — vibe-beeper holds the TCP connection open until the user responds).
-
-Hooks are identified by `cc-beeper/port` in the command string for safe update/removal without touching user hooks.
-
-</details>
-
-<details>
-<summary><strong>Session management</strong></summary>
-
-vibe-beeper tracks multiple concurrent Claude Code and Codex sessions. The displayed state resolves by priority across all active sessions. Sessions auto-prune after 2 hours of inactivity.
-
-</details>
-
-<details>
-<summary><strong>Instance detection</strong></summary>
-
-On launch, vibe-beeper pings ports 19222-19230 via HTTP to detect if another instance is already running, preventing conflicts.
-
-</details>
-
-<details>
-<summary><strong>Menu bar</strong></summary>
-
-The menu bar icon reflects the current state: normal (outline), attention (orange), YOLO (purple), recording (red circle), speaking (green speaker), or hidden (dimmed).
-
-The menu contains: session count, state label, Mute/Unmute, Sleep/Wake, Clap Dictation toggle, Fix Permissions (when needed), auto-accept preset picker, size picker, hotkey reference, Settings, and Quit.
-
-</details>
-
-<details>
-<summary><strong>Settings</strong></summary>
-
-| Tab | What's inside |
-|-----|--------------|
-| **Theme** | 10 shell colors |
-| **Dictation** | Double Clap Dictation toggle, Whisper model size (small/medium), download |
-| **Read Over** | Auto-speak toggle, Kokoro/Apple picker, language & voice |
-| **Feedback** | Sound + vibration toggles |
-| **Hotkeys** | 5 remappable hotkey fields |
-| **Permissions** | 4 preset radio buttons |
-| **Setup** | Reinstall hooks, reopen onboarding |
-| **About** | Version, credits, links |
-
-</details>
+You can inspect or remove local hook configuration at any time.
 
 ---
 
-## Disclaimer
+## Limitations and risk boundaries
 
-**vibe-beeper is an independent, community-built project. It is not affiliated with, endorsed by, or sponsored by Anthropic or OpenAI.**
-
-vibe-beeper is a community fork of CC-Beeper with Codex support work in progress. Use it at your own risk.
-
-Auto-accept modes approve Claude Code tool requests on your behalf — including file modifications, shell commands, and network requests. **YOLO mode approves everything without prompting.** You are responsible for reviewing what you approve.
-
-The authors are not liable for any damage, data loss, or unintended consequences.
+- `YOLO` mode can approve risky operations automatically. Use it only when you fully trust the current workspace and task.
+- Codex support is still not at full Claude Code parity.
+- The app depends on local CLI hook behavior, so existing sessions may need a restart after setup changes.
 
 ---
 
 ## Contributing
 
-Feature suggestions and code improvements are welcome.
+Issues, docs improvements, bug reports, and pull requests are welcome.
+
+Suggested flow:
 
 1. Fork the repo
-2. Create a feature branch (`git checkout -b feature/your-idea`)
-3. Commit your changes
-4. Open a Pull Request
+2. Create a branch
+3. Run `swift test`
+4. Make your changes
+5. Open a pull request
+
+---
+
+## Disclaimer
+
+vibe-beeper is an independent open-source project. It is not affiliated with, endorsed by, or sponsored by Anthropic or OpenAI.
+
+The project started from the CC-Beeper lineage and continues as a community-maintained macOS companion for agent workflows.
 
 ---
 
 ## License
 
-GPL-3.0 — see [LICENSE](LICENSE) for details.
+GPL-3.0. See [LICENSE](LICENSE).
 
 ---
 
 <div align="center">
 
-**Built by [Victor Cartier](https://github.com/vecartier)**
+Open Source · Native macOS · Built for agent-heavy workflows
 
-Free · Open Source · Native macOS
-
-If vibe-beeper saves you from one missed permission prompt, give it a star.
+If vibe-beeper saves you from one missed permission prompt, a GitHub star helps a lot.
 
 </div>

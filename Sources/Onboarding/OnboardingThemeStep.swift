@@ -121,7 +121,7 @@ private struct CompactShellPreview: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            if let img = loadImage("beeper-small-\(theme.id).png") {
+            if let img = loadImage("vibe-beeper-small-\(theme.id).png") {
                 Image(nsImage: img)
                     .resizable()
                     .interpolation(.high)

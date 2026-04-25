@@ -28,9 +28,6 @@ struct ContentView: View {
                 .interpolation(.high)
                 .frame(width: shellW, height: shellH)
 
-            BrandBadgeView(compact: false)
-                .offset(x: 27, y: 17)
-
             // LED indicators — top right of bezel
             HStack(spacing: 4) {
                 Circle()

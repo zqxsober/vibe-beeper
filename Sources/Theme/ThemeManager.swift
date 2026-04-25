@@ -14,16 +14,16 @@ struct ShellTheme: Identifiable, Equatable {
 
 final class ThemeManager: ObservableObject {
     static let themes: [ShellTheme] = [
-        ShellTheme(id: "black",  name: "Black",  displayName: "Midnight", shellImage: "beeper-black.png",  dotColor: "212121"),
-        ShellTheme(id: "blue",   name: "Blue",   displayName: "Ocean",    shellImage: "beeper-blue.png",   dotColor: "004FFA"),
-        ShellTheme(id: "green",  name: "Green",  displayName: "Pine",     shellImage: "beeper-green.png",  dotColor: "209B43"),
-        ShellTheme(id: "mint",   name: "Mint",   displayName: "Slate",    shellImage: "beeper-mint.png",   dotColor: "58D0C0"),
-        ShellTheme(id: "orange", name: "Orange", displayName: "Ember",    shellImage: "beeper-orange.png", dotColor: "E86A1B"),
-        ShellTheme(id: "pink",   name: "Pink",   displayName: "Rose",     shellImage: "beeper-pink.png",   dotColor: "FD6295"),
-        ShellTheme(id: "purple", name: "Purple", displayName: "Violet",   shellImage: "beeper-purple.png", dotColor: "6C22FF"),
-        ShellTheme(id: "red",    name: "Red",    displayName: "Crimson",  shellImage: "beeper-red.png",    dotColor: "FF2222"),
-        ShellTheme(id: "white",  name: "White",  displayName: "Ghost",    shellImage: "beeper-white.png",  dotColor: "FFFFFF"),
-        ShellTheme(id: "yellow", name: "Yellow", displayName: "Gold",     shellImage: "beeper-yellow.png", dotColor: "EDA623"),
+        ShellTheme(id: "black",  name: "Black",  displayName: "Midnight", shellImage: "vibe-beeper-black.png",  dotColor: "212121"),
+        ShellTheme(id: "blue",   name: "Blue",   displayName: "Ocean",    shellImage: "vibe-beeper-blue.png",   dotColor: "004FFA"),
+        ShellTheme(id: "green",  name: "Green",  displayName: "Pine",     shellImage: "vibe-beeper-green.png",  dotColor: "209B43"),
+        ShellTheme(id: "mint",   name: "Mint",   displayName: "Slate",    shellImage: "vibe-beeper-mint.png",   dotColor: "58D0C0"),
+        ShellTheme(id: "orange", name: "Orange", displayName: "Ember",    shellImage: "vibe-beeper-orange.png", dotColor: "E86A1B"),
+        ShellTheme(id: "pink",   name: "Pink",   displayName: "Rose",     shellImage: "vibe-beeper-pink.png",   dotColor: "FD6295"),
+        ShellTheme(id: "purple", name: "Purple", displayName: "Violet",   shellImage: "vibe-beeper-purple.png", dotColor: "6C22FF"),
+        ShellTheme(id: "red",    name: "Red",    displayName: "Crimson",  shellImage: "vibe-beeper-red.png",    dotColor: "FF2222"),
+        ShellTheme(id: "white",  name: "White",  displayName: "Ghost",    shellImage: "vibe-beeper-white.png",  dotColor: "FFFFFF"),
+        ShellTheme(id: "yellow", name: "Yellow", displayName: "Gold",     shellImage: "vibe-beeper-yellow.png", dotColor: "EDA623"),
     ]
 
     @Published var currentThemeId: String {
@@ -49,7 +49,7 @@ final class ThemeManager: ObservableObject {
     }
 
     var shellImageName: String { theme.shellImage }
-    var smallShellImageName: String { "beeper-small-\(currentThemeId).png" }
+    var smallShellImageName: String { "vibe-beeper-small-\(currentThemeId).png" }
 
     // MARK: - LCD Colors (dark mode support)
 

@@ -1,5 +1,6 @@
 # Build
 .build/
+.build-local/
 .swiftpm/
 *.app
 *.dmg
@@ -15,6 +16,14 @@ AppIcon.icns
 CLAUDE.md
 NOTARIZATION.md
 
+# Xcode / editor local state
+DerivedData/
+*.xcuserstate
+*.xcuserdatad/
+*.xcworkspace/xcuserdata/
+.idea/
+.vscode/
+
 # Dev tooling
 *.html
 picked-sprites.json
@@ -26,3 +35,7 @@ gen-*.js
 *.bak
 *.old
 *~
+
+# Local image previews
+icon-teal.png
+icon-vibe.png
