@@ -11,8 +11,8 @@ struct OnboardingThemeStep: View {
         OnboardingShell(
             stepNumber: 2,
             totalSteps: OnboardingViewModel.totalCountedSteps,
-            title: "Pick your Beeper color",
-            subtitle: "Sets the vibe. Easy to swap later.",
+            title: "Pick your Beeper shell",
+            subtitle: "Choose a classic color or the Apple shell. Easy to swap later.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             skipLabel: nil,
@@ -34,7 +34,7 @@ struct OnboardingThemeStep: View {
                                 Circle()
                                     .fill(Color(hex: theme.dotColor))
                                     .frame(width: 24, height: 24)
-                                if theme.id == "white" {
+                                if theme.id == "white" || theme.id == "apple" {
                                     Circle()
                                         .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                                         .frame(width: 24, height: 24)
@@ -70,10 +70,11 @@ private struct LargeShellPreview: View {
 
     private let shellW: CGFloat = 270
     private let shellH: CGFloat = 120
-    private let lcdX: CGFloat = 30
-    private let lcdY: CGFloat = 25
-    private let lcdW: CGFloat = 214
-    private let lcdH: CGFloat = 34
+    private var isApple: Bool { theme.id == "apple" }
+    private var lcdX: CGFloat { isApple ? 34 : 30 }
+    private var lcdY: CGFloat { isApple ? 32 : 25 }
+    private var lcdW: CGFloat { isApple ? 206 : 214 }
+    private var lcdH: CGFloat { isApple ? 36 : 34 }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -84,12 +85,23 @@ private struct LargeShellPreview: View {
                     .frame(width: shellW, height: shellH)
             }
 
-            HStack(spacing: 3) {
-                Circle().fill(AppConstants.ledGreen).frame(width: 4, height: 4)
-                    .shadow(color: AppConstants.ledGreen.opacity(0.6), radius: 2)
-                Circle().fill(AppConstants.ledOff).frame(width: 4, height: 4)
+            if isApple {
+                AppleDriveLED(color: Color(hex: "D64A3A"), active: false)
+                    .offset(x: 244, y: 92)
+            } else {
+                HStack(spacing: 3) {
+                    Circle().fill(AppConstants.ledGreen).frame(width: 4, height: 4)
+                        .shadow(color: AppConstants.ledGreen.opacity(0.6), radius: 2)
+                    Circle().fill(AppConstants.ledOff).frame(width: 4, height: 4)
+                }
+                .offset(x: 226, y: 15)
             }
-            .offset(x: 226, y: 15)
+
+            if isApple {
+                AppleLCDHeader()
+                    .frame(width: 206, height: 10)
+                    .offset(x: 34, y: 22)
+            }
 
             OnboardingLCD(animFrame: animFrame)
                 .frame(width: lcdW, height: lcdH)
@@ -97,8 +109,10 @@ private struct LargeShellPreview: View {
                 .offset(x: lcdX, y: lcdY)
 
             // Button overlays (static, decorative)
-            OnboardingButtonRow()
-                .offset(x: 12, y: shellH - 54)
+            if !isApple {
+                OnboardingButtonRow()
+                    .offset(x: 12, y: shellH - 54)
+            }
         }
         .frame(width: shellW, height: shellH)
         .onReceive(animTimer) { _ in animFrame += 1 }
@@ -114,10 +128,11 @@ private struct CompactShellPreview: View {
 
     private let shellW: CGFloat = 160
     private let shellH: CGFloat = 82
-    private let lcdX: CGFloat = 24
-    private let lcdY: CGFloat = 24
-    private let lcdW: CGFloat = 105
-    private let lcdH: CGFloat = 23
+    private var isApple: Bool { theme.id == "apple" }
+    private var lcdX: CGFloat { isApple ? 22 : 24 }
+    private var lcdY: CGFloat { isApple ? 29 : 24 }
+    private var lcdW: CGFloat { isApple ? 116 : 105 }
+    private var lcdH: CGFloat { isApple ? 24 : 23 }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -128,11 +143,19 @@ private struct CompactShellPreview: View {
                     .frame(width: shellW, height: shellH)
             }
 
-            HStack(spacing: 2) {
-                Circle().fill(AppConstants.ledGreen).frame(width: 3, height: 3)
-                Circle().fill(AppConstants.ledOff).frame(width: 3, height: 3)
+            if isApple {
+                AppleDriveLED(color: Color(hex: "D64A3A"), active: false)
+                    .offset(x: 145, y: 63)
+                AppleLCDHeader()
+                    .frame(width: 116, height: 8)
+                    .offset(x: 22, y: 20)
+            } else {
+                HStack(spacing: 2) {
+                    Circle().fill(AppConstants.ledGreen).frame(width: 3, height: 3)
+                    Circle().fill(AppConstants.ledOff).frame(width: 3, height: 3)
+                }
+                .offset(x: 125, y: 15)
             }
-            .offset(x: 125, y: 15)
 
             OnboardingLCD(animFrame: animFrame, compact: true)
                 .frame(width: lcdW, height: lcdH)

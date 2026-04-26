@@ -10,6 +10,25 @@ final class ShellAssetReferenceXCTests: XCTestCase {
         XCTAssertFalse(source.contains("\"beeper-small-\\(currentThemeId).png\""))
     }
 
+    func testAppleShellThemeIsAvailableAlongsideClassicThemes() throws {
+        let source = try String(contentsOfFile: themeManagerPath(), encoding: .utf8)
+        XCTAssertTrue(source.contains("ShellTheme(id: \"apple\""))
+        XCTAssertTrue(source.contains("displayName: \"Apple\""))
+        XCTAssertTrue(source.contains("vibe-beeper-apple.png"))
+    }
+
+    func testAppleShellAssetsExist() {
+        XCTAssertTrue(FileManager.default.fileExists(atPath: projectRoot() + "/Sources/shells/vibe-beeper-apple.png"))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: projectRoot() + "/Sources/shells/vibe-beeper-small-apple.png"))
+    }
+
+    func testAppleShellGeneratorDrawsClassicRainbowAppleLogo() throws {
+        let source = try String(contentsOfFile: appleShellGeneratorPath(), encoding: .utf8)
+        XCTAssertTrue(source.contains("drawClassicRainbowAppleLogo"))
+        XCTAssertTrue(source.contains("biteCutoutColor"))
+        XCTAssertFalse(source.contains("drawRainbowBadge"))
+    }
+
     func testOnboardingPreviewsUseVibeShellAssets() throws {
         let themeSource = try String(contentsOfFile: onboardingThemeStepPath(), encoding: .utf8)
         XCTAssertTrue(themeSource.contains("\"vibe-beeper-small-\\(theme.id).png\""))
@@ -48,5 +67,9 @@ final class ShellAssetReferenceXCTests: XCTestCase {
 
     private func buildScriptPath() -> String {
         projectRoot() + "/build.sh"
+    }
+
+    private func appleShellGeneratorPath() -> String {
+        projectRoot() + "/scripts/generate_apple_shell_assets.swift"
     }
 }

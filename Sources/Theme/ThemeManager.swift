@@ -24,6 +24,7 @@ final class ThemeManager: ObservableObject {
         ShellTheme(id: "red",    name: "Red",    displayName: "Crimson",  shellImage: "vibe-beeper-red.png",    dotColor: "FF2222"),
         ShellTheme(id: "white",  name: "White",  displayName: "Ghost",    shellImage: "vibe-beeper-white.png",  dotColor: "FFFFFF"),
         ShellTheme(id: "yellow", name: "Yellow", displayName: "Gold",     shellImage: "vibe-beeper-yellow.png", dotColor: "EDA623"),
+        ShellTheme(id: "apple",  name: "Apple",  displayName: "Apple",    shellImage: "vibe-beeper-apple.png",  dotColor: "ECE7D5"),
     ]
 
     @Published var currentThemeId: String {
@@ -50,9 +51,10 @@ final class ThemeManager: ObservableObject {
 
     var shellImageName: String { theme.shellImage }
     var smallShellImageName: String { "vibe-beeper-small-\(currentThemeId).png" }
+    var isAppleTheme: Bool { currentThemeId == "apple" }
 
     // MARK: - LCD Colors (dark mode support)
 
     var lcdBg: Color { Color(hex: "98D65A") }
-    var lcdOn: Color { Color(hex: "2A4A10") }
+    var lcdOn: Color { isAppleTheme ? Color(hex: "2F3A29") : Color(hex: "2A4A10") }
 }

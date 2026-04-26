@@ -6,12 +6,17 @@ struct ContentView: View {
     @EnvironmentObject var monitor: ClaudeMonitor
     @EnvironmentObject var themeManager: ThemeManager
 
-    private let shellW: CGFloat = 360
-    private let shellH: CGFloat = 160
+    private var shellW: CGFloat { 360 }
+    private var shellH: CGFloat { 160 }
 
     // LCD screen
-    private let lcdW: CGFloat = 286
-    private let lcdH: CGFloat = 45
+    private var lcdW: CGFloat { themeManager.isAppleTheme ? 276 : 286 }
+    private var lcdH: CGFloat { themeManager.isAppleTheme ? 48 : 45 }
+    private var lcdX: CGFloat { themeManager.isAppleTheme ? 45 : 40 }
+    private var lcdY: CGFloat { themeManager.isAppleTheme ? 43 : 33 }
+    private var headerX: CGFloat { 45 }
+    private var headerY: CGFloat { 29 }
+    private var headerW: CGFloat { 276 }
 
     // Buzz service
     private let buzzService = BuzzService()
@@ -28,57 +33,86 @@ struct ContentView: View {
                 .interpolation(.high)
                 .frame(width: shellW, height: shellH)
 
-            // LED indicators — top right of bezel
-            HStack(spacing: 4) {
-                Circle()
-                    .fill(ledGreenColor)
-                    .frame(width: 5, height: 5)
-                    .shadow(color: ledGreenColor.opacity(0.6), radius: ledGreenGlow ? 3 : 0)
-                Circle()
-                    .fill(ledAlertColor)
-                    .frame(width: 5, height: 5)
-                    .opacity(ledAlertActive ? (ledPulse ? 1.0 : 0.3) : 1.0)
-                    .shadow(color: ledAlertColor.opacity(0.6), radius: ledAlertActive && ledPulse ? 4 : 0)
+            if themeManager.isAppleTheme {
+                AppleDriveLED(color: appleDriveLEDColor, active: ledAlertActive && ledPulse)
+                    .offset(x: 326, y: 123)
+            } else {
+                // LED indicators — top right of bezel
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(ledGreenColor)
+                        .frame(width: 5, height: 5)
+                        .shadow(color: ledGreenColor.opacity(0.6), radius: ledGreenGlow ? 3 : 0)
+                    Circle()
+                        .fill(ledAlertColor)
+                        .frame(width: 5, height: 5)
+                        .opacity(ledAlertActive ? (ledPulse ? 1.0 : 0.3) : 1.0)
+                        .shadow(color: ledAlertColor.opacity(0.6), radius: ledAlertActive && ledPulse ? 4 : 0)
+                }
+                .offset(x: 302, y: 20)
             }
-            .offset(x: 302, y: 20)
+
+            if themeManager.isAppleTheme {
+                AppleLCDHeader()
+                    .frame(width: headerW, height: 12)
+                    .offset(x: headerX, y: headerY)
+            }
 
             // LCD screen
             ScreenView()
                 .frame(width: lcdW, height: lcdH)
                 .clipped()
-                .offset(x: 40, y: 33)
+                .offset(x: lcdX, y: lcdY)
                 .allowsHitTesting(false)
 
             // Buttons — hidden in compact mode
             if monitor.widgetSize == .large {
-                HStack(alignment: .center, spacing: -16) {
-                    AcceptDenyPill(
-                        active: monitor.state.needsAttention,
+                if themeManager.isAppleTheme {
+                    AppleShellControls(
+                        permissionActive: monitor.state.needsAttention,
+                        isRecording: monitor.isRecording,
+                        isSpeaking: monitor.ttsService.isSpeaking,
                         onAccept: { monitor.respondToPermission(allow: true) },
-                        onDeny: { monitor.respondToPermission(allow: false) }
-                    )
-
-                    HStack(spacing: -24) {
-                        RecordButton(
-                            isRecording: monitor.isRecording,
-                            action: { monitor.voiceService.toggle() }
-                        )
-                        SoundMuteButton(
-                            isSpeaking: monitor.ttsService.isSpeaking,
-                            action: {
-                                if monitor.ttsService.isSpeaking {
-                                    monitor.ttsService.stopSpeaking()
-                                }
+                        onDeny: { monitor.respondToPermission(allow: false) },
+                        onRecord: { monitor.voiceService.toggle() },
+                        onStopSpeaking: {
+                            if monitor.ttsService.isSpeaking {
+                                monitor.ttsService.stopSpeaking()
                             }
+                        },
+                        onTerminal: { monitor.goToConversation() }
+                    )
+                    .offset(x: 92, y: 116)
+                } else {
+                    HStack(alignment: .center, spacing: -16) {
+                        AcceptDenyPill(
+                            active: monitor.state.needsAttention,
+                            onAccept: { monitor.respondToPermission(allow: true) },
+                            onDeny: { monitor.respondToPermission(allow: false) }
+                        )
+
+                        HStack(spacing: -24) {
+                            RecordButton(
+                                isRecording: monitor.isRecording,
+                                action: { monitor.voiceService.toggle() }
+                            )
+                            SoundMuteButton(
+                                isSpeaking: monitor.ttsService.isSpeaking,
+                                action: {
+                                    if monitor.ttsService.isSpeaking {
+                                        monitor.ttsService.stopSpeaking()
+                                    }
+                                }
+                            )
+                        }
+
+                        TerminalButton(
+                            enabled: true,
+                            action: { monitor.goToConversation() }
                         )
                     }
-
-                    TerminalButton(
-                        enabled: true,
-                        action: { monitor.goToConversation() }
-                    )
+                    .offset(x: 16, y: shellH - 72)
                 }
-                .offset(x: 16, y: shellH - 72)
             }
         }
         .frame(width: shellW, height: shellH)
@@ -136,6 +170,16 @@ struct ContentView: View {
 
     private var ledAlertActive: Bool {
         monitor.state == .working || monitor.state.needsAttention
+    }
+
+    private var appleDriveLEDColor: Color {
+        if ledAlertActive {
+            return AppConstants.ledAmber
+        }
+        if monitor.state == .done {
+            return AppConstants.ledGreen
+        }
+        return Color(hex: "D64A3A")
     }
 
     private func loadShellImage(_ name: String) -> NSImage {

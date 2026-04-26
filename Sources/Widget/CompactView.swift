@@ -8,12 +8,14 @@ struct CompactView: View {
     @State private var ledPulse = false
     private let ledTimer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
 
-    private let shellW: CGFloat = 220
-    private let shellH: CGFloat = 113
+    private var shellW: CGFloat { 220 }
+    private var shellH: CGFloat { 113 }
 
     // LCD screen -- proportional from large shell (286x45 in 360x160)
-    private let lcdW: CGFloat = 175
-    private let lcdH: CGFloat = 47
+    private var lcdW: CGFloat { themeManager.isAppleTheme ? 160 : 175 }
+    private var lcdH: CGFloat { themeManager.isAppleTheme ? 36 : 47 }
+    private var lcdX: CGFloat { themeManager.isAppleTheme ? 30 : 26 }
+    private var lcdY: CGFloat { themeManager.isAppleTheme ? 38 : 31 }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -23,25 +25,36 @@ struct CompactView: View {
                 .interpolation(.high)
                 .frame(width: shellW, height: shellH)
 
-            // LED indicators — top right of bezel
-            HStack(spacing: 3) {
-                Circle()
-                    .fill(ledGreenColor)
-                    .frame(width: 4, height: 4)
-                    .shadow(color: ledGreenColor.opacity(0.6), radius: ledGreenGlow ? 2 : 0)
-                Circle()
-                    .fill(ledAlertColor)
-                    .frame(width: 4, height: 4)
-                    .opacity(ledAlertActive ? (ledPulse ? 1.0 : 0.3) : 1.0)
-                    .shadow(color: ledAlertColor.opacity(0.6), radius: ledAlertActive && ledPulse ? 3 : 0)
+            if themeManager.isAppleTheme {
+                AppleDriveLED(color: appleDriveLEDColor, active: ledAlertActive && ledPulse)
+                    .offset(x: 198, y: 87)
+            } else {
+                // LED indicators — top right of bezel
+                HStack(spacing: 3) {
+                    Circle()
+                        .fill(ledGreenColor)
+                        .frame(width: 4, height: 4)
+                        .shadow(color: ledGreenColor.opacity(0.6), radius: ledGreenGlow ? 2 : 0)
+                    Circle()
+                        .fill(ledAlertColor)
+                        .frame(width: 4, height: 4)
+                        .opacity(ledAlertActive ? (ledPulse ? 1.0 : 0.3) : 1.0)
+                        .shadow(color: ledAlertColor.opacity(0.6), radius: ledAlertActive && ledPulse ? 3 : 0)
+                }
+                .offset(x: 173, y: 21)
             }
-            .offset(x: 173, y: 21)
+
+            if themeManager.isAppleTheme {
+                AppleLCDHeader()
+                    .frame(width: 160, height: 10)
+                    .offset(x: 30, y: 27)
+            }
 
             // LCD screen -- compact mode (icon-only badge)
             ScreenView(compact: true)
                 .frame(width: lcdW, height: lcdH)
                 .clipped()
-                .offset(x: 26, y: 31)
+                .offset(x: lcdX, y: lcdY)
                 .allowsHitTesting(false)
         }
         .frame(width: shellW, height: shellH)
@@ -84,6 +97,16 @@ struct CompactView: View {
 
     private var ledAlertActive: Bool {
         monitor.state == .working || monitor.state.needsAttention
+    }
+
+    private var appleDriveLEDColor: Color {
+        if ledAlertActive {
+            return AppConstants.ledAmber
+        }
+        if monitor.state == .done {
+            return AppConstants.ledGreen
+        }
+        return Color(hex: "D64A3A")
     }
 
     private func loadShellImage(_ name: String) -> NSImage {

@@ -38,8 +38,10 @@ struct OnboardingSizesStep: View {
                                 .interpolation(.high)
                                 .frame(width: 183, height: 80)
                         }
-                        OnboardingButtonRow(productionScale: 0.5)
-                            .offset(x: 8, y: 44)
+                        if theme.id != "apple" {
+                            OnboardingButtonRow(productionScale: 0.5)
+                                .offset(x: 8, y: 44)
+                        }
                     }
                     .frame(width: 183, height: 80)
                 }
