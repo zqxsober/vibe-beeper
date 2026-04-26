@@ -23,6 +23,23 @@ enum AgentState: Equatable {
         }
     }
 
+    var chineseLabel: String {
+        switch self {
+        case .idle: "摸鱼中"
+        case .working: "开干中"
+        case .done: "搞定啦"
+        case .error: "翻车了"
+        case .approveQuestion: "等放行"
+        case .needsInput: "喊你呢"
+        case .listening: "听着呢"
+        case .speaking: "开讲啦"
+        }
+    }
+
+    func displayLabel(useChinese: Bool) -> String {
+        useChinese ? chineseLabel : label
+    }
+
     var priority: Int {
         switch self {
         case .error: return 7

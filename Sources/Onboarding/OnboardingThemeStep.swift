@@ -166,6 +166,7 @@ private struct MenuOnlyPreview: View {
 private struct OnboardingLCD: View {
     let animFrame: Int
     var compact: Bool = false
+    @AppStorage("useChineseRuntimeCopy") private var useChineseRuntimeCopy = false
 
     private let lcdBg = Color(hex: "98D65A")
     private let lcdOn = Color(hex: "2A4A10")
@@ -179,10 +180,10 @@ private struct OnboardingLCD: View {
                     .frame(width: compact ? 22 : 26, height: compact ? 20 : 22)
 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("SNOOZING")
+                    Text(useChineseRuntimeCopy ? "摸鱼中" : "SNOOZING")
                         .font(.system(size: compact ? 8 : 9, weight: .heavy, design: .monospaced))
                         .foregroundColor(lcdOn)
-                    Text("Idle")
+                    Text(useChineseRuntimeCopy ? "梦里写码" : "Idle")
                         .font(.system(size: compact ? 6 : 7, weight: .medium, design: .monospaced))
                         .foregroundColor(lcdOn.opacity(0.7))
                 }

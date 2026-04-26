@@ -4,6 +4,7 @@ struct ScreenContentView: View {
     var compact: Bool = false
     @EnvironmentObject var monitor: ClaudeMonitor
     @EnvironmentObject var themeManager: ThemeManager
+    @AppStorage("useChineseRuntimeCopy") private var useChineseRuntimeCopy = false
     @State private var animFrame = 0
     @State private var tick = 0
     @State private var isWindowVisible = true
@@ -197,6 +198,10 @@ struct ScreenContentView: View {
     // MARK: - Text
 
     private var titleText: String {
+        useChineseRuntimeCopy ? chineseTitleText : englishTitleText
+    }
+
+    private var englishTitleText: String {
         switch monitor.state {
         case .idle: return "SNOOZING"
         case .working: return "WORKING"
@@ -209,22 +214,83 @@ struct ScreenContentView: View {
         }
     }
 
+    private var chineseTitleText: String {
+        switch monitor.state {
+        case .idle: return "摸鱼中"
+        case .working: return "开干中"
+        case .done: return "搞定啦"
+        case .error: return "翻车了"
+        case .approveQuestion: return "等放行"
+        case .needsInput: return "喊你呢"
+        case .listening: return "听着呢"
+        case .speaking: return "开讲啦"
+        }
+    }
+
     // Random subtitle variants — picked once per state entry, stored in randomVariantIndex
     @State private var randomVariantIndex: Int = 0
 
-    private static let idleVariants = ["Idle", "Out cold", "Lights off", "Gone fishing", "Dreaming"]
-    private static let workingVariants = ["Running", "Poking", "Busy with", "Tinkering", "Crunching"]
-    private static let doneVariants = ["That's a wrap", "Over to you", "Go check", "Your turn", "Fresh out the oven"]
-    private static let errorVariants = ["Oops", "Uh oh", "Broke", "Oof", "Welp"]
-    private static let approveVariants = ["Knocking", "Requesting", "Asking for", "Let me use", "Pretty please"]
-    private static let inputVariants = ["Asks", "Says", "Psst", "Hey", "Paging you"]
-    private static let listeningVariants = ["Mic on", "All ears", "Go ahead", "Tuned in", "Copy that"]
-    private static let speakingVariants = ["Catching you up", "Here's what happened", "Quick summary", "While you were away", "Last message"]
+    private static let englishIdleVariants = ["Idle", "Out cold", "Lights off", "Gone fishing", "Dreaming"]
+    private static let englishWorkingVariants = ["Running", "Poking", "Busy with", "Tinkering", "Crunching"]
+    private static let englishDoneVariants = ["That's a wrap", "Over to you", "Go check", "Your turn", "Fresh out the oven"]
+    private static let englishErrorVariants = ["Oops", "Uh oh", "Broke", "Oof", "Welp"]
+    private static let englishApproveVariants = ["Knocking", "Requesting", "Asking for", "Let me use", "Pretty please"]
+    private static let englishInputVariants = ["Asks", "Says", "Psst", "Hey", "Paging you"]
+    private static let englishListeningVariants = ["Mic on", "All ears", "Go ahead", "Tuned in", "Copy that"]
+    private static let englishSpeakingVariants = ["Catching you up", "Here's what happened", "Quick summary", "While you were away", "Last message"]
+
+    private static let chineseIdleVariants = ["摸鱼中", "呼呼睡", "省电模式", "屏息待命", "梦里写码"]
+    private static let chineseWorkingVariants = ["哒哒跑", "工具上场", "正在捣鼓", "火速处理中", "脑袋冒烟"]
+    private static let chineseDoneVariants = ["搞定收工", "轮到你啦", "新鲜出炉", "快去验货", "漂亮交差"]
+    private static let chineseErrorVariants = ["哎呀翻车", "这里卡壳", "需要救场", "撞墙了", "快看一眼"]
+    private static let chineseApproveVariants = ["求放行", "敲门中", "想用工具", "等你点头", "给个许可"]
+    private static let chineseInputVariants = ["喊你呢", "等你回话", "有个小问号", "快来接球", "轮到你说"]
+    private static let chineseListeningVariants = ["耳朵竖起", "麦开啦", "你说我听", "收到信号", "正在听"]
+    private static let chineseSpeakingVariants = ["小广播开", "给你复盘", "讲重点啦", "播报进度", "刚才发生了"]
 
     private var detailText: String? {
+        useChineseRuntimeCopy ? chineseDetailText : englishDetailText
+    }
+
+    private var englishDetailText: String? {
+        detailText(
+            idleVariants: Self.englishIdleVariants,
+            workingVariants: Self.englishWorkingVariants,
+            doneVariants: Self.englishDoneVariants,
+            errorVariants: Self.englishErrorVariants,
+            approveVariants: Self.englishApproveVariants,
+            inputVariants: Self.englishInputVariants,
+            listeningVariants: Self.englishListeningVariants,
+            speakingVariants: Self.englishSpeakingVariants
+        )
+    }
+
+    private var chineseDetailText: String? {
+        detailText(
+            idleVariants: Self.chineseIdleVariants,
+            workingVariants: Self.chineseWorkingVariants,
+            doneVariants: Self.chineseDoneVariants,
+            errorVariants: Self.chineseErrorVariants,
+            approveVariants: Self.chineseApproveVariants,
+            inputVariants: Self.chineseInputVariants,
+            listeningVariants: Self.chineseListeningVariants,
+            speakingVariants: Self.chineseSpeakingVariants
+        )
+    }
+
+    private func detailText(
+        idleVariants: [String],
+        workingVariants: [String],
+        doneVariants: [String],
+        errorVariants: [String],
+        approveVariants: [String],
+        inputVariants: [String],
+        listeningVariants: [String],
+        speakingVariants: [String]
+    ) -> String? {
         switch monitor.state {
         case .idle:
-            let variant = Self.idleVariants[randomVariantIndex % Self.idleVariants.count]
+            let variant = idleVariants[randomVariantIndex % idleVariants.count]
             if let start = monitor.idleStartTime {
                 let elapsed = Int(Date().timeIntervalSince(start))
                 let duration: String
@@ -235,33 +301,33 @@ struct ScreenContentView: View {
             }
             return variant
         case .working:
-            let variant = Self.workingVariants[randomVariantIndex % Self.workingVariants.count]
+            let variant = workingVariants[randomVariantIndex % workingVariants.count]
             let tool = monitor.currentTool ?? ""
             return tool.isEmpty ? variant : "\(variant) \u{00B7} \(tool)"
         case .done:
-            return Self.doneVariants[randomVariantIndex % Self.doneVariants.count]
+            return doneVariants[randomVariantIndex % doneVariants.count]
         case .error:
-            let variant = Self.errorVariants[randomVariantIndex % Self.errorVariants.count]
+            let variant = errorVariants[randomVariantIndex % errorVariants.count]
             if let detail = monitor.errorDetail, !detail.isEmpty {
                 return "\(variant) \u{00B7} \(detail)"
             }
             return variant
         case .approveQuestion:
-            let variant = Self.approveVariants[randomVariantIndex % Self.approveVariants.count]
+            let variant = approveVariants[randomVariantIndex % approveVariants.count]
             if let p = monitor.pendingPermission, !p.tool.isEmpty {
                 return "\(variant) \u{00B7} \(p.tool)"
             }
             return variant
         case .needsInput:
-            let variant = Self.inputVariants[randomVariantIndex % Self.inputVariants.count]
+            let variant = inputVariants[randomVariantIndex % inputVariants.count]
             if let msg = monitor.inputMessage, !msg.isEmpty {
                 return "\(variant) \u{00B7} \(msg)"
             }
             return variant
         case .listening:
-            return Self.listeningVariants[randomVariantIndex % Self.listeningVariants.count]
+            return listeningVariants[randomVariantIndex % listeningVariants.count]
         case .speaking:
-            return Self.speakingVariants[randomVariantIndex % Self.speakingVariants.count]
+            return speakingVariants[randomVariantIndex % speakingVariants.count]
         }
     }
 

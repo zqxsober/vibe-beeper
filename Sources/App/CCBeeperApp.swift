@@ -9,6 +9,7 @@ struct CCBeeperApp: App {
     @StateObject private var themeManager = ThemeManager()
     @Environment(\.openWindow) private var openWindow
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("useChineseRuntimeCopy") private var useChineseRuntimeCopy = false
 
     var body: some Scene {
         Window("vibe-beeper", id: "main") {
@@ -124,7 +125,7 @@ struct CCBeeperApp: App {
             } else {
             // Status
             Text("Sessions: \(monitor.sessionCount)")
-            Text(monitor.state.label)
+            Text(monitor.state.displayLabel(useChinese: useChineseRuntimeCopy))
                 .foregroundColor(.secondary)
 
             Divider()
@@ -202,6 +203,31 @@ struct CCBeeperApp: App {
                             }
                             Text("\(size.label) · \(size.menuDescription)")
                         }
+                    }
+                }
+            }
+
+            // Runtime copy language
+            Menu("Language · \(useChineseRuntimeCopy ? "中文" : "English")") {
+                Button {
+                    useChineseRuntimeCopy = false
+                } label: {
+                    HStack {
+                        if !useChineseRuntimeCopy {
+                            Image(systemName: "checkmark")
+                        }
+                        Text("English · original LCD copy")
+                    }
+                }
+
+                Button {
+                    useChineseRuntimeCopy = true
+                } label: {
+                    HStack {
+                        if useChineseRuntimeCopy {
+                            Image(systemName: "checkmark")
+                        }
+                        Text("中文 · 俏皮状态文案")
                     }
                 }
             }
