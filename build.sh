@@ -82,7 +82,7 @@ cat > "${APP_BUNDLE}/Contents/Info.plist" << PLIST
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>1.0.4</string>
     <key>LSUIElement</key>
     <true/>
     <key>CFBundleIconFile</key>

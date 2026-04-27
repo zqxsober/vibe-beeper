@@ -10,15 +10,24 @@ let package = Package(
         .package(url: "https://github.com/argmaxinc/WhisperKit.git", from: "0.17.0"),
     ],
     targets: [
+        .target(
+            name: "UpdateCore",
+            path: "Sources/UpdateCore",
+            swiftSettings: [
+                .swiftLanguageMode(.v5),
+            ]
+        ),
         .executableTarget(
             name: "vibe-beeper",
             dependencies: [
+                .target(name: "UpdateCore"),
                 .product(name: "FluidAudio", package: "FluidAudio"),
                 .product(name: "HotKey", package: "HotKey"),
                 .product(name: "WhisperKit", package: "WhisperKit"),
             ],
             path: "Sources",
             exclude: [
+                "UpdateCore",
                 "shells",
                 "buttons",
                 "shell.svg",
@@ -31,6 +40,7 @@ let package = Package(
         .testTarget(
             name: "CC-BeeperTests",
             dependencies: [
+                .target(name: "UpdateCore"),
                 .product(name: "FluidAudio", package: "FluidAudio"),
             ],
             path: "Tests/CC-BeeperTests"
