@@ -7,6 +7,7 @@ struct CCBeeperApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var monitor = ClaudeMonitor()
     @StateObject private var themeManager = ThemeManager()
+    @StateObject private var permissionWindowShakeService = PermissionWindowShakeService()
     @Environment(\.openWindow) private var openWindow
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("useChineseRuntimeCopy") private var useChineseRuntimeCopy = false
@@ -76,6 +77,15 @@ struct CCBeeperApp: App {
                 if hasCompletedOnboarding && !missing.isEmpty {
                     openWindow(id: "permissions-alert")
                 }
+            }
+            .onChange(of: monitor.state) { _, _ in
+                updatePermissionWindowShake()
+            }
+            .onChange(of: monitor.pendingPermission) { _, _ in
+                updatePermissionWindowShake()
+            }
+            .onDisappear {
+                permissionWindowShakeService.stop()
             }
         }
         .windowStyle(.hiddenTitleBar)
@@ -293,6 +303,10 @@ struct CCBeeperApp: App {
             constrainToScreen(window)
             return
         }
+    }
+
+    private func updatePermissionWindowShake() {
+        permissionWindowShakeService.update(isPermissionPending: monitor.state == .approveQuestion && monitor.pendingPermission != nil)
     }
 }
 

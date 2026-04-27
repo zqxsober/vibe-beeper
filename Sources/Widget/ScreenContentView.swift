@@ -217,7 +217,7 @@ struct ScreenContentView: View {
     private var chineseTitleText: String {
         switch monitor.state {
         case .idle: return "摸鱼中"
-        case .working: return "开干中"
+        case .working: return "搬砖中"
         case .done: return "搞定啦"
         case .error: return "翻车了"
         case .approveQuestion: return "等放行"

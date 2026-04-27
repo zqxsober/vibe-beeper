@@ -31,7 +31,7 @@ final class WidgetChineseRuntimeCopyXCTests: XCTestCase {
 
         let expectedChineseTitles = [
             "摸鱼中",
-            "开干中",
+            "搬砖中",
             "搞定啦",
             "翻车了",
             "等放行",

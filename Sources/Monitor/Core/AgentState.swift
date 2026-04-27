@@ -26,7 +26,7 @@ enum AgentState: Equatable {
     var chineseLabel: String {
         switch self {
         case .idle: "摸鱼中"
-        case .working: "开干中"
+        case .working: "搬砖中"
         case .done: "搞定啦"
         case .error: "翻车了"
         case .approveQuestion: "等放行"
