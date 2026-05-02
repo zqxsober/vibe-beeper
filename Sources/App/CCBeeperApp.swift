@@ -12,21 +12,29 @@ struct CCBeeperApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("useChineseRuntimeCopy") private var useChineseRuntimeCopy = false
 
+    @ViewBuilder
+    private var mainWidgetContent: some View {
+        if monitor.widgetSize == .compact {
+            if themeManager.isOldSchoolTheme {
+                OldSchoolCompactView()
+            } else {
+                CompactView()
+            }
+        } else {
+            if themeManager.isOldSchoolTheme {
+                OldSchoolLargeView()
+            } else {
+                ContentView()
+            }
+        }
+    }
+
     var body: some Scene {
         Window("vibe-beeper", id: "main") {
-            Group {
-                if monitor.widgetSize == .compact {
-                    CompactView()
-                        .environmentObject(monitor)
-                        .environmentObject(themeManager)
-                        .background(WindowConfigurator())
-                } else {
-                    ContentView()
-                        .environmentObject(monitor)
-                        .environmentObject(themeManager)
-                        .background(WindowConfigurator())
-                }
-            }
+            mainWidgetContent
+                .environmentObject(monitor)
+                .environmentObject(themeManager)
+                .background(WindowConfigurator())
             .onAppear {
                 // Hide immediately to prevent flash — delayed block decides visibility
                 Self.hideMainWindow()
@@ -38,10 +46,7 @@ struct CCBeeperApp: App {
                         // Stay hidden
                     } else {
                         // Widget should be visible — resize and show
-                        let size = monitor.widgetSize == .compact
-                            ? NSSize(width: 300, height: 193)
-                            : NSSize(width: 440, height: 240)
-                        Self.resizeMainWindow(to: size)
+                        Self.resizeMainWindow(to: themeManager.mainWindowSize(for: monitor.widgetSize))
                         Self.showMainWindow()
                     }
                     // Close any stale onboarding window restored by SwiftUI
@@ -66,11 +71,12 @@ struct CCBeeperApp: App {
                     monitor.reloadFromDefaults()
                     themeManager.reloadFromDefaults()
                     monitor.startServices()
-                    let size = monitor.widgetSize == .compact
-                        ? NSSize(width: 300, height: 193)
-                        : NSSize(width: 440, height: 240)
-                    Self.resizeMainWindow(to: size)
-                    Self.showMainWindow()
+                    if monitor.widgetSize == .menuOnly {
+                        Self.hideMainWindow()
+                    } else {
+                        Self.resizeMainWindow(to: themeManager.mainWindowSize(for: monitor.widgetSize))
+                        Self.showMainWindow()
+                    }
                 }
             }
             .onChange(of: monitor.missingPermissions) { _, missing in
@@ -84,6 +90,16 @@ struct CCBeeperApp: App {
             .onChange(of: monitor.pendingPermission) { _, _ in
                 updatePermissionWindowShake()
             }
+            .onChange(of: monitor.widgetSize) { _, _ in
+                applyWidgetSizeVisibility()
+            }
+            .onChange(of: themeManager.currentThemeId) { _, _ in
+                resizeVisibleMainWindow()
+            }
+            .onChange(of: themeManager.oldSchoolDisplaySize) { _, _ in
+                guard themeManager.isOldSchoolTheme else { return }
+                resizeVisibleMainWindow()
+            }
             .onDisappear {
                 permissionWindowShakeService.stop()
             }
@@ -91,6 +107,14 @@ struct CCBeeperApp: App {
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
         .defaultPosition(.topTrailing)
+        .commands {
+            CommandGroup(replacing: .appSettings) {
+                Button("Settings...") {
+                    showSettingsWindow()
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
+        }
 
         Window("Setup vibe-beeper", id: "onboarding") {
             OnboardingView()
@@ -154,10 +178,7 @@ struct CCBeeperApp: App {
                     // Menu mode: don't show window
                 } else {
                     Self.showMainWindow()
-                    let windowSize = monitor.widgetSize == .compact
-                        ? NSSize(width: 300, height: 193)
-                        : NSSize(width: 440, height: 240)
-                    Self.resizeMainWindow(to: windowSize)
+                    Self.resizeMainWindow(to: themeManager.mainWindowSize(for: monitor.widgetSize))
                 }
             }
 
@@ -197,12 +218,9 @@ struct CCBeeperApp: App {
                     Button {
                         monitor.widgetSize = size
                         switch size {
-                        case .large:
+                        case .large, .compact:
                             Self.showMainWindow()
-                            Self.resizeMainWindow(to: NSSize(width: 440, height: 240))
-                        case .compact:
-                            Self.showMainWindow()
-                            Self.resizeMainWindow(to: NSSize(width: 300, height: 193))
+                            Self.resizeMainWindow(to: themeManager.mainWindowSize(for: size))
                         case .menuOnly:
                             Self.hideMainWindow()
                         }
@@ -255,8 +273,7 @@ struct CCBeeperApp: App {
 
             // Settings
             Button("Settings...") {
-                NSApp.activate(ignoringOtherApps: true)
-                openWindow(id: "settings")
+                showSettingsWindow()
             }
 
             Divider()
@@ -268,6 +285,11 @@ struct CCBeeperApp: App {
             Image(nsImage: BeeperIcon.image(state: monitor.menuBarIconState))
         }
         .menuBarExtraStyle(.menu)
+    }
+
+    private func showSettingsWindow() {
+        NSApp.activate(ignoringOtherApps: true)
+        openWindow(id: "settings")
     }
 
     static func isMainWindowVisible() -> Bool {
@@ -302,6 +324,39 @@ struct CCBeeperApp: App {
             window.setFrame(frame, display: true, animate: true)
             constrainToScreen(window)
             return
+        }
+    }
+
+    private func resizeVisibleMainWindow() {
+        guard hasCompletedOnboarding,
+              monitor.isActive else {
+            return
+        }
+
+        guard monitor.widgetSize != .menuOnly else {
+            Self.hideMainWindow()
+            return
+        }
+
+        guard Self.isMainWindowVisible() else {
+            return
+        }
+
+        Self.resizeMainWindow(to: themeManager.mainWindowSize(for: monitor.widgetSize))
+    }
+
+    private func applyWidgetSizeVisibility() {
+        guard hasCompletedOnboarding,
+              monitor.isActive else {
+            return
+        }
+
+        switch monitor.widgetSize {
+        case .large, .compact:
+            Self.resizeMainWindow(to: themeManager.mainWindowSize(for: monitor.widgetSize))
+            Self.showMainWindow()
+        case .menuOnly:
+            Self.hideMainWindow()
         }
     }
 
@@ -351,7 +406,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        if !flag {
+        let storedWidgetSize = UserDefaults.standard.string(forKey: "widgetSize")
+        if !flag && storedWidgetSize != WidgetSize.menuOnly.rawValue {
             CCBeeperApp.showMainWindow()
         }
         return false

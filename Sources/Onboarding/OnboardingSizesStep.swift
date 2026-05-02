@@ -31,30 +31,38 @@ struct OnboardingSizesStep: View {
                 SizeOption(isSelected: viewModel.selectedSize == .large,
                            label: "Large", desc: "Buttons + LCD",
                            onTap: { viewModel.selectedSize = .large }) {
-                    ZStack(alignment: .topLeading) {
-                        if let img = loadSizeImage(theme.shellImage) {
-                            Image(nsImage: img)
-                                .resizable()
-                                .interpolation(.high)
-                                .frame(width: 183, height: 80)
+                    if themeId == "old-school" {
+                        OldSchoolSizePreview(width: 183, height: 80, compact: false)
+                    } else {
+                        ZStack(alignment: .topLeading) {
+                            if let img = loadSizeImage(theme.shellImage) {
+                                Image(nsImage: img)
+                                    .resizable()
+                                    .interpolation(.high)
+                                    .frame(width: 183, height: 80)
+                            }
+                            if theme.id != "apple" {
+                                OnboardingButtonRow(productionScale: 0.5)
+                                    .offset(x: 8, y: 44)
+                            }
                         }
-                        if theme.id != "apple" {
-                            OnboardingButtonRow(productionScale: 0.5)
-                                .offset(x: 8, y: 44)
-                        }
+                        .frame(width: 183, height: 80)
                     }
-                    .frame(width: 183, height: 80)
                 }
 
                 // COMPACT — 110×57 (0.5× of 220×113), no buttons
                 SizeOption(isSelected: viewModel.selectedSize == .compact,
                            label: "Compact", desc: "LCD only",
                            onTap: { viewModel.selectedSize = .compact }) {
-                    if let img = loadSizeImage("vibe-beeper-small-\(themeId).png") {
-                        Image(nsImage: img)
-                            .resizable()
-                            .interpolation(.high)
-                            .frame(width: 110, height: 57)
+                    if themeId == "old-school" {
+                        OldSchoolSizePreview(width: 110, height: 57, compact: true)
+                    } else {
+                        if let img = loadSizeImage("vibe-beeper-small-\(themeId).png") {
+                            Image(nsImage: img)
+                                .resizable()
+                                .interpolation(.high)
+                                .frame(width: 110, height: 57)
+                        }
                     }
                 }
 
@@ -74,6 +82,17 @@ struct OnboardingSizesStep: View {
     private func loadSizeImage(_ name: String) -> NSImage? {
         guard let path = Bundle.main.resourcePath else { return nil }
         return NSImage(contentsOfFile: path + "/" + name)
+    }
+}
+
+private struct OldSchoolSizePreview: View {
+    let width: CGFloat
+    let height: CGFloat
+    let compact: Bool
+
+    var body: some View {
+        OldSchoolPreviewMachine(compact: compact, showScreenContent: false)
+        .frame(width: width, height: height)
     }
 }
 

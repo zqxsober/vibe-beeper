@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 // MARK: - Theme Definition
 
@@ -8,6 +9,33 @@ struct ShellTheme: Identifiable, Equatable {
     let displayName: String
     let shellImage: String
     let dotColor: String  // hex for swatch
+}
+
+enum OldSchoolDisplaySize: String, CaseIterable, Identifiable, Equatable {
+    case small
+    case medium
+    case large
+    case showcase
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .small: return "Small"
+        case .medium: return "Medium"
+        case .large: return "Large"
+        case .showcase: return "Showcase"
+        }
+    }
+
+    var windowSize: NSSize {
+        switch self {
+        case .small: return NSSize(width: 360, height: 360)
+        case .medium: return NSSize(width: 420, height: 420)
+        case .large: return NSSize(width: 500, height: 500)
+        case .showcase: return NSSize(width: 580, height: 580)
+        }
+    }
 }
 
 // MARK: - Theme Manager
@@ -25,10 +53,14 @@ final class ThemeManager: ObservableObject {
         ShellTheme(id: "white",  name: "White",  displayName: "Ghost",    shellImage: "vibe-beeper-white.png",  dotColor: "FFFFFF"),
         ShellTheme(id: "yellow", name: "Yellow", displayName: "Gold",     shellImage: "vibe-beeper-yellow.png", dotColor: "EDA623"),
         ShellTheme(id: "apple",  name: "Apple",  displayName: "Apple",    shellImage: "vibe-beeper-apple.png",  dotColor: "ECE7D5"),
+        ShellTheme(id: "old-school", name: "Old School", displayName: "Old School", shellImage: "vibe-beeper-apple.png", dotColor: "ECE7D5"),
     ]
 
     @Published var currentThemeId: String {
         didSet { UserDefaults.standard.set(currentThemeId, forKey: "themeId") }
+    }
+    @Published var oldSchoolDisplaySize: OldSchoolDisplaySize {
+        didSet { UserDefaults.standard.set(oldSchoolDisplaySize.rawValue, forKey: "oldSchoolDisplaySize") }
     }
     let darkMode: Bool = false
 
@@ -38,6 +70,7 @@ final class ThemeManager: ObservableObject {
 
     init() {
         currentThemeId = UserDefaults.standard.string(forKey: "themeId") ?? "black"
+        oldSchoolDisplaySize = OldSchoolDisplaySize(rawValue: UserDefaults.standard.string(forKey: "oldSchoolDisplaySize") ?? "") ?? .medium
     }
 
     /// Re-read the active theme from UserDefaults and assign it so observers
@@ -47,14 +80,33 @@ final class ThemeManager: ObservableObject {
         if let stored = UserDefaults.standard.string(forKey: "themeId"), stored != currentThemeId {
             currentThemeId = stored
         }
+
+        let storedOldSchoolDisplaySize = OldSchoolDisplaySize(rawValue: UserDefaults.standard.string(forKey: "oldSchoolDisplaySize") ?? "") ?? .medium
+        if storedOldSchoolDisplaySize != oldSchoolDisplaySize {
+            oldSchoolDisplaySize = storedOldSchoolDisplaySize
+        }
     }
 
     var shellImageName: String { theme.shellImage }
-    var smallShellImageName: String { "vibe-beeper-small-\(currentThemeId).png" }
+    var smallShellImageName: String {
+        isOldSchoolTheme ? "vibe-beeper-small-apple.png" : "vibe-beeper-small-\(currentThemeId).png"
+    }
     var isAppleTheme: Bool { currentThemeId == "apple" }
+    var isOldSchoolTheme: Bool { currentThemeId == "old-school" }
+
+    func mainWindowSize(for widgetSize: WidgetSize) -> NSSize {
+        switch widgetSize {
+        case .large:
+            return isOldSchoolTheme ? oldSchoolDisplaySize.windowSize : NSSize(width: 440, height: 240)
+        case .compact:
+            return isOldSchoolTheme ? NSSize(width: 310, height: 245) : NSSize(width: 300, height: 193)
+        case .menuOnly:
+            return NSSize(width: 1, height: 1)
+        }
+    }
 
     // MARK: - LCD Colors (dark mode support)
 
     var lcdBg: Color { Color(hex: "98D65A") }
-    var lcdOn: Color { isAppleTheme ? Color(hex: "2F3A29") : Color(hex: "2A4A10") }
+    var lcdOn: Color { (isAppleTheme || isOldSchoolTheme) ? Color(hex: "2F3A29") : Color(hex: "2A4A10") }
 }

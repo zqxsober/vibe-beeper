@@ -5,7 +5,8 @@ final class ShellAssetReferenceXCTests: XCTestCase {
     func testThemeManagerUsesVibeShellAssets() throws {
         let source = try String(contentsOfFile: themeManagerPath(), encoding: .utf8)
         XCTAssertTrue(source.contains("vibe-beeper-black.png"))
-        XCTAssertTrue(source.contains("var smallShellImageName: String { \"vibe-beeper-small-\\(currentThemeId).png\" }"))
+        XCTAssertTrue(source.contains("\"vibe-beeper-small-\\(currentThemeId).png\""))
+        XCTAssertTrue(source.contains("isOldSchoolTheme ? \"vibe-beeper-small-apple.png\""))
         XCTAssertFalse(source.contains(#""beeper-black.png""#))
         XCTAssertFalse(source.contains("\"beeper-small-\\(currentThemeId).png\""))
     }

@@ -23,11 +23,12 @@ struct ThemeDotsRow: View {
                                 .frame(width: 24, height: 24)
                         }
                         if themeManager.currentThemeId == theme.id {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(theme.id == "white" ? .black : .white)
+                            Circle()
+                                .strokeBorder(Color.primary.opacity(0.82), lineWidth: 2)
+                                .frame(width: 32, height: 32)
                         }
                     }
+                    .frame(width: 34, height: 34)
                 }
                 .buttonStyle(.plain)
                 .help(theme.displayName)

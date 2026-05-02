@@ -28,8 +28,7 @@ struct PixelCharacterView: View {
     let frame: Int
     var onColor: Color = Color(hex: "3A3A2E")
     var isGlitching: Bool = false
-
-    private let pixelSize: CGFloat = 2.5
+    var pixelSize: CGFloat = 2.5
 
     private var currentSprite: [String] {
         if isGlitching {

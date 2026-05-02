@@ -5,6 +5,7 @@ import AppKit
 final class BuzzService {
     private var lastVibrateState: ClaudeState?
     private var reminderTimer: Timer?
+    private var pendingVibrationWorkItems: [UUID: DispatchWorkItem] = [:]
 
     // MARK: - Cancellable shake state
 
@@ -14,20 +15,20 @@ final class BuzzService {
 
     /// Called from ContentView.onReceive(monitor.$state) to handle vibration triggers.
     func handleStateChange(_ newState: ClaudeState, vibrationEnabled: Bool, soundEnabled: Bool) {
+        if !newState.needsAttention {
+            cancelPendingVibrations()
+        }
+
         // Vibration on done
         if vibrationEnabled && newState == .done && lastVibrateState != newState {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                self.vibrate(soundEnabled: soundEnabled)
-            }
+            schedulePendingVibration(soundEnabled: soundEnabled)
         }
 
         // Needs attention (permission or input): vibrate now + repeat every 15s
         if newState.needsAttention {
             if lastVibrateState != newState {
                 if vibrationEnabled {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                        self.vibrate(soundEnabled: soundEnabled)
-                    }
+                    schedulePendingVibration(soundEnabled: soundEnabled)
                 }
                 reminderTimer?.invalidate()
                 reminderTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] _ in
@@ -89,7 +90,27 @@ final class BuzzService {
     /// stops the current sound, and resets the window to its current position.
     /// Does NOT invalidate the reminderTimer — future reminders continue per design.
     func cancelVibration() {
+        cancelPendingVibrations()
         cancelVibration(resetWindow: true)
+    }
+
+    private func schedulePendingVibration(soundEnabled: Bool) {
+        let token = UUID()
+        let item = DispatchWorkItem { [weak self] in
+            guard let self, self.pendingVibrationWorkItems[token] != nil else { return }
+            self.pendingVibrationWorkItems.removeValue(forKey: token)
+            self.vibrate(soundEnabled: soundEnabled)
+            self.pendingVibrationWorkItems.removeValue(forKey: token)
+        }
+        pendingVibrationWorkItems[token] = item
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: item)
+    }
+
+    private func cancelPendingVibrations() {
+        for item in pendingVibrationWorkItems.values {
+            item.cancel()
+        }
+        pendingVibrationWorkItems.removeAll()
     }
 
     private func cancelVibration(resetWindow: Bool) {

@@ -12,7 +12,7 @@ struct OnboardingThemeStep: View {
             stepNumber: 2,
             totalSteps: OnboardingViewModel.totalCountedSteps,
             title: "Pick your Beeper shell",
-            subtitle: "Choose a classic color or the Apple shell. Easy to swap later.",
+            subtitle: "Choose a classic color, Apple shell, or Old School machine. Easy to swap later.",
             primaryLabel: "Next",
             primaryAction: { viewModel.goNext() },
             skipLabel: nil,
@@ -77,45 +77,49 @@ private struct LargeShellPreview: View {
     private var lcdH: CGFloat { isApple ? 36 : 34 }
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            if let img = loadImage(theme.shellImage) {
-                Image(nsImage: img)
-                    .resizable()
-                    .interpolation(.high)
-                    .frame(width: shellW, height: shellH)
-            }
-
-            if isApple {
-                AppleDriveLED(color: Color(hex: "D64A3A"), active: false)
-                    .offset(x: 244, y: 92)
-            } else {
-                HStack(spacing: 3) {
-                    Circle().fill(AppConstants.ledGreen).frame(width: 4, height: 4)
-                        .shadow(color: AppConstants.ledGreen.opacity(0.6), radius: 2)
-                    Circle().fill(AppConstants.ledOff).frame(width: 4, height: 4)
+        if theme.id == "old-school" {
+            OldSchoolOnboardingPreview(width: shellW, height: shellH, compact: false)
+        } else {
+            ZStack(alignment: .topLeading) {
+                if let img = loadImage(theme.shellImage) {
+                    Image(nsImage: img)
+                        .resizable()
+                        .interpolation(.high)
+                        .frame(width: shellW, height: shellH)
                 }
-                .offset(x: 226, y: 15)
-            }
 
-            if isApple {
-                AppleLCDHeader()
-                    .frame(width: 206, height: 10)
-                    .offset(x: 34, y: 22)
-            }
+                if isApple {
+                    AppleDriveLED(color: Color(hex: "D64A3A"), active: false)
+                        .offset(x: 244, y: 92)
+                } else {
+                    HStack(spacing: 3) {
+                        Circle().fill(AppConstants.ledGreen).frame(width: 4, height: 4)
+                            .shadow(color: AppConstants.ledGreen.opacity(0.6), radius: 2)
+                        Circle().fill(AppConstants.ledOff).frame(width: 4, height: 4)
+                    }
+                    .offset(x: 226, y: 15)
+                }
 
-            OnboardingLCD(animFrame: animFrame)
-                .frame(width: lcdW, height: lcdH)
-                .clipped()
-                .offset(x: lcdX, y: lcdY)
+                if isApple {
+                    AppleLCDHeader()
+                        .frame(width: 206, height: 10)
+                        .offset(x: 34, y: 22)
+                }
 
-            // Button overlays (static, decorative)
-            if !isApple {
-                OnboardingButtonRow()
-                    .offset(x: 12, y: shellH - 54)
+                OnboardingLCD(animFrame: animFrame)
+                    .frame(width: lcdW, height: lcdH)
+                    .clipped()
+                    .offset(x: lcdX, y: lcdY)
+
+                // Button overlays (static, decorative)
+                if !isApple {
+                    OnboardingButtonRow()
+                        .offset(x: 12, y: shellH - 54)
+                }
             }
+            .frame(width: shellW, height: shellH)
+            .onReceive(animTimer) { _ in animFrame += 1 }
         }
-        .frame(width: shellW, height: shellH)
-        .onReceive(animTimer) { _ in animFrame += 1 }
     }
 }
 
@@ -135,34 +139,52 @@ private struct CompactShellPreview: View {
     private var lcdH: CGFloat { isApple ? 24 : 23 }
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            if let img = loadImage("vibe-beeper-small-\(theme.id).png") {
-                Image(nsImage: img)
-                    .resizable()
-                    .interpolation(.high)
-                    .frame(width: shellW, height: shellH)
-            }
-
-            if isApple {
-                AppleDriveLED(color: Color(hex: "D64A3A"), active: false)
-                    .offset(x: 145, y: 63)
-                AppleLCDHeader()
-                    .frame(width: 116, height: 8)
-                    .offset(x: 22, y: 20)
-            } else {
-                HStack(spacing: 2) {
-                    Circle().fill(AppConstants.ledGreen).frame(width: 3, height: 3)
-                    Circle().fill(AppConstants.ledOff).frame(width: 3, height: 3)
+        if theme.id == "old-school" {
+            OldSchoolOnboardingPreview(width: shellW, height: shellH, compact: true)
+        } else {
+            ZStack(alignment: .topLeading) {
+                if let img = loadImage("vibe-beeper-small-\(theme.id).png") {
+                    Image(nsImage: img)
+                        .resizable()
+                        .interpolation(.high)
+                        .frame(width: shellW, height: shellH)
                 }
-                .offset(x: 125, y: 15)
-            }
 
-            OnboardingLCD(animFrame: animFrame, compact: true)
-                .frame(width: lcdW, height: lcdH)
-                .clipped()
-                .offset(x: lcdX, y: lcdY)
+                if isApple {
+                    AppleDriveLED(color: Color(hex: "D64A3A"), active: false)
+                        .offset(x: 145, y: 63)
+                    AppleLCDHeader()
+                        .frame(width: 116, height: 8)
+                        .offset(x: 22, y: 20)
+                } else {
+                    HStack(spacing: 2) {
+                        Circle().fill(AppConstants.ledGreen).frame(width: 3, height: 3)
+                        Circle().fill(AppConstants.ledOff).frame(width: 3, height: 3)
+                    }
+                    .offset(x: 125, y: 15)
+                }
+
+                OnboardingLCD(animFrame: animFrame, compact: true)
+                    .frame(width: lcdW, height: lcdH)
+                    .clipped()
+                    .offset(x: lcdX, y: lcdY)
+            }
+            .frame(width: shellW, height: shellH)
+            .onReceive(animTimer) { _ in animFrame += 1 }
         }
-        .frame(width: shellW, height: shellH)
+    }
+}
+
+private struct OldSchoolOnboardingPreview: View {
+    let width: CGFloat
+    let height: CGFloat
+    let compact: Bool
+    @State private var animFrame = 0
+    private let animTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
+
+    var body: some View {
+        OldSchoolPreviewMachine(compact: compact, showScreenContent: true)
+        .frame(width: width, height: height)
         .onReceive(animTimer) { _ in animFrame += 1 }
     }
 }
