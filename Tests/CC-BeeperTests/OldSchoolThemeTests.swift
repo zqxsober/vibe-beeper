@@ -24,11 +24,11 @@ final class OldSchoolThemeXCTests: XCTestCase {
             return
         }
 
-        XCTAssertTrue(source.contains("NSSize(width: 360, height: 360)"))
-        XCTAssertTrue(source.contains("NSSize(width: 420, height: 420)"))
-        XCTAssertTrue(source.contains("NSSize(width: 500, height: 500)"))
-        XCTAssertTrue(source.contains("NSSize(width: 580, height: 580)"))
-        XCTAssertTrue(source.contains("NSSize(width: 310, height: 245)"))
+        XCTAssertTrue(source.contains("NSSize(width: 360, height: 405)"))
+        XCTAssertTrue(source.contains("NSSize(width: 420, height: 472)"))
+        XCTAssertTrue(source.contains("NSSize(width: 500, height: 562)"))
+        XCTAssertTrue(source.contains("NSSize(width: 580, height: 652)"))
+        XCTAssertTrue(source.contains("NSSize(width: 310, height: 349)"))
         XCTAssertTrue(source.contains("mainWindowSize(for widgetSize: WidgetSize)"))
     }
 
@@ -66,6 +66,7 @@ final class OldSchoolThemeXCTests: XCTestCase {
         XCTAssertTrue(largeSource.contains("monitor.ttsService.stopSpeaking()"))
         XCTAssertTrue(largeSource.contains("monitor.goToConversation()"))
         XCTAssertTrue(chromeSource.contains("OldSchoolControls"))
+        XCTAssertTrue(chromeSource.contains("OldSchoolControlHitAreas"))
         XCTAssertTrue(chromeSource.contains("OldSchoolKeyButton"))
     }
 
@@ -77,22 +78,16 @@ final class OldSchoolThemeXCTests: XCTestCase {
             return
         }
 
-        XCTAssertTrue(largeSource.contains("OldSchoolDesktopMacBody"))
-        XCTAssertTrue(largeSource.contains("includesKeyboardBase: true"))
-        XCTAssertTrue(largeSource.contains("OldSchoolAppleLogo"))
-        XCTAssertTrue(largeSource.contains("OldSchoolFloppyDrive"))
-        XCTAssertTrue(largeSource.contains("OldSchoolReferenceScreen"))
+        XCTAssertTrue(largeSource.contains("OldSchoolShellArtwork()"))
+        XCTAssertTrue(largeSource.contains("OldSchoolControlHitAreas"))
+        XCTAssertTrue(largeSource.contains(".zIndex(1)"))
         XCTAssertFalse(largeSource.contains("OldSchoolRainbowBadge()"))
 
-        XCTAssertTrue(compactSource.contains("OldSchoolDesktopMacBody"))
-        XCTAssertTrue(compactSource.contains("OldSchoolAppleLogo"))
-        XCTAssertTrue(compactSource.contains("OldSchoolFloppyDrive"))
-        XCTAssertTrue(compactSource.contains("OldSchoolReferenceScreen"))
+        XCTAssertTrue(compactSource.contains("OldSchoolShellArtwork()"))
+        XCTAssertTrue(compactSource.contains("OldSchoolControlHitAreas"))
+        XCTAssertTrue(compactSource.contains(".zIndex(1)"))
 
-        XCTAssertTrue(chromeSource.contains("struct OldSchoolDesktopMacBody"))
-        XCTAssertTrue(chromeSource.contains("struct OldSchoolKeyboardBase"))
-        XCTAssertTrue(chromeSource.contains("struct OldSchoolAppleLogo"))
-        XCTAssertTrue(chromeSource.contains("struct OldSchoolFloppyDrive"))
+        XCTAssertTrue(chromeSource.contains("struct OldSchoolShellArtwork"))
         XCTAssertTrue(chromeSource.contains("struct OldSchoolReferenceScreen"))
         XCTAssertTrue(chromeSource.contains("Image(systemName: \"apple.logo\")"))
         XCTAssertFalse(chromeSource.contains("tree.fill"))
@@ -106,13 +101,24 @@ final class OldSchoolThemeXCTests: XCTestCase {
             return
         }
 
-        XCTAssertTrue(largeSource.contains("min(size.width / 420, size.height / 420)"))
-        XCTAssertTrue(largeSource.contains(".frame(width: 396 * scale, height: 410 * scale)"))
-        XCTAssertTrue(largeSource.contains(".frame(width: 306 * scale, height: 178 * scale)"))
-        XCTAssertTrue(largeSource.contains(".offset(x: 54 * scale, y: 44 * scale)"))
-        XCTAssertTrue(largeSource.contains(".offset(x: 35 * scale, y: 331 * scale)"))
+        XCTAssertTrue(largeSource.contains("min(size.width / 1020, size.height / 1147)"))
+        XCTAssertTrue(largeSource.contains("OldSchoolShellArtwork()"))
+        XCTAssertTrue(largeSource.contains(".frame(width: 736 * scale, height: 462 * scale)"))
+        XCTAssertTrue(largeSource.contains(".offset(x: originX + 142 * scale, y: originY + 101 * scale)"))
+        XCTAssertTrue(largeSource.contains(".offset(x: originX, y: originY)"))
         XCTAssertTrue(chromeSource.contains("OldSchoolScreenMetrics"))
         XCTAssertTrue(chromeSource.contains(".minimumScaleFactor(0.62)"))
+    }
+
+    func testOldSchoolArtworkAssetExistsAndIsBundledByBuildScript() {
+        guard let chromeSource = sourceIfExists(oldSchoolChromePath()),
+              let buildSource = sourceIfExists(buildScriptPath()) else {
+            return
+        }
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: projectRoot() + "/Sources/shells/vibe-beeper-old-school-shell.png"))
+        XCTAssertTrue(chromeSource.contains("vibe-beeper-old-school-shell.png"))
+        XCTAssertTrue(buildSource.contains("cp Sources/shells/vibe-beeper-*.png"))
     }
 
     func testOldSchoolKeyboardBaseHasLayeredLowerDeckStyling() {
@@ -207,6 +213,10 @@ final class OldSchoolThemeXCTests: XCTestCase {
 
     private func settingsGeneralSectionPath() -> String {
         projectRoot() + "/Sources/Settings/SettingsGeneralSection.swift"
+    }
+
+    private func buildScriptPath() -> String {
+        projectRoot() + "/build.sh"
     }
 
     private func onboardingThemeStepPath() -> String {

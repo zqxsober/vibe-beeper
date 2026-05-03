@@ -604,6 +604,66 @@ struct OldSchoolControls: View {
     }
 }
 
+struct OldSchoolControlHitAreas: View {
+    let scale: CGFloat
+    let permissionActive: Bool
+    let isSpeaking: Bool
+    let onAccept: () -> Void
+    let onDeny: () -> Void
+    let onRecord: () -> Void
+    let onStopSpeaking: () -> Void
+    let onTerminal: () -> Void
+
+    private let panelOrigin = CGPoint(x: 40, y: 760)
+    private let panelSize = CGSize(width: 940, height: 220)
+
+    var body: some View {
+        HStack(spacing: 0) {
+            hitButton(action: { if permissionActive { onAccept() } }, help: "Accept")
+            hitButton(action: { if permissionActive { onDeny() } }, help: "Deny")
+            hitButton(action: onRecord, help: "Record")
+            hitButton(action: { if isSpeaking { onStopSpeaking() } }, help: "Stop speaking")
+            hitButton(action: onTerminal, help: "Go to terminal")
+        }
+        .frame(width: panelSize.width * scale, height: panelSize.height * scale)
+        .offset(x: panelOrigin.x * scale, y: panelOrigin.y * scale)
+        .frame(width: 1020 * scale, height: 1147 * scale, alignment: .topLeading)
+    }
+
+    private func hitButton(action: @escaping () -> Void, help: String) -> some View {
+        Button(action: action) {
+            Rectangle()
+                .fill(Color.white.opacity(0.001))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(OldSchoolHitButtonStyle(scale: scale))
+        .help(help)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+struct OldSchoolHitButtonStyle: ButtonStyle {
+    let scale: CGFloat
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .overlay(alignment: .center) {
+                RoundedRectangle(cornerRadius: 18 * scale, style: .continuous)
+                    .fill(Color.black.opacity(configuration.isPressed ? 0.14 : 0))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18 * scale, style: .continuous)
+                            .stroke(Color.white.opacity(configuration.isPressed ? 0.28 : 0), lineWidth: max(1, 2 * scale))
+                    )
+                    .padding(.horizontal, 18 * scale)
+                    .padding(.top, 64 * scale)
+                    .padding(.bottom, 24 * scale)
+                    .offset(y: 18 * scale)
+                    .animation(.easeOut(duration: 0.08), value: configuration.isPressed)
+            }
+            .offset(y: configuration.isPressed ? 2 * scale : 0)
+    }
+}
+
 struct OldSchoolKeyButton: View {
     let icon: OldSchoolPixelIconKind
     let isEnabled: Bool
@@ -671,6 +731,15 @@ enum OldSchoolPixelIconKind {
     case stop
     case speaker
     case terminal
+}
+
+struct OldSchoolShellArtwork: View {
+    var body: some View {
+        Image(nsImage: loadButtonImage("vibe-beeper-old-school-shell.png"))
+            .resizable()
+            .interpolation(.high)
+            .allowsHitTesting(false)
+    }
 }
 
 struct OldSchoolPixelIcon: View {
@@ -816,32 +885,18 @@ struct OldSchoolPreviewMachine: View {
     var body: some View {
         GeometryReader { proxy in
             let size = proxy.size
-            let scale = min(size.width / 180, size.height / 142)
-            let originX = (size.width - 180 * scale) / 2
-            let originY = (size.height - 142 * scale) / 2
 
             ZStack(alignment: .topLeading) {
-                OldSchoolDesktopMacBody(includesKeyboardBase: false)
-                    .frame(width: 180 * scale, height: 142 * scale)
-                    .offset(x: originX, y: originY)
+                OldSchoolShellArtwork()
+                    .frame(width: size.width, height: size.height)
 
-                OldSchoolLCDPanel(cornerRadius: 5 * scale, inset: 3 * scale, contentPadding: 4 * scale) {
-                    if showScreenContent {
+                if showScreenContent {
+                    OldSchoolLCDPanel(cornerRadius: 10, inset: 6, contentPadding: 12) {
                         OldSchoolStaticPreviewScreen(compact: compact)
                     }
+                    .frame(width: size.width * 0.7216, height: size.height * 0.4028)
+                    .offset(x: size.width * 0.1392, y: size.height * 0.0881)
                 }
-                .frame(width: 140 * scale, height: 81 * scale)
-                .offset(x: originX + 23 * scale, y: originY + 19 * scale)
-
-                OldSchoolAppleLogo(size: 16 * scale)
-                    .offset(x: originX + 24 * scale, y: originY + 101 * scale)
-
-                OldSchoolFloppyDrive()
-                    .frame(width: 52 * scale, height: 10 * scale)
-                    .offset(x: originX + 108 * scale, y: originY + 108 * scale)
-
-                OldSchoolLED(color: Color(hex: "D64A3A"), active: true, size: 3.5 * scale)
-                    .offset(x: originX + 163 * scale, y: originY + 111 * scale)
             }
         }
         .allowsHitTesting(false)

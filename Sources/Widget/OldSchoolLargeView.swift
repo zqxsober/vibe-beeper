@@ -16,32 +16,27 @@ struct OldSchoolLargeView: View {
 
     var body: some View {
         let size = windowSize
-        let scale = min(size.width / 420, size.height / 420)
+        let scale = min(size.width / 1020, size.height / 1147)
+        let shellWidth = 1020 * scale
+        let shellHeight = 1147 * scale
+        let originX = (size.width - shellWidth) / 2
+        let originY = (size.height - shellHeight) / 2
 
         ZStack(alignment: .topLeading) {
-            OldSchoolDesktopMacBody(includesKeyboardBase: true)
-                .frame(width: 396 * scale, height: 410 * scale)
-                .offset(x: 12 * scale, y: 5 * scale)
+            OldSchoolShellArtwork()
+                .frame(width: shellWidth, height: shellHeight)
+                .offset(x: originX, y: originY)
 
-            OldSchoolLCDPanel(cornerRadius: 10 * scale, inset: 6 * scale, contentPadding: 12 * scale) {
+            OldSchoolLCDPanel(cornerRadius: 18 * scale, inset: 8 * scale, contentPadding: 34 * scale) {
                 OldSchoolReferenceScreen()
             }
-            .frame(width: 306 * scale, height: 178 * scale)
-            .offset(x: 54 * scale, y: 44 * scale)
+            .frame(width: 736 * scale, height: 462 * scale)
+            .offset(x: originX + 142 * scale, y: originY + 101 * scale)
+            .zIndex(1)
 
-            OldSchoolAppleLogo(size: 35 * scale)
-                .offset(x: 45 * scale, y: 252 * scale)
-
-            OldSchoolFloppyDrive()
-                .frame(width: 114 * scale, height: 22 * scale)
-                .offset(x: 254 * scale, y: 266 * scale)
-
-            OldSchoolLED(color: driveLEDColor, active: ledAlertActive && ledPulse, size: 7 * scale)
-                .offset(x: 375 * scale, y: 274 * scale)
-
-            OldSchoolControls(
+            OldSchoolControlHitAreas(
+                scale: scale,
                 permissionActive: monitor.state.needsAttention,
-                isRecording: monitor.isRecording,
                 isSpeaking: monitor.ttsService.isSpeaking,
                 onAccept: { monitor.respondToPermission(allow: true) },
                 onDeny: { monitor.respondToPermission(allow: false) },
@@ -51,12 +46,13 @@ struct OldSchoolLargeView: View {
                         monitor.ttsService.stopSpeaking()
                     }
                 },
-                onTerminal: { monitor.goToConversation() },
-                keySize: CGSize(width: 56 * scale, height: 51 * scale),
-                iconSize: 25 * scale,
-                spacing: 16 * scale
+                onTerminal: { monitor.goToConversation() }
             )
-            .offset(x: 35 * scale, y: 331 * scale)
+            .offset(x: originX, y: originY)
+            .zIndex(2)
+
+            OldSchoolLED(color: driveLEDColor, active: ledAlertActive && ledPulse, size: 7 * scale)
+                .offset(x: originX + 896 * scale, y: originY + 688 * scale)
         }
         .frame(width: size.width, height: size.height)
         .background(Color.clear)

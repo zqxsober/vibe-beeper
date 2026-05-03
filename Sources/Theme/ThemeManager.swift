@@ -30,10 +30,10 @@ enum OldSchoolDisplaySize: String, CaseIterable, Identifiable, Equatable {
 
     var windowSize: NSSize {
         switch self {
-        case .small: return NSSize(width: 360, height: 360)
-        case .medium: return NSSize(width: 420, height: 420)
-        case .large: return NSSize(width: 500, height: 500)
-        case .showcase: return NSSize(width: 580, height: 580)
+        case .small: return NSSize(width: 360, height: 405)
+        case .medium: return NSSize(width: 420, height: 472)
+        case .large: return NSSize(width: 500, height: 562)
+        case .showcase: return NSSize(width: 580, height: 652)
         }
     }
 }
@@ -99,7 +99,7 @@ final class ThemeManager: ObservableObject {
         case .large:
             return isOldSchoolTheme ? oldSchoolDisplaySize.windowSize : NSSize(width: 440, height: 240)
         case .compact:
-            return isOldSchoolTheme ? NSSize(width: 310, height: 245) : NSSize(width: 300, height: 193)
+            return isOldSchoolTheme ? NSSize(width: 310, height: 349) : NSSize(width: 300, height: 193)
         case .menuOnly:
             return NSSize(width: 1, height: 1)
         }

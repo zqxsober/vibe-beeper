@@ -8,28 +8,40 @@ struct OldSchoolCompactView: View {
     private let ledTimer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
 
     private let shellW: CGFloat = 310
-    private let shellH: CGFloat = 245
+    private let shellH: CGFloat = 349
 
     var body: some View {
+        let scale = shellW / 1020
+
         ZStack(alignment: .topLeading) {
-            OldSchoolDesktopMacBody(includesKeyboardBase: false)
+            OldSchoolShellArtwork()
                 .frame(width: shellW, height: shellH)
 
-            OldSchoolLCDPanel(cornerRadius: 8, inset: 5, contentPadding: 8) {
+            OldSchoolLCDPanel(cornerRadius: 18 * scale, inset: 8 * scale, contentPadding: 34 * scale) {
                 OldSchoolReferenceScreen(compact: true)
             }
-            .frame(width: 240, height: 139)
-            .offset(x: 35, y: 30)
+            .frame(width: 736 * scale, height: 462 * scale)
+            .offset(x: 142 * scale, y: 101 * scale)
+            .zIndex(1)
 
-            OldSchoolAppleLogo(size: 26)
-                .offset(x: 40, y: 172)
+            OldSchoolControlHitAreas(
+                scale: scale,
+                permissionActive: monitor.state.needsAttention,
+                isSpeaking: monitor.ttsService.isSpeaking,
+                onAccept: { monitor.respondToPermission(allow: true) },
+                onDeny: { monitor.respondToPermission(allow: false) },
+                onRecord: { monitor.voiceService.toggle() },
+                onStopSpeaking: {
+                    if monitor.ttsService.isSpeaking {
+                        monitor.ttsService.stopSpeaking()
+                    }
+                },
+                onTerminal: { monitor.goToConversation() }
+            )
+            .zIndex(2)
 
-            OldSchoolFloppyDrive()
-                .frame(width: 88, height: 16)
-                .offset(x: 185, y: 184)
-
-            OldSchoolLED(color: driveLEDColor, active: ledAlertActive && ledPulse, size: 6)
-                .offset(x: 281, y: 189)
+            OldSchoolLED(color: driveLEDColor, active: ledAlertActive && ledPulse, size: 7 * scale)
+                .offset(x: 896 * scale, y: 688 * scale)
         }
         .frame(width: shellW, height: shellH)
         .background(Color.clear)
